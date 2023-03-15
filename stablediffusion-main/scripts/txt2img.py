@@ -19,7 +19,6 @@ from ldm.models.diffusion.plms import PLMSSampler
 from ldm.models.diffusion.dpm_solver import DPMSolverSampler
 
 torch.set_grad_enabled(False)
-
 def chunk(it, size):
     it = iter(it)
     return iter(lambda: tuple(islice(it, size)), ())
@@ -41,7 +40,8 @@ def load_model_from_config(config, ckpt, device=torch.device("cuda"), verbose=Fa
         print(u)
 
     if device == torch.device("cuda"):
-        model.cuda()
+        torch.cuda.empty_cache()
+        model.cuda().half()
     elif device == torch.device("cpu"):
         model.cpu()
         model.cond_stage_model.device = "cpu"
