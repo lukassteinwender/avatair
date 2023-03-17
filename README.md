@@ -1,4 +1,5 @@
 # avatair
 
 Test:
-python interface.py
+
+python avatair.py
