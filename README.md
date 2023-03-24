@@ -1,4 +1,4 @@
-# avatair
+# AvatAIr
 
 Test:
 
