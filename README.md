@@ -5,7 +5,7 @@ The pipeline will work as followed:
 
 
 
-** Installation: **
+**Installation:**
 
 Test Prompts:
 python prompt_test.py
