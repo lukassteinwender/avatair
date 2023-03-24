@@ -5,5 +5,10 @@ The pipeline will work as followed:
 
 
 
-To test execute:
+** Installation: **
+
+Test Prompts:
+python prompt_test.py
+
+AvatAIr:
 python avatair.py
