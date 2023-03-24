@@ -2,22 +2,24 @@ import gradio as gr
 from diffusers import DiffusionPipeline
 import torch
 
-def diffusion(slide1, slide2):
+def diffusion(check):
     torch.cuda.empty_cache()
+    
+    print(check)
 
-    if slide1 == 0: abstr = "A ultra abstract "
-    if slide1 == 0.2: abstr = "A very abstract " 
-    if slide1 == 0.4: abstr = "A abstract "
-    if slide1 == 0.6: abstr = "A realistic "
-    if slide1 == 0.8: abstr = "A very realistic "
-    if slide1 == 1: abstr = "A ultra realistic "
+    opt_val = 0.3
 
-    if slide2 == 0: age = "10 y.o. "
-    if slide2 == 0.2: age = "20 y.o. " 
-    if slide2 == 0.4: age = "30 y.o. "
-    if slide2 == 0.6: age = "50 y.o. "
-    if slide2 == 0.8: age = "60 y.o. "
-    if slide2 == 1: age = "70 y.o. "
+    if 0 <= opt_val <= 0.19: abstr = "A ultra abstract "
+    if 0.2 <= opt_val <= 0.39: abstr = "A abstract "
+    if 0.4 <= opt_val <= 0.59: abstr = "A realistic "
+    if 0.6 <= opt_val <= 0.79: abstr = "A very realistic "
+    if 0.8 <= opt_val <= 1: abstr = "A ultra realistic "
+
+    if 0 <= opt_val <= 0.19: age = "10 y.o. "
+    if 0.2 <= opt_val <= 0.39: age = "20 y.o. " 
+    if 0.4 <= opt_val <= 0.59: age = "30 y.o. "
+    if 0.6 <= opt_val <= 0.79: age = "50 y.o. "
+    if 0.8 <= opt_val <= 1: age = "70 y.o. "
 
     prompt = abstr + age +  "woman is looking at the camera with a smile on her face and a grey background, by NHK Animation, digital art, trending on artstation, illustration"
     negative_prompt= "(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, anime:1.4), text, close up, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck"
@@ -39,7 +41,7 @@ def diffusion(slide1, slide2):
 
 demo = gr.Interface(
     fn=diffusion,
-    inputs=[gr.Slider(0, 1, step=0.2, value=0.6, label="Abstraction", info="abstract <-> realistic"), gr.Slider(0, 1, step=0.2, value=0.4, label="Age", info="young <-> old")],
+    inputs=[gr.Checkbox(label="Avatar gut?"),],
     outputs="image"
 )
 
