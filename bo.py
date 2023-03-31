@@ -6,10 +6,7 @@ from botorch.optim import optimize_acqf
 
 # define the objective function to optimize
 def objective(x):
-    x == 1.00
-    while x==0.00 or x==1.00: 
-        x = torch.rand_like(x)
-    return x
+    return torch.rand_like(x)
 
 # define the function to query the human for feedback on each value
 def query_human(x):
