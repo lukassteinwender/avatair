@@ -1,5 +1,5 @@
 # AvatAIr
-The pipeline will work as followed:
+The pipeline will work as following:
 
 ![AvatAIr Pipeline](/Documentation/picture/pipeline.png)
 
