@@ -25,7 +25,7 @@ def diffusion(slide1, slide2):
 
     pipe = DiffusionPipeline.from_pretrained(
         "SG161222/Realistic_Vision_V1.4_Fantasy.ai",
-        torch_dtype=torch.float32,
+        torch_dtype=torch.float16,
     )
     pipe = pipe.to("cuda")
 

@@ -73,7 +73,7 @@ def bayesian_opti():
             break
 
 # Photo generation on user-interaction
-def diffusion(check):
+def diffusion(check, btn1, btn2, btn3, btn4, btn5, btn6, btn7):
     
     # empty cuda-cache
     torch.cuda.empty_cache()
@@ -86,20 +86,41 @@ def diffusion(check):
 
     print(opt_val)
 
-    if 0 <= opt_val <= 0.19: abstr = "A ultra abstract "
-    if 0.2 <= opt_val <= 0.39: abstr = "A abstract "
-    if 0.4 <= opt_val <= 0.59: abstr = "A realistic "
-    if 0.6 <= opt_val <= 0.79: abstr = "A very realistic "
-    if 0.8 <= opt_val <= 1: abstr = "A ultra realistic "
+    if 0 <= opt_val <= 0.19: abstr = "A ultra abstract "; sugarcheck = False
+    if 0.2 <= opt_val <= 0.39: abstr = "A abstract "; sugarcheck = False
+    if 0.4 <= opt_val <= 0.59: abstr = "A realistic "; sugarcheck = False
+    if 0.6 <= opt_val <= 0.79: abstr = "A very realistic " ; sugarcheck = False
+    if 0.8 <= opt_val <= 1: abstr = "A realistic "; sugarcheck = True
 
-    if 0 <= opt_val <= 0.19: age = "10 y.o. "
-    if 0.2 <= opt_val <= 0.39: age = "20 y.o. " 
-    if 0.4 <= opt_val <= 0.59: age = "30 y.o. "
-    if 0.6 <= opt_val <= 0.79: age = "50 y.o. "
-    if 0.8 <= opt_val <= 1: age = "70 y.o. "
+    if 0 <= opt_val <= 0.09: age = "10 y.o. "
+    if 0.1 <= opt_val <= 0.14: age = "15 y.o. " 
+    if 0.15 <= opt_val <= 0.19: age = "20 y.o. "
+    if 0.2 <= opt_val <= 0.24: age = "25 y.o. "
+    if 0.25 <= opt_val <= 0.29: age = "30 y.o. "
+    if 0.30 <= opt_val <= 0.34: age = "35 y.o. "
+    if 0.35 <= opt_val <= 0.39: age = "40 y.o. "
+    if 0.4 <= opt_val <= 0.44: age = "45 y.o. "
+    if 0.45 <= opt_val <= 0.49: age = "50 y.o. "
+    if 0.5 <= opt_val <= 0.54: age = "55 y.o. "
+    if 0.55 <= opt_val <= 0.59: age = "60 y.o. "
+    if 0.6 <= opt_val <= 0.64: age = "65 y.o. "
+    if 0.65 <= opt_val <= 0.69: age = "70 y.o. "
+    if 0.7 <= opt_val <= 0.74: age = "75 y.o. "
+    if 0.75 <= opt_val <= 0.79: age = "80 y.o. "
+    if 0.8 <= opt_val <= 0.84: age = "85 y.o. "
+    if 0.85 <= opt_val <= 0.89: age = "90 y.o. "
+    if 0.9 <= opt_val <= 0.94: age = "95 y.o. "
+    if 0.95 <= opt_val <= 1: age = "100 y.o. "
+
+
+    # set the sugar
+    if sugarcheck == True: 
+        sugar = "(high detailed skin:1.2), 8k uhd, dslr,soft lighting, high quality, film grain"
+    else:
+        sugar = "by NHK Animation, digital art, trending on artstation, illustration"
 
     # set the prompts
-    prompt = abstr + age +  "woman is looking at the camera with a smile on her face and a grey background, by NHK Animation, digital art, trending on artstation, illustration"
+    prompt = abstr + age +  "woman is looking at the camera with a smile on her face and a grey background, " + sugar
     negative_prompt= "(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, anime:1.4), text, close up, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck"
     print("Running prompt: " + prompt)
 
@@ -117,14 +138,33 @@ def diffusion(check):
     image = pipe(prompt=prompt, negative_prompt=negative_prompt).images[0]
     return image
 
+# button callback
+def button_clicked(button_id):
+    print(f"Button {button_id} clicked!")
+
+
+button1 = gr.Button("1", onclick=lambda: button_clicked(1))
+button2 = gr.Button("2", onclick=lambda: button_clicked(2))
+button3 = gr.Button("3", onclick=lambda: button_clicked(3))
+button4 = gr.Button("4", onclick=lambda: button_clicked(4))
+button5 = gr.Button("5", onclick=lambda: button_clicked(5))
+button6 = gr.Button("6", onclick=lambda: button_clicked(6))
+button7 = gr.Button("7", onclick=lambda: button_clicked(7))
+
 # initializing Gradio-UI
 def main():
     demo = gr.Interface(
         fn=diffusion,
-        inputs=[gr.Checkbox(label="Avatar gut?"),],
-        outputs="image"
+        inputs=[gr.Checkbox(label="Avatar gut?"), button1, button2, button3, button4, button5, button6, button7],
+        outputs="image",
+        description="Ein Interface zum erstellen individueller Avatare"
     )
     demo.launch()
+    
+
+
+
+    
 
 # start threads main and bo parallel
 warnings.filterwarnings("ignore", category=UserWarning, module=".*botorch.*")
