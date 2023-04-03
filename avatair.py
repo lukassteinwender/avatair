@@ -82,7 +82,7 @@ def diffusion(check, btn1, btn2, btn3, btn4, btn5, btn6, btn7):
     event.set()
 
     global val
-    opt_val = val
+    opt_val = round(val, 2)
 
     print(opt_val)
 
