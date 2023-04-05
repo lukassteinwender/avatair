@@ -82,35 +82,37 @@ def diffusion(check, btn1, btn2, btn3, btn4, btn5, btn6, btn7):
     event.set()
 
     global val
-    opt_val = round(val, 2)
+    opt_val= val
+    
 
     print(opt_val)
 
-    if 0 <= opt_val <= 0.19: abstr = "A ultra abstract "; sugarcheck = False
-    if 0.2 <= opt_val <= 0.39: abstr = "A abstract "; sugarcheck = False
-    if 0.4 <= opt_val <= 0.59: abstr = "A realistic "; sugarcheck = False
-    if 0.6 <= opt_val <= 0.79: abstr = "A very realistic " ; sugarcheck = False
-    if 0.8 <= opt_val <= 1: abstr = "A realistic "; sugarcheck = True
+    if 0.00 <= opt_val < 0.2: abstr = "A ultra abstract "; sugarcheck = False
+    if 0.2 <= opt_val < 0.40: abstr = "A abstract "; sugarcheck = False
+    if 0.4 <= opt_val < 0.60: abstr = "A realistic "; sugarcheck = False
+    if 0.6 <= opt_val < 0.80: abstr = "A very realistic " ; sugarcheck = False
+    if 0.8 <= opt_val < 1.00: abstr = "A realistic "; sugarcheck = True
 
-    if 0 <= opt_val <= 0.09: age = "10 y.o. "
-    if 0.1 <= opt_val <= 0.14: age = "15 y.o. " 
-    if 0.15 <= opt_val <= 0.19: age = "20 y.o. "
-    if 0.2 <= opt_val <= 0.24: age = "25 y.o. "
-    if 0.25 <= opt_val <= 0.29: age = "30 y.o. "
-    if 0.30 <= opt_val <= 0.34: age = "35 y.o. "
-    if 0.35 <= opt_val <= 0.39: age = "40 y.o. "
-    if 0.4 <= opt_val <= 0.44: age = "45 y.o. "
-    if 0.45 <= opt_val <= 0.49: age = "50 y.o. "
-    if 0.5 <= opt_val <= 0.54: age = "55 y.o. "
-    if 0.55 <= opt_val <= 0.59: age = "60 y.o. "
-    if 0.6 <= opt_val <= 0.64: age = "65 y.o. "
-    if 0.65 <= opt_val <= 0.69: age = "70 y.o. "
-    if 0.7 <= opt_val <= 0.74: age = "75 y.o. "
-    if 0.75 <= opt_val <= 0.79: age = "80 y.o. "
-    if 0.8 <= opt_val <= 0.84: age = "85 y.o. "
-    if 0.85 <= opt_val <= 0.89: age = "90 y.o. "
-    if 0.9 <= opt_val <= 0.94: age = "95 y.o. "
-    if 0.95 <= opt_val <= 1: age = "100 y.o. "
+    if 0.00 <= opt_val < 0.10: age = "10 y.o. "
+    if 0.1 <= opt_val < 0.15: age = "15 y.o. " 
+    if 0.15 <= opt_val < 0.20: age = "20 y.o. "
+    if 0.2 <= opt_val < 0.25: age = "25 y.o. "
+    if 0.25 <= opt_val < 0.30: age = "30 y.o. "
+    if 0.30 <= opt_val < 0.35: age = "35 y.o. "
+    if 0.35 <= opt_val < 0.40: age = "40 y.o. "
+    if 0.4 <= opt_val < 0.45: age = "45 y.o. "
+    if 0.45 <= opt_val < 0.50: age = "50 y.o. "
+    if 0.5 <= opt_val < 0.55: age = "55 y.o. "
+    if 0.55 <= opt_val < 0.60: age = "60 y.o. "
+    if 0.6 <= opt_val < 0.65: age = "65 y.o. "
+    if 0.65 <= opt_val < 0.70: age = "70 y.o. "
+    if 0.7 <= opt_val < 0.75: age = "75 y.o. "
+    if 0.75 <= opt_val < 0.80: age = "80 y.o. "
+    if 0.8 <= opt_val < 0.85: age = "85 y.o. "
+    if 0.85 <= opt_val < 0.90: age = "90 y.o. "
+    if 0.9 <= opt_val < 0.95: age = "95 y.o. "
+    if 0.95 <= opt_val < 1.00: age = "100 y.o. "
+
 
 
     # set the sugar
