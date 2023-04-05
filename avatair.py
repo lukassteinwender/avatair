@@ -43,22 +43,23 @@ tkwargs = {
 BATCH_SIZE = 1 # Number of design parameter points to query at next iteration
 NUM_RESTARTS = 10 # Used for the acquisition function number of restarts in optimization
 RAW_SAMPLES = 1024 # Initial restart location candidates
-N_ITERATIONS = 3 # Number of optimization iterations
+N_ITERATIONS = 5 # Number of optimization iterations
 MC_SAMPLES = 512 # Number of samples to approximate acquisition function
 N_INITIAL = 10
 SEED = 2 # Seed to initialize the initial samples obtained
 
 start_time = time.strftime("%Y-%m-%d-%H-%M", time.localtime())
 
-problem_dim = 4 # dimension of the inputs X z.B.: ALter, Abstraktheit, (alles was wir ändern)
+problem_dim = 8 # dimension of the inputs X z.B.: ALter, Abstraktheit, (alles was wir ändern)
 num_objs = 2 # dimension of the objectives Y z.B.: Vertraunswürdigkeit, Schönheit (alles was die Leute bewerten)
+
+ABSTR_VAL = 1.00
+AGE_VAL = 1.00
 
 ref_point = torch.tensor([-1. for _ in range(num_objs)]).cuda()
 problem_bounds = torch.zeros(2, problem_dim, **tkwargs)
 
 problem_bounds [1] = 1
-
-val = 1.00
 
 def objective(x):
     x = x.cpu().numpy()
@@ -229,8 +230,19 @@ def mobo_execute(seed, iterations, initial_samples):
         print("pareto y", pareto_y)
         print("volume", volume)
 
-        print("training x", train_x_qehvi)
+        trainValues = train_x_qehvi
+        actualValues = trainValues[-1:]
+        print("training x", trainValues)
+        print("RESULT: ", actualValues)
         print("training obj", train_obj_qehvi)
+        
+        global ABSTR_VAL
+        ABSTR_VAL = actualValues.data[0][0]
+
+        global AGE_VAL
+        AGE_VAL = actualValues.data[0][1]
+
+        event2.set()
 
         mll_qehvi, model_qehvi = initialize_model(train_x_qehvi, train_obj_qehvi)
     
@@ -244,38 +256,42 @@ def diffusion(check, btn1, btn2, btn3, btn4, btn5, btn6, btn7):
 
     # call BO
     event.set()
+    event2.wait()
+    event2.clear()
+    
+    global ABSTR_VAL
+    global AGE_VAL
 
-    global val
-    opt_val=0.50
     sugarcheck= False
 
-    print(opt_val)
+    print("ABSTR_VAL", ABSTR_VAL)
+    print("AGE_VAL", AGE_VAL)
 
-    if 0.00 <= opt_val < 0.2: abstr = "A ultra abstract "; sugarcheck = False
-    if 0.2 <= opt_val < 0.40: abstr = "A abstract "; sugarcheck = False
-    if 0.4 <= opt_val < 0.60: abstr = "A realistic "; sugarcheck = False
-    if 0.6 <= opt_val < 0.80: abstr = "A very realistic " ; sugarcheck = False
-    if 0.8 <= opt_val < 1.00: abstr = "A realistic "; sugarcheck = True
+    if 0.00 <= ABSTR_VAL < 0.2: abstr = "A ultra abstract "; sugarcheck = False
+    if 0.2 <= ABSTR_VAL < 0.40: abstr = "A abstract "; sugarcheck = False
+    if 0.4 <= ABSTR_VAL < 0.60: abstr = "A realistic "; sugarcheck = False
+    if 0.6 <= ABSTR_VAL < 0.80: abstr = "A very realistic " ; sugarcheck = False
+    if 0.8 <= ABSTR_VAL < 1.00: abstr = "A realistic "; sugarcheck = True
 
-    if 0.00 <= opt_val < 0.10: age = "10 y.o. "
-    if 0.1 <= opt_val < 0.15: age = "15 y.o. " 
-    if 0.15 <= opt_val < 0.20: age = "20 y.o. "
-    if 0.2 <= opt_val < 0.25: age = "25 y.o. "
-    if 0.25 <= opt_val < 0.30: age = "30 y.o. "
-    if 0.30 <= opt_val < 0.35: age = "35 y.o. "
-    if 0.35 <= opt_val < 0.40: age = "40 y.o. "
-    if 0.4 <= opt_val < 0.45: age = "45 y.o. "
-    if 0.45 <= opt_val < 0.50: age = "50 y.o. "
-    if 0.5 <= opt_val < 0.55: age = "55 y.o. "
-    if 0.55 <= opt_val < 0.60: age = "60 y.o. "
-    if 0.6 <= opt_val < 0.65: age = "65 y.o. "
-    if 0.65 <= opt_val < 0.70: age = "70 y.o. "
-    if 0.7 <= opt_val < 0.75: age = "75 y.o. "
-    if 0.75 <= opt_val < 0.80: age = "80 y.o. "
-    if 0.8 <= opt_val < 0.85: age = "85 y.o. "
-    if 0.85 <= opt_val < 0.90: age = "90 y.o. "
-    if 0.9 <= opt_val < 0.95: age = "95 y.o. "
-    if 0.95 <= opt_val < 1.00: age = "100 y.o. "
+    if 0.00 <= AGE_VAL < 0.10: age = "10 y.o. "
+    if 0.1 <= AGE_VAL < 0.15: age = "15 y.o. " 
+    if 0.15 <= AGE_VAL < 0.20: age = "20 y.o. "
+    if 0.2 <= AGE_VAL < 0.25: age = "25 y.o. "
+    if 0.25 <= AGE_VAL < 0.30: age = "30 y.o. "
+    if 0.30 <= AGE_VAL < 0.35: age = "35 y.o. "
+    if 0.35 <= AGE_VAL < 0.40: age = "40 y.o. "
+    if 0.4 <= AGE_VAL < 0.45: age = "45 y.o. "
+    if 0.45 <= AGE_VAL < 0.50: age = "50 y.o. "
+    if 0.5 <= AGE_VAL < 0.55: age = "55 y.o. "
+    if 0.55 <= AGE_VAL < 0.60: age = "60 y.o. "
+    if 0.6 <= AGE_VAL < 0.65: age = "65 y.o. "
+    if 0.65 <= AGE_VAL < 0.70: age = "70 y.o. "
+    if 0.7 <= AGE_VAL < 0.75: age = "75 y.o. "
+    if 0.75 <= AGE_VAL < 0.80: age = "80 y.o. "
+    if 0.8 <= AGE_VAL < 0.85: age = "85 y.o. "
+    if 0.85 <= AGE_VAL < 0.90: age = "90 y.o. "
+    if 0.9 <= AGE_VAL < 0.95: age = "95 y.o. "
+    if 0.95 <= AGE_VAL < 1.00: age = "100 y.o. "
 
 
 
@@ -322,6 +338,7 @@ def main():
 # start threads main and bo parallel
 warnings.filterwarnings("ignore", category=UserWarning, module=".*botorch.*")
 event = threading.Event()
+event2 = threading.Event()
 t1 = threading.Thread(target=mobo_execute, args=(SEED, N_ITERATIONS, N_INITIAL))
 t1.start()
 main()
