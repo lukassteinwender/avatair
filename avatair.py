@@ -1,22 +1,124 @@
 import gradio as gr
-import torch
-from diffusers import DiffusionPipeline
+import os
+import numpy as np
 import torch
 import threading
 import warnings
+from diffusers import DiffusionPipeline
+from botorch.test_functions.multi_objective import BraninCurrin
+from botorch.models.gp_regression import SingleTaskGP
+from botorch.models.transforms.outcome import Standardize
+from gpytorch.mlls.exact_marginal_log_likelihood import ExactMarginalLogLikelihood
+from botorch.utils.transforms import unnormalize
+from botorch.utils.sampling import draw_sobol_samples
+from botorch.optim.optimize import optimize_acqf, optimize_acqf_list
+from botorch.acquisition.objective import GenericMCObjective
+from botorch.utils.multi_objective.scalarization import get_chebyshev_scalarization
+from botorch.utils.multi_objective.box_decompositions.non_dominated import NondominatedPartitioning
+from botorch.acquisition.multi_objective.monte_carlo import qExpectedHypervolumeImprovement
+from botorch.utils.sampling import sample_simplex
+from botorch import fit_gpytorch_model
+from botorch.acquisition.monte_carlo import qExpectedImprovement, qNoisyExpectedImprovement
+from botorch.sampling import SobolQMCNormalSampler
+from botorch.exceptions import BadInitialCandidatesWarning
+from botorch.utils.multi_objective.pareto import is_non_dominated
+from botorch.utils.multi_objective.hypervolume import Hypervolume
 from botorch.models import SingleTaskGP
 from botorch.acquisition import UpperConfidenceBound
 from botorch.optim import optimize_acqf
+from botorch.utils.multi_objective.hypervolume import Hypervolume
+import socket
+import pickle
+import pandas as pd
+import time
+import matplotlib.pyplot as plt
+from operator import itemgetter
+
+tkwargs = {
+    "dtype": torch.double,
+   # "device": torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+    "device": torch.device("cuda")
+}
+
+BATCH_SIZE = 1 # Number of design parameter points to query at next iteration
+NUM_RESTARTS = 10 # Used for the acquisition function number of restarts in optimization
+RAW_SAMPLES = 1024 # Initial restart location candidates
+N_ITERATIONS = 3 # Number of optimization iterations
+MC_SAMPLES = 512 # Number of samples to approximate acquisition function
+N_INITIAL = 10
+SEED = 2 # Seed to initialize the initial samples obtained
+
+start_time = time.strftime("%Y-%m-%d-%H-%M", time.localtime())
+
+problem_dim = 4 # dimension of the inputs X z.B.: ALter, Abstraktheit, (alles was wir ändern)
+num_objs = 2 # dimension of the objectives Y z.B.: Vertraunswürdigkeit, Schönheit (alles was die Leute bewerten)
+
+ref_point = torch.tensor([-1. for _ in range(num_objs)]).cuda()
+problem_bounds = torch.zeros(2, problem_dim, **tkwargs)
+
+problem_bounds [1] = 1
 
 val = 1.00
 
 def objective(x):
-    x == 1.00
-    while x==0.00 or x==1.00: 
-        x = torch.rand_like(x)
-    global val
-    val = x
-    return x
+    x = x.cpu().numpy()
+
+    fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x) 
+    print(f"fs: {fs}")
+    print(f"datatype: {type(fs)}")
+  
+    fs = fs[:num_objs]
+    print(f"return value: {torch.tensor(fs, dtype=torch.float64).cuda().shape[-1]}") # return.shape[-1] = 10
+    return torch.tensor(fs, dtype=torch.float64).cuda()
+
+def generate_initial_data(n_samples):
+    # generate training data
+    train_x = draw_sobol_samples(
+        bounds=problem_bounds, n=1, q=n_samples, seed=torch.randint(1000000, (1,)).item()
+    ).squeeze(0)
+    train_obj = objective(train_x)
+    print(f"train_x: {train_x.shape[0]}") # train_x.shape[0] = N_INITIAL und train_x.shape[-1] = 3
+
+    train_obj = []
+    for i, x in enumerate(train_x):
+        print(f"initial sample: {i + 1}")
+        train_obj.append(objective(x))
+        print(f"objFunction: {objective(x).shape[-1]}") # objFunction.shape [-1] = 3
+
+    train_obj = torch.stack(train_obj).cuda()
+    print(f"train_obj: {train_obj.shape[-1]}") 
+
+    return train_x, train_obj
+
+def initialize_model(train_x, train_obj):
+    # define models for objective and constraint
+    model = SingleTaskGP(train_x, train_obj, outcome_transform=Standardize(m=train_obj.shape[-1]))
+    mll = ExactMarginalLogLikelihood(model.likelihood, model)
+    return mll, model
+
+def optimize_qehvi(model, train_obj, sampler):
+    """Optimizes the qEHVI acquisition function, and returns a new candidate and observation."""
+    # partition non-dominated space into disjoint rectangles
+    partitioning = NondominatedPartitioning(ref_point=ref_point, Y=train_obj)
+    acq_func = qExpectedHypervolumeImprovement(
+        model=model,
+        ref_point=ref_point.tolist(),  # use known reference point 
+        partitioning=partitioning,
+        sampler=sampler,
+    )
+    # optimize
+    candidates, _ = optimize_acqf(
+        acq_function=acq_func,
+        bounds=problem_bounds,
+        q=BATCH_SIZE,
+        num_restarts=NUM_RESTARTS,
+        raw_samples=RAW_SAMPLES,  # used for intialization heuristic
+        options={"batch_limit": 5, "maxiter": 200, "nonnegative": True},
+        sequential=True,
+    )
+    # observe new values 
+    new_x =  unnormalize(candidates.detach(), bounds=problem_bounds)
+    return new_x
 
 # define the function to query the human for feedback on each value
 def query_human(x):
@@ -31,46 +133,108 @@ def query_human(x):
         return 1
     else:
         return 0
-
-# Main BO-Script
-def bayesian_opti():
     
-    # set the seed for reproducibility
-    torch.manual_seed(123)
+def mobo_execute(seed, iterations, initial_samples):
+    torch.manual_seed(seed)
+    
+    hv = Hypervolume(ref_point = ref_point)
+    # Hypervolumes
+    hvs_qehvi = []
 
-    # set the range of values to search over
-    bounds = torch.tensor([[0.0], [1.0]])
 
-    # randomly sample some initial data points
-    train_x = torch.rand(2, 1)
-    train_y = torch.tensor([objective(x) for x in train_x]).unsqueeze(-1)
+    # Initial Samples
+    # train_x_qehvi, train_obj_qehvi = load_data()
+    train_x_qehvi, train_obj_qehvi = generate_initial_data(n_samples=initial_samples)
+    print(f"train_qehvi: {train_obj_qehvi.shape[-1]}")
 
-    # define the model
-    model = SingleTaskGP(train_x, train_y)
+    print("generated initial data")
 
-    # loop until the human is satisfied with the value
-    while True:
-        # define the acquisition function
-        acq_func = UpperConfidenceBound(model, beta=2.0)
+    # Initialize GP models
+    mll_qehvi, model_qehvi = initialize_model(train_x_qehvi, train_obj_qehvi)
+    print("initialized GP models")
 
-        # optimize the acquisition function to get the next point to evaluate
-        x_next, y_opt = optimize_acqf(acq_func, bounds=bounds, q=1, num_restarts=5, raw_samples=20)
 
-        # evaluate the objective function at the next point
-        y_next = objective(x_next)
 
-        # query the human for feedback
-        is_good = query_human(x_next.item())
+    # Compute Pareto front and hypervolume
+    pareto_mask = is_non_dominated(train_obj_qehvi)
 
-        # add the new data point to the model
-        train_x = torch.cat([train_x, x_next])
-        train_y = torch.cat([train_y, y_next], dim=0)
-        model = SingleTaskGP(train_x, train_y)
+    print("is_non_dominated(train_obj_qehvi) done")
 
-        # check if the human is satisfied with the value
-        if is_good:
-            print(f"The optimal value is {x_next.item():.2f}.")
-            break
+    
+    pareto_y = train_obj_qehvi[pareto_mask]
+    pareto_y = -pareto_y
+
+    print("train_obj_qehvi done")
+    print(f"pareto_y: {pareto_y}")
+    
+    print(f"pareto_y_shape: {pareto_y.shape[-1]}") # pareto_y.shape[-1]: 3, pareto_y.shape[0]: 10
+    print(f"ref_point_shape: {ref_point.shape[0]}") # ref_point.shape[-1]: 10, ref_point.shape[0]: 10
+    print(f"mask_shape: {pareto_mask.shape[0]}") # pareto_mask.shape[-1]: 22, pareto_mask.shape[0]: 22
+
+
+
+    volume = hv.compute(pareto_y)
+    hvs_qehvi.append(volume)
+
+    # Go through the iterations 
+
+    print(f"iterations: {iterations}")
+
+    for iteration in range(1, iterations + 1):
+
+        print("Waiting for Input...")
+        event.wait()
+        event.clear()
+
+        print("Iteration: " + str(iteration))
+        #print(mll_qehvi)
+        # Fit Models
+        fit_gpytorch_model(mll_qehvi)
+
+        print("after fit_gpytorch_model")
+        # Define qEI acquisition modules using QMC sampler
+        qehvi_sampler = SobolQMCNormalSampler(sample_shape=(BATCH_SIZE))
+        print("after qehvi_sampler")
+
+
+        # Optimize acquisition functions and get new observations
+        new_x_qehvi = optimize_qehvi(model_qehvi, train_obj_qehvi, qehvi_sampler)
+        new_obj_qehvi = objective(new_x_qehvi[0])
+
+        print("after optimize acq")
+        print("new_x_qehvi")
+        print(new_x_qehvi)
+        print("train_x_qehvi")
+        print(train_x_qehvi)
+
+        print("train_obj_qehvi")
+        print(train_obj_qehvi)
+        print("new_obj_qehvi")
+        print(new_obj_qehvi)
+
+        # Update training points
+        train_x_qehvi = torch.cat([train_x_qehvi, new_x_qehvi])
+        train_obj_qehvi = torch.cat([train_obj_qehvi, new_obj_qehvi.unsqueeze(0)])
+
+        print("after update training")
+
+        # Compute hypervolumes
+        pareto_mask = is_non_dominated(train_obj_qehvi)
+        pareto_y = train_obj_qehvi[pareto_mask]
+        volume = hv.compute(pareto_y)
+        hvs_qehvi.append(volume)
+        # Mark: das hier benötigen wir erst mal nicht
+        # save_xy(train_x_qehvi, train_obj_qehvi, hvs_qehvi)
+        print("mask", pareto_mask)
+        print("pareto y", pareto_y)
+        print("volume", volume)
+
+        print("training x", train_x_qehvi)
+        print("training obj", train_obj_qehvi)
+
+        mll_qehvi, model_qehvi = initialize_model(train_x_qehvi, train_obj_qehvi)
+    
+    return hvs_qehvi, train_x_qehvi, train_obj_qehvi
 
 # Photo generation on user-interaction
 def diffusion(check, btn1, btn2, btn3, btn4, btn5, btn6, btn7):
@@ -82,9 +246,8 @@ def diffusion(check, btn1, btn2, btn3, btn4, btn5, btn6, btn7):
     event.set()
 
     global val
-    opt_val= val.item()
-    opt_val= opt_val
-    
+    opt_val=0.50
+    sugarcheck= False
 
     print(opt_val)
 
@@ -141,24 +304,11 @@ def diffusion(check, btn1, btn2, btn3, btn4, btn5, btn6, btn7):
     image = pipe(prompt=prompt, negative_prompt=negative_prompt).images[0]
     return image
 
-# button callback
-def button_clicked(button_id):
-    print(f"Button {button_id} clicked!")
-
-
-button1 = gr.Button("1", onclick=lambda: button_clicked(1))
-button2 = gr.Button("2", onclick=lambda: button_clicked(2))
-button3 = gr.Button("3", onclick=lambda: button_clicked(3))
-button4 = gr.Button("4", onclick=lambda: button_clicked(4))
-button5 = gr.Button("5", onclick=lambda: button_clicked(5))
-button6 = gr.Button("6", onclick=lambda: button_clicked(6))
-button7 = gr.Button("7", onclick=lambda: button_clicked(7))
-
 # initializing Gradio-UI
 def main():
     demo = gr.Interface(
         fn=diffusion,
-        inputs=[gr.Checkbox(label="Avatar gut?"), button1, button2, button3, button4, button5, button6, button7],
+        inputs=[gr.Checkbox(label="Avatar gut?"),],
         outputs="image",
         description="Ein Interface zum erstellen individueller Avatare"
     )
@@ -172,5 +322,6 @@ def main():
 # start threads main and bo parallel
 warnings.filterwarnings("ignore", category=UserWarning, module=".*botorch.*")
 event = threading.Event()
-threading.Thread(target=bayesian_opti).start()
+t1 = threading.Thread(target=mobo_execute, args=(SEED, N_ITERATIONS, N_INITIAL))
+t1.start()
 main()
