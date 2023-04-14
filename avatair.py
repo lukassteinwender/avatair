@@ -43,15 +43,20 @@ tkwargs = {
 BATCH_SIZE = 1 # Number of design parameter points to query at next iteration
 NUM_RESTARTS = 10 # Used for the acquisition function number of restarts in optimization
 RAW_SAMPLES = 1024 # Initial restart location candidates
-N_ITERATIONS = 5 # Number of optimization iterations
+N_ITERATIONS = 10 # Number of optimization iterations
 MC_SAMPLES = 512 # Number of samples to approximate acquisition function
 N_INITIAL = 10
 SEED = 2 # Seed to initialize the initial samples obtained
 
 start_time = time.strftime("%Y-%m-%d-%H-%M", time.localtime())
 
-problem_dim = 8 # dimension of the inputs X z.B.: ALter, Abstraktheit, (alles was wir ändern)
+problem_dim = 4 # dimension of the inputs X z.B.: ALter, Abstraktheit, (alles was wir ändern)
 num_objs = 2 # dimension of the objectives Y z.B.: Vertraunswürdigkeit, Schönheit (alles was die Leute bewerten)
+
+INITIAL_CHECK = False
+
+VERT_VAL = 0.3000
+SCHOEN_VAL = 0.2000
 
 ABSTR_VAL = 1.00
 AGE_VAL = 1.00
@@ -63,12 +68,21 @@ problem_bounds [1] = 1
 
 def objective(x):
     x = x.cpu().numpy()
+    global INITIAL_CHECK
 
-    fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x) 
-    print(f"fs: {fs}")
-    print(f"datatype: {type(fs)}")
-  
+    if INITIAL_CHECK == False:
+        fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x) 
+    # print(f"datatype: {type(fs)}")
+    else:
+        fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x) 
+        global VERT_VAL
+        global SCHOEN_VAL
+        fs[0] = VERT_VAL
+        fs[1] = SCHOEN_VAL
+    print(f"fs BEFORE : {fs}")
     fs = fs[:num_objs]
+    print(f"fs AFTER : {fs}")
+
     print(f"return value: {torch.tensor(fs, dtype=torch.float64).cuda().shape[-1]}") # return.shape[-1] = 10
     return torch.tensor(fs, dtype=torch.float64).cuda()
 
@@ -120,28 +134,17 @@ def optimize_qehvi(model, train_obj, sampler):
     # observe new values 
     new_x =  unnormalize(candidates.detach(), bounds=problem_bounds)
     return new_x
-
-# define the function to query the human for feedback on each value
-def query_human(x):
-
-    # wait for user in gradio-UI to generate next one
-    event.wait()
-    event.clear()
-    
-    # TODO input scale from 0-6 how "good" the avatar is
-    response = 'n'
-    if response.lower() == 'y':
-        return 1
-    else:
-        return 0
     
 def mobo_execute(seed, iterations, initial_samples):
-    torch.manual_seed(seed)
     
+    event3.wait()
+    event3.clear()
+    
+    torch.manual_seed(seed)
+
     hv = Hypervolume(ref_point = ref_point)
     # Hypervolumes
     hvs_qehvi = []
-
 
     # Initial Samples
     # train_x_qehvi, train_obj_qehvi = load_data()
@@ -149,6 +152,10 @@ def mobo_execute(seed, iterations, initial_samples):
     print(f"train_qehvi: {train_obj_qehvi.shape[-1]}")
 
     print("generated initial data")
+
+    global INITIAL_CHECK
+
+    INITIAL_CHECK = True
 
     # Initialize GP models
     mll_qehvi, model_qehvi = initialize_model(train_x_qehvi, train_obj_qehvi)
@@ -233,8 +240,7 @@ def mobo_execute(seed, iterations, initial_samples):
         trainValues = train_x_qehvi
         actualValues = trainValues[-1:]
         print("training x", trainValues)
-        print("RESULT: ", actualValues)
-        print("training obj", train_obj_qehvi)
+        # # # print("training obj", train_obj_qehvi)
         
         global ABSTR_VAL
         ABSTR_VAL = actualValues.data[0][0]
@@ -242,20 +248,27 @@ def mobo_execute(seed, iterations, initial_samples):
         global AGE_VAL
         AGE_VAL = actualValues.data[0][1]
 
+        mll_qehvi, model_qehvi = initialize_model(train_x_qehvi, train_obj_qehvi)
+
         event2.set()
 
-        mll_qehvi, model_qehvi = initialize_model(train_x_qehvi, train_obj_qehvi)
-    
     return hvs_qehvi, train_x_qehvi, train_obj_qehvi
 
 # Photo generation on user-interaction
-def diffusion(check, btn1, btn2, btn3, btn4, btn5, btn6, btn7):
+def diffusion(vert, schoen):
     
     # empty cuda-cache
     torch.cuda.empty_cache()
 
+    global VERT_VAL
+    global SCHOEN_VAL
+
+    VERT_VAL = vert
+    SCHOEN_VAL = schoen
+
     # call BO
     event.set()
+    event3.set()
     event2.wait()
     event2.clear()
     
@@ -271,7 +284,7 @@ def diffusion(check, btn1, btn2, btn3, btn4, btn5, btn6, btn7):
     if 0.2 <= ABSTR_VAL < 0.40: abstr = "A abstract "; sugarcheck = False
     if 0.4 <= ABSTR_VAL < 0.60: abstr = "A realistic "; sugarcheck = False
     if 0.6 <= ABSTR_VAL < 0.80: abstr = "A very realistic " ; sugarcheck = False
-    if 0.8 <= ABSTR_VAL < 1.00: abstr = "A realistic "; sugarcheck = True
+    if 0.8 <= ABSTR_VAL <= 1.00: abstr = "A realistic "; sugarcheck = True
 
     if 0.00 <= AGE_VAL < 0.10: age = "10 y.o. "
     if 0.1 <= AGE_VAL < 0.15: age = "15 y.o. " 
@@ -291,7 +304,7 @@ def diffusion(check, btn1, btn2, btn3, btn4, btn5, btn6, btn7):
     if 0.8 <= AGE_VAL < 0.85: age = "85 y.o. "
     if 0.85 <= AGE_VAL < 0.90: age = "90 y.o. "
     if 0.9 <= AGE_VAL < 0.95: age = "95 y.o. "
-    if 0.95 <= AGE_VAL < 1.00: age = "100 y.o. "
+    if 0.95 <= AGE_VAL <= 1.00: age = "100 y.o. "
 
 
 
@@ -324,7 +337,11 @@ def diffusion(check, btn1, btn2, btn3, btn4, btn5, btn6, btn7):
 def main():
     demo = gr.Interface(
         fn=diffusion,
-        inputs=[gr.Checkbox(label="Avatar gut?"),],
+        inputs=
+            [   
+                gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="Vertrauenswürdigkeit", info="0 = nicht vertrauenswürdig | 1 = sehr vertrauenswürdig"),
+                gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="Schönheit", info="0 = nicht schön | 1 = sehr schön"),
+            ],
         outputs="image",
         description="Ein Interface zum erstellen individueller Avatare"
     )
@@ -339,6 +356,7 @@ def main():
 warnings.filterwarnings("ignore", category=UserWarning, module=".*botorch.*")
 event = threading.Event()
 event2 = threading.Event()
+event3 = threading.Event()
 t1 = threading.Thread(target=mobo_execute, args=(SEED, N_ITERATIONS, N_INITIAL))
 t1.start()
 main()
