@@ -286,25 +286,26 @@ def diffusion(vert, schoen):
     if 0.6 <= ABSTR_VAL < 0.80: abstr = "A very realistic " ; sugarcheck = False
     if 0.8 <= ABSTR_VAL <= 1.00: abstr = "A realistic "; sugarcheck = True
 
-    if 0.00 <= AGE_VAL < 0.10: age = "10 y.o. "
-    if 0.1 <= AGE_VAL < 0.15: age = "15 y.o. " 
-    if 0.15 <= AGE_VAL < 0.20: age = "20 y.o. "
-    if 0.2 <= AGE_VAL < 0.25: age = "25 y.o. "
-    if 0.25 <= AGE_VAL < 0.30: age = "30 y.o. "
-    if 0.30 <= AGE_VAL < 0.35: age = "35 y.o. "
-    if 0.35 <= AGE_VAL < 0.40: age = "40 y.o. "
-    if 0.4 <= AGE_VAL < 0.45: age = "45 y.o. "
-    if 0.45 <= AGE_VAL < 0.50: age = "50 y.o. "
-    if 0.5 <= AGE_VAL < 0.55: age = "55 y.o. "
-    if 0.55 <= AGE_VAL < 0.60: age = "60 y.o. "
-    if 0.6 <= AGE_VAL < 0.65: age = "65 y.o. "
-    if 0.65 <= AGE_VAL < 0.70: age = "70 y.o. "
-    if 0.7 <= AGE_VAL < 0.75: age = "75 y.o. "
-    if 0.75 <= AGE_VAL < 0.80: age = "80 y.o. "
-    if 0.8 <= AGE_VAL < 0.85: age = "85 y.o. "
-    if 0.85 <= AGE_VAL < 0.90: age = "90 y.o. "
-    if 0.9 <= AGE_VAL < 0.95: age = "95 y.o. "
-    if 0.95 <= AGE_VAL <= 1.00: age = "100 y.o. "
+    if 0.00 <= AGE_VAL < 0.05: age = "16 y.o. "
+    if 0.05 <= AGE_VAL < 0.10: age = "18 y.o. " 
+    if 0.10 <= AGE_VAL < 0.15: age = "20 y.o. "
+    if 0.15 <= AGE_VAL < 0.20: age = "23 y.o. "
+    if 0.20 <= AGE_VAL < 0.25: age = "25 y.o. "
+    if 0.25 <= AGE_VAL < 0.30: age = "27 y.o. "
+    if 0.30 <= AGE_VAL < 0.35: age = "29 y.o. "
+    if 0.35 <= AGE_VAL < 0.40: age = "32 y.o. "
+    if 0.40 <= AGE_VAL < 0.45: age = "34 y.o. "
+    if 0.45 <= AGE_VAL < 0.50: age = "36 y.o. "
+    if 0.50 <= AGE_VAL < 0.55: age = "39 y.o. "
+    if 0.55 <= AGE_VAL < 0.60: age = "41 y.o. "
+    if 0.60 <= AGE_VAL < 0.65: age = "43 y.o. "
+    if 0.65 <= AGE_VAL < 0.70: age = "45 y.o. "
+    if 0.70 <= AGE_VAL < 0.75: age = "48 y.o. "
+    if 0.75 <= AGE_VAL < 0.80: age = "50 y.o. "
+    if 0.80 <= AGE_VAL < 0.85: age = "52 y.o. "
+    if 0.85 <= AGE_VAL < 0.90: age = "54 y.o. "
+    if 0.90 <= AGE_VAL < 0.95: age = "56 y.o. "
+    if 0.95 <= AGE_VAL <= 1.00: age = "59 y.o. "
 
 
 
@@ -343,7 +344,7 @@ def main():
                 gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="Schönheit", info="0 = nicht schön | 1 = sehr schön"),
             ],
         outputs="image",
-        description="Ein Interface zum erstellen individueller Avatare"
+        description="AvatAIr",
     )
     demo.launch()
     
