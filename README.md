@@ -1,4 +1,7 @@
 # AvatAIr
+
+![AvatAIr Pipeline](/Documentation/picture/pprogram.png)
+
 The pipeline will work as following:
 
 ![AvatAIr Pipeline](/Documentation/picture/pipeline.png)
