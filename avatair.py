@@ -57,6 +57,8 @@ INITIAL_CHECK = False
 
 VERT_VAL = 0.3000
 SCHOEN_VAL = 0.2000
+ETHN_VAL = 0.1000
+GENDER_VAL = 0.3000
 
 ABSTR_VAL = 1.00
 AGE_VAL = 1.00
@@ -248,6 +250,12 @@ def mobo_execute(seed, iterations, initial_samples):
         global AGE_VAL
         AGE_VAL = actualValues.data[0][1]
 
+        global ETHN_VAL
+        ETHN_VAL = actualValues.data[0][2]
+
+        global GENDER_VAL
+        GENDER_VAL = actualValues.data[0][3]
+
         mll_qehvi, model_qehvi = initialize_model(train_x_qehvi, train_obj_qehvi)
 
         event2.set()
@@ -274,17 +282,21 @@ def diffusion(vert, schoen):
     
     global ABSTR_VAL
     global AGE_VAL
+    global ETHN_VAL
+    global GENDER_VAL
 
     sugarcheck= False
 
-    print("ABSTR_VAL", ABSTR_VAL)
-    print("AGE_VAL", AGE_VAL)
+    print("ABSTR_VAL: ", ABSTR_VAL)
+    print("AGE_VAL: ", AGE_VAL)
+    print("ETHN_VAL: ", ETHN_VAL)
+    print("GENDER_VAL: ", GENDER_VAL)
 
-    if 0.00 <= ABSTR_VAL < 0.2: abstr = "A ultra abstract "; sugarcheck = False
-    if 0.2 <= ABSTR_VAL < 0.40: abstr = "A abstract "; sugarcheck = False
-    if 0.4 <= ABSTR_VAL < 0.60: abstr = "A realistic "; sugarcheck = False
-    if 0.6 <= ABSTR_VAL < 0.80: abstr = "A very realistic " ; sugarcheck = False
-    if 0.8 <= ABSTR_VAL <= 1.00: abstr = "A realistic "; sugarcheck = True
+    if 0.00 <= ABSTR_VAL < 0.20: abstr = "A ultra abstract "; sugarcheck = False
+    if 0.20 <= ABSTR_VAL < 0.40: abstr = "A abstract "; sugarcheck = False
+    if 0.40 <= ABSTR_VAL < 0.60: abstr = "A realistic "; sugarcheck = False
+    if 0.60 <= ABSTR_VAL < 0.80: abstr = "A very realistic " ; sugarcheck = False
+    if 0.80 <= ABSTR_VAL <= 1.00: abstr = "A realistic "; sugarcheck = True
 
     if 0.00 <= AGE_VAL < 0.05: age = "16 y.o. "
     if 0.05 <= AGE_VAL < 0.10: age = "18 y.o. " 
@@ -307,6 +319,15 @@ def diffusion(vert, schoen):
     if 0.90 <= AGE_VAL < 0.95: age = "56 y.o. "
     if 0.95 <= AGE_VAL <= 1.00: age = "59 y.o. "
 
+    if 0.00 <= ETHN_VAL < 0.20: ethn = "european "
+    if 0.20 <= ETHN_VAL < 0.40: ethn = "asian "
+    if 0.40 <= ETHN_VAL < 0.60: ethn = "african "
+    if 0.60 <= ETHN_VAL < 0.80: ethn = "native American "
+    if 0.80 <= ETHN_VAL <= 1.00: ethn = "pacific Islander "
+
+    if 0.00 <= GENDER_VAL < 0.50: gender = "man "
+    if 0.50 <= GENDER_VAL <= 1.00: gender = "woman "
+
 
 
     # set the sugar
@@ -316,7 +337,7 @@ def diffusion(vert, schoen):
         sugar = "by NHK Animation, digital art, trending on artstation, illustration"
 
     # set the prompts
-    prompt = abstr + age +  "woman is looking at the camera with a smile on her face and a grey background, " + sugar
+    prompt = abstr + age + ethn + gender + "is looking at the camera with a smile on her face and a grey background, " + sugar
     negative_prompt= "(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, anime:1.4), text, close up, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck"
     print("Running prompt: " + prompt)
 
@@ -331,7 +352,7 @@ def diffusion(vert, schoen):
         return images, False
     pipe.safety_checker = dummy
     
-    image = pipe(prompt=prompt, negative_prompt=negative_prompt).images[0]
+    image = pipe(prompt=prompt, negative_prompt=negative_prompt, width=512, height=512).images[0]
     return image
 
 # initializing Gradio-UI
