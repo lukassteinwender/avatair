@@ -3,8 +3,7 @@
 ![AvatAIr Pipeline](/Documentation/picture/program.png)
 
 The pipeline is planned to work as following:
-
-![AvatAIr Pipeline](/Documentation/picture/pipeline.png | width=100)
+<img src="https://Documentation/picture/pipeline.png" width="100">
 
 **Requirements:**
 PyTorch (recommended on CUDA 11.7)
