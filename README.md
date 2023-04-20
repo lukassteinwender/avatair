@@ -6,9 +6,10 @@
 <img src="https://raw.githubusercontent.com/lukassteinwender/avatair/main/Documentation/picture/pipeline.png" width="800"><br />
 <br />
 **Requirements:**<br />
-PyTorch (recommended on CUDA 11.7)<br />
-BoTorch<br />
-Gradio<br />
+PyTorch (https://pytorch.org/get-started/locally/, recommended on CUDA 11.7)<br />
+BoTorch(https://botorch.org/docs/getting_started)<br />
+Gradio (https://gradio.app/quickstart/)<br />
+Diffusers (https://huggingface.co/docs/diffusers/installation) <br />
 <br />
 It is recommended to run AvatAIr on a new Anaconda environment and Python 3.10.10.<br />
 <br />
