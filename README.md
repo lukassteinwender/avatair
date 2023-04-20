@@ -3,7 +3,7 @@
 ![AvatAIr Pipeline](/Documentation/picture/program.png)
 
 The pipeline is planned to work as following:
-<img src="https://raw.githubusercontent.com/lukassteinwender/avatair/main/Documentation/picture/pipeline.png" width="100">
+<img src="https://raw.githubusercontent.com/lukassteinwender/avatair/main/Documentation/picture/pipeline.png" width="300">
 
 **Requirements:**
 PyTorch (recommended on CUDA 11.7)
