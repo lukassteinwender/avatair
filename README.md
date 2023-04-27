@@ -1,6 +1,5 @@
 # AvatAIr<br />
-
-![AvatAIr Pipeline](/Documentation/picture/program.png)<br />
+<img src="https://raw.githubusercontent.com/lukassteinwender/avatair/main/Documentation/picture/program.png" width="600"><br />
 <br />
 
 **Installation:**<br />
@@ -25,6 +24,6 @@ Gradio (https://gradio.app/quickstart/)<br />
 Diffusers (https://huggingface.co/docs/diffusers/installation) <br />
 <br />
 
-**The pipeline is planned to work as following:**<br />
-<img src="https://raw.githubusercontent.com/lukassteinwender/avatair/main/Documentation/picture/pipeline.png" width="800"><br />
+**The pipeline is planned to work as following:**<br /><br />
+<img src="https://raw.githubusercontent.com/lukassteinwender/avatair/main/Documentation/picture/pipeline.png" width="600"><br />
 <br />
