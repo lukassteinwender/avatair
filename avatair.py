@@ -2,6 +2,7 @@ import gradio as gr
 import os
 import numpy as np
 import torch
+import random
 import threading
 import warnings
 from diffusers import DiffusionPipeline
@@ -342,6 +343,8 @@ def diffusion(vert, schoen):
     print("Running prompt: " + prompt)
 
     # stable-diffusion photo-generation script
+    torch.manual_seed(random.randint(0, 1000))
+    
     pipe = DiffusionPipeline.from_pretrained(
         "SG161222/Realistic_Vision_V1.4",
         torch_dtype=torch.float32,
@@ -351,7 +354,7 @@ def diffusion(vert, schoen):
     def dummy(images, **kwargs):
         return images, False
     pipe.safety_checker = dummy
-    
+
     image = pipe(prompt=prompt, negative_prompt=negative_prompt, width=512, height=512).images[0]
     return image
 
