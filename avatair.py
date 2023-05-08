@@ -44,9 +44,9 @@ tkwargs = {
 BATCH_SIZE = 1 # Number of design parameter points to query at next iteration
 NUM_RESTARTS = 10 # Used for the acquisition function number of restarts in optimization
 RAW_SAMPLES = 1024 # Initial restart location candidates
-N_ITERATIONS = 10 # Number of optimization iterations
+N_ITERATIONS = 40 # Number of optimization iterations
 MC_SAMPLES = 512 # Number of samples to approximate acquisition function
-N_INITIAL = 10
+N_INITIAL = 5
 SEED = 2 # Seed to initialize the initial samples obtained
 
 start_time = time.strftime("%Y-%m-%d-%H-%M", time.localtime())
