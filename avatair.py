@@ -402,21 +402,26 @@ def diffusion(vert, schoen):
 
 # initializing Gradio-UI
 def main():
-    demo = gr.Interface(
-        fn=diffusion,
-        inputs=
-            [   
-                gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="Vertrauenswürdigkeit", info="0 = nicht vertrauenswürdig | 1 = sehr vertrauenswürdig"),
-                gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="Schönheit", info="0 = nicht schön | 1 = sehr schön"),
-            ],
-        outputs="image",
-        description="AvatAIr",
-    )
+    #demo = gr.Interface(
+    #    fn=diffusion,
+    #    inputs=
+    #       [   
+    #            gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="Vertrauenswürdigkeit", info="0 = nicht vertrauenswürdig | 1 = sehr vertrauenswürdig", visible=False),
+    #            gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="Schönheit", info="0 = nicht schön | 1 = sehr schön", visible=False),
+    #        ],
+    #    outputs="image",
+    #    description="AvatAIr",
+    #    allow_flagging=False,
+    #)
+    with gr.Blocks() as demo:
+        gr.Markdown("**AvatAIr**")
+        with gr.Row():
+            inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="Vertrauenswürdigkeit", info="0 = nicht vertrauenswürdig | 1 = sehr vertrauenswürdig")
+            inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="Schönheit", info="0 = nicht schön | 1 = sehr schön")
+            out = gr.Image()
+        btn = gr.Button("Run")
+        btn.click(fn=diffusion, inputs=[inp1, inp2], outputs=out)
     demo.launch()
-    
-
-
-
     
 
 # start threads main and bo parallel
