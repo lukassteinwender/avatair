@@ -82,6 +82,8 @@ def objective(x):
         global SCHOEN_VAL
         fs[0] = VERT_VAL
         fs[1] = SCHOEN_VAL
+        fs[2] = ETHN_VAL
+        fs[3] = GENDER_VAL
     print(f"fs BEFORE : {fs}")
     fs = fs[:num_objs]
     print(f"fs AFTER : {fs}")
