@@ -1,5 +1,5 @@
 # AvatAIr<br />
-<img src="https://raw.githubusercontent.com/lukassteinwender/avatair/main/Documentation/picture/program.png" width="600"><br />
+<img src="https://raw.githubusercontent.com/lukassteinwender/avatair/main/Documentation/picture/program.png" width="1000"><br />
 <br />
 
 **Installation:**<br />
