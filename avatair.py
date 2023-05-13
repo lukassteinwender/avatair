@@ -55,6 +55,7 @@ problem_dim = 4 # dimension of the inputs X z.B.: ALter, Abstraktheit, (alles wa
 num_objs = 2 # dimension of the objectives Y z.B.: Vertraunswürdigkeit, Schönheit (alles was die Leute bewerten)
 
 INITIAL_CHECK = False
+ITERATION_COUNT = 0
 
 VERT_VAL = 0.3000
 SCHOEN_VAL = 0.2000
@@ -200,6 +201,8 @@ def mobo_execute(seed, iterations, initial_samples):
         event.clear()
 
         print("Iteration: " + str(iteration))
+        global ITERATION_COUNT 
+        ITERATION_COUNT = iteration
         #print(mll_qehvi)
         # Fit Models
         fit_gpytorch_model(mll_qehvi)
@@ -500,12 +503,23 @@ def main():
             pipe.safety_checker = dummy
 
             image = pipe(prompt=prompt, negative_prompt=negative_prompt, width=512, height=512).images[0]
-            return {
-                inp1: gr.update(visible=True),
-                inp2: gr.update(visible=True),
-                out: gr.update(value=image),
-                btn: gr.update(value="Generate new avatar")
-            }
+            global N_INITIAL
+            global ITERATION_COUNT
+            if(ITERATION_COUNT < N_INITIAL):
+                return {
+                    inp1: gr.update(visible=True),
+                    inp2: gr.update(visible=True),
+                    out: gr.update(value=image),
+                    btn: gr.update(value="Generate new avatar")
+                }
+            else:
+                return {
+                    inp1: gr.update(visible=False),
+                    inp2: gr.update(visible=False),
+                    out: gr.update(value=image),
+                    btn: gr.update(visible=False)
+                }
+            
         btn = gr.Button("Run")
         btn.click(fn=diffusion, inputs=[inp1, inp2], outputs=[inp1,inp2,out,btn])
     demo.launch()
