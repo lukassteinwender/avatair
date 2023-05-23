@@ -276,7 +276,7 @@ def main():
     #    inputs=
     #       [   
     #            gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="Vertrauenswürdigkeit", info="0 = nicht vertrauenswürdig | 1 = sehr vertrauenswürdig", visible=False),
-    #            gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="Schönheit", info="0 = nicht schön | 1 = sehr schön", visible=False),
+    #            gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="Ästhetik", info="0 = nicht schön | 1 = sehr schön", visible=False),
     #        ],
     #    outputs="image",
     #    description="AvatAIr",
