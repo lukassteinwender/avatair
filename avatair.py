@@ -286,7 +286,7 @@ def main():
         gr.Markdown("**AvatAIr**")
         with gr.Row():
             inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="Vertrauenswürdigkeit", info="0 = nicht vertrauenswürdig | 1 = sehr vertrauenswürdig", visible=False)
-            inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="Schönheit", info="0 = nicht schön | 1 = sehr schön", visible=False)
+            inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="Ästhetik", info="0 = nicht schön | 1 = sehr schön", visible=False)
             out = gr.Image()
         
         def diffusion(vert, schoen):
