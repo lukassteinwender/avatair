@@ -485,7 +485,7 @@ def main():
                 sugar = "by NHK Animation, digital art, trending on artstation, illustration"
 
             # set the prompts
-            prompt = abstr + age + ethn + gender + "is looking at the camera with a smile on her face and a grey background, " + sugar
+            prompt = abstr + age + ethn + gender + "is looking at the camera with a smile on the face and a grey background, " + sugar
             negative_prompt= "(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, anime:1.4), text, close up, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck"
             print("Running prompt: " + prompt)
 
