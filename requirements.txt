@@ -2,8 +2,8 @@
 
 torch==2.0.0+cu117
 gradio
-botorch
-diffusers
-transformers
+botorch>=0.8.5
+diffusers>=0.17.0
+transformers>=4.30.0
 accelerate
-pandas>=2.0.1
+pandas>=2.0.2
