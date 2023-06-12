@@ -5,6 +5,7 @@ import torch
 import random
 import threading
 import warnings
+import config
 from diffusers import DiffusionPipeline
 from botorch.test_functions.multi_objective import BraninCurrin
 from botorch.models.gp_regression import SingleTaskGP
@@ -44,26 +45,35 @@ tkwargs = {
 BATCH_SIZE = 1 # Number of design parameter points to query at next iteration
 NUM_RESTARTS = 10 # Used for the acquisition function number of restarts in optimization
 RAW_SAMPLES = 1024 # Initial restart location candidates
-N_ITERATIONS = 40 # Number of optimization iterations
+N_ITERATIONS = config.initial * 8 # Number of optimization iterations
 MC_SAMPLES = 512 # Number of samples to approximate acquisition function
-N_INITIAL = 5
+N_INITIAL = config.initial
 SEED = 2 # Seed to initialize the initial samples obtained
+
+SCALES = config.scales
 
 start_time = time.strftime("%Y-%m-%d-%H-%M", time.localtime())
 
-problem_dim = 4 # dimension of the inputs X z.B.: ALter, Abstraktheit, (alles was wir ändern)
-num_objs = 2 # dimension of the objectives Y z.B.: Vertraunswürdigkeit, Schönheit (alles was die Leute bewerten)
+problem_dim = 5 # dimension of the inputs X z.B.: ALter, Abstraktheit, (alles was wir ändern)
+# dimension of the objectives Y z.B.: Vertraunswürdigkeit, Schönheit (alles was die Leute bewerten)
+if SCALES == 1: num_objs = 5
+if SCALES == 2: num_objs = 5
+if SCALES == 3: num_objs = 1 # dimension of the objectives Y z.B.: Vertraunswürdigkeit, Schönheit (alles was die Leute bewerten)
 
 INITIAL_CHECK = False
 ITERATION_COUNT = 0
 
-VERT_VAL = 0.3000
-SCHOEN_VAL = 0.2000
-ETHN_VAL = 0.1000
-GENDER_VAL = 0.3000
+SCALE_1 = 0.3000
+SCALE_2 = 0.2000
+SCALE_3 = 0.2000
+SCALE_4 = 0.2000
+SCALE_5 = 0.2000
 
 ABSTR_VAL = 1.00
 AGE_VAL = 1.00
+ETHN_VAL = 0.1000
+GENDER_VAL = 0.3000
+testval = 0.3000
 
 ref_point = torch.tensor([-1. for _ in range(num_objs)]).cuda()
 problem_bounds = torch.zeros(2, problem_dim, **tkwargs)
@@ -79,12 +89,16 @@ def objective(x):
     # print(f"datatype: {type(fs)}")
     else:
         fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x) 
-        global VERT_VAL
-        global SCHOEN_VAL
-        fs[0] = VERT_VAL
-        fs[1] = SCHOEN_VAL
-        fs[2] = ETHN_VAL
-        fs[3] = GENDER_VAL
+        global SCALE_1
+        global SCALE_2
+        global SCALE_3
+        global SCALE_4
+        global SCALE_5
+        fs[0] = SCALE_1
+        fs[1] = SCALE_2
+        fs[2] = SCALE_3
+        fs[3] = SCALE_4
+        fs[4] = SCALE_5
     print(f"fs BEFORE : {fs}")
     fs = fs[:num_objs]
     print(f"fs AFTER : {fs}")
@@ -262,6 +276,9 @@ def mobo_execute(seed, iterations, initial_samples):
         global GENDER_VAL
         GENDER_VAL = actualValues.data[0][3]
 
+        global testval
+        testval = actualValues.data[0][4]
+
         mll_qehvi, model_qehvi = initialize_model(train_x_qehvi, train_obj_qehvi)
 
         event2.set()
@@ -285,20 +302,40 @@ def main():
     with gr.Blocks() as demo:
         gr.Markdown("**AvatAIr**")
         with gr.Row():
-            inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="Vertrauenswürdigkeit", info="0 = nicht vertrauenswürdig | 1 = sehr vertrauenswürdig", visible=False)
-            inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="Ästhetik", info="0 = nicht schön | 1 = sehr schön", visible=False)
+            with gr.Column(scale=1):
+                global SCALES
+                if(SCALES == 1):
+                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="acceptance", info="from 0 to 1", visible=False)
+                    inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="likeability", info="from 0 to 1", visible=False)
+                    inp3 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="empathy", info="from 0 to 1", visible=False)
+                    inp4 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="anthropomorphism", info="from 0 to 1", visible=False)
+                    inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="trust", info="from 0 to 1", visible=False)
+                if(SCALES == 2):
+                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="openness", info="from 0 to 1", visible=False)
+                    inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="conscientiousness", info="from 0 to 1", visible=False)
+                    inp3 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="extraversion", info="from 0 to 1", visible=False)
+                    inp4 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="agreeableness", info="from 0 to 1", visible=False)
+                    inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="neuroticism", info="from 0 to 1", visible=False)
+                if(SCALES == 3):
+                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="efficiency", info="from 0 to 1", visible=False)
             out = gr.Image()
         
-        def diffusion(vert, schoen):
+        def diffusion(scale1, scale2, scale3, scale4, scale5):
     
             # empty cuda-cache
             torch.cuda.empty_cache()
 
-            global VERT_VAL
-            global SCHOEN_VAL
+            global SCALE_1
+            global SCALE_2
+            global SCALE_3
+            global SCALE_4
+            global SCALE_5
 
-            VERT_VAL = vert
-            SCHOEN_VAL = schoen
+            SCALE_1 = scale1
+            SCALE_2 = scale2
+            SCALE_3 = scale3
+            SCALE_4 = scale4
+            SCALE_5 = scale5
 
             # call BO
             event.set()
@@ -310,6 +347,7 @@ def main():
             global AGE_VAL
             global ETHN_VAL
             global GENDER_VAL
+            global testval
 
             sugarcheck= False
 
@@ -317,6 +355,7 @@ def main():
             print("AGE_VAL: ", AGE_VAL)
             print("ETHN_VAL: ", ETHN_VAL)
             print("GENDER_VAL: ", GENDER_VAL)
+            print("testval: ", testval)
 
             if 0.00 <= ABSTR_VAL < 0.20: abstr = "A ultra abstract "; sugarcheck = False
             if 0.20 <= ABSTR_VAL < 0.40: abstr = "A abstract "; sugarcheck = False
@@ -495,33 +534,55 @@ def main():
             pipe = DiffusionPipeline.from_pretrained(
                 "SG161222/Realistic_Vision_V1.4",
                 torch_dtype=torch.float32,
+                safety_checker = None,
+                requires_safety_checker = False
             )
             pipe = pipe.to("cuda")
-            
-            def dummy(images, **kwargs):
-                return images, False
-            pipe.safety_checker = dummy
 
             image = pipe(prompt=prompt, negative_prompt=negative_prompt, width=512, height=512).images[0]
+
             global N_INITIAL
             global ITERATION_COUNT
             if(ITERATION_COUNT < N_INITIAL):
-                return {
-                    inp1: gr.update(visible=True),
-                    inp2: gr.update(visible=True),
-                    out: gr.update(value=image),
-                    btn: gr.update(value="Generate new avatar")
-                }
+                if(SCALES == 1 or SCALES == 2):
+                    return {
+                        inp1: gr.update(visible=True),
+                        inp2: gr.update(visible=True),
+                        inp3: gr.update(visible=True),
+                        inp4: gr.update(visible=True),
+                        inp5: gr.update(visible=True),
+                        out: gr.update(value=image),
+                        btn: gr.update(value="Generate new avatar")
+                    }
+                else: 
+                    return {
+                        inp1: gr.update(visible=True),
+                        out: gr.update(value=image),
+                        btn: gr.update(value="Generate new avatar")
+                    }
             else:
-                return {
-                    inp1: gr.update(visible=False),
-                    inp2: gr.update(visible=False),
-                    out: gr.update(value=image),
-                    btn: gr.update(visible=False)
-                }
+                if(SCALES == 1 or SCALES == 2):
+                    return {
+                        inp1: gr.update(visible=False),
+                        inp2: gr.update(visible=False),
+                        inp3: gr.update(visible=False),
+                        inp4: gr.update(visible=False),
+                        inp5: gr.update(visible=False),
+                        out: gr.update(value=image),
+                        btn: gr.update(visible=False)
+                    }
+                else:
+                    return {
+                        inp1: gr.update(visible=False),
+                        out: gr.update(value=image),
+                        btn: gr.update(visible=False)
+                    }
             
         btn = gr.Button("Run")
-        btn.click(fn=diffusion, inputs=[inp1, inp2], outputs=[inp1,inp2,out,btn])
+        if(SCALES == 1 or SCALES  == 2):
+            btn.click(fn=diffusion, inputs=[inp1, inp2, inp3, inp4, inp5], outputs=[inp1,inp2,inp3,inp4,inp5,out,btn])
+        else:
+            btn.click(fn=diffusion, inputs=[inp1], outputs=[inp1,out,btn])
     demo.launch()
     
 
