@@ -64,10 +64,11 @@ INITIAL_CHECK = False
 ITERATION_COUNT = 0
 
 SCALE_1 = 0.3000
-SCALE_2 = 0.2000
-SCALE_3 = 0.2000
-SCALE_4 = 0.2000
-SCALE_5 = 0.2000
+if(SCALES == 1 or SCALES == 2):
+    SCALE_2 = 0.2000
+    SCALE_3 = 0.2000
+    SCALE_4 = 0.2000
+    SCALE_5 = 0.2000
 
 ABSTR_VAL = 1.00
 AGE_VAL = 1.00
@@ -90,15 +91,17 @@ def objective(x):
     else:
         fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x) 
         global SCALE_1
-        global SCALE_2
-        global SCALE_3
-        global SCALE_4
-        global SCALE_5
+        if(SCALES == 1 or SCALES == 2):
+            global SCALE_2
+            global SCALE_3
+            global SCALE_4
+            global SCALE_5
         fs[0] = SCALE_1
-        fs[1] = SCALE_2
-        fs[2] = SCALE_3
-        fs[3] = SCALE_4
-        fs[4] = SCALE_5
+        if(SCALES == 1 or SCALES == 2):
+            fs[1] = SCALE_2
+            fs[2] = SCALE_3
+            fs[3] = SCALE_4
+            fs[4] = SCALE_5
     print(f"fs BEFORE : {fs}")
     fs = fs[:num_objs]
     print(f"fs AFTER : {fs}")
@@ -326,16 +329,18 @@ def main():
             torch.cuda.empty_cache()
 
             global SCALE_1
-            global SCALE_2
-            global SCALE_3
-            global SCALE_4
-            global SCALE_5
+            if(SCALES == 1 or SCALES == 2):
+                global SCALE_2
+                global SCALE_3
+                global SCALE_4
+                global SCALE_5
 
             SCALE_1 = scale1
-            SCALE_2 = scale2
-            SCALE_3 = scale3
-            SCALE_4 = scale4
-            SCALE_5 = scale5
+            if(SCALES == 1 or SCALES == 2):
+                SCALE_2 = scale2
+                SCALE_3 = scale3
+                SCALE_4 = scale4
+                SCALE_5 = scale5
 
             # call BO
             event.set()
