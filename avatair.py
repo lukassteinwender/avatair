@@ -45,7 +45,7 @@ tkwargs = {
 BATCH_SIZE = 1 # Number of design parameter points to query at next iteration
 NUM_RESTARTS = 10 # Used for the acquisition function number of restarts in optimization
 RAW_SAMPLES = 1024 # Initial restart location candidates
-N_ITERATIONS = config.initial * 8 # Number of optimization iterations
+N_ITERATIONS = 40 # Number of optimization iterations
 MC_SAMPLES = 512 # Number of samples to approximate acquisition function
 N_INITIAL = config.initial
 SEED = 2 # Seed to initialize the initial samples obtained
@@ -291,17 +291,6 @@ def mobo_execute(seed, iterations, initial_samples):
 
 # initializing Gradio-UI
 def main():
-    #demo = gr.Interface(
-    #    fn=diffusion,
-    #    inputs=
-    #       [   
-    #            gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="Vertrauenswürdigkeit", info="0 = nicht vertrauenswürdig | 1 = sehr vertrauenswürdig", visible=False),
-    #            gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="Ästhetik", info="0 = nicht schön | 1 = sehr schön", visible=False),
-    #        ],
-    #    outputs="image",
-    #    description="AvatAIr",
-    #    allow_flagging=False,
-    #)
     with gr.Blocks(title="AvatAIr") as demo:
         gr.Markdown("**AvatAIr**")
         with gr.Row():
@@ -322,7 +311,8 @@ def main():
                     inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="neuroticism", info="0 = low | 1 = high", visible=False)
                 if(SCALES == 3):
                     inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="efficiency", info="0 = low | 1 = high", visible=False)
-            out = gr.Image(shape=(512,512))
+            out = gr.Image()
+            out.style(height=512, width=512)
         
         def diffusion(scale1, scale2, scale3, scale4, scale5):
     
