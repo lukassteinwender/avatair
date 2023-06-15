@@ -322,7 +322,7 @@ def main():
                     inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="neuroticism", info="0 = low | 1 = high", visible=False)
                 if(SCALES == 3):
                     inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="efficiency", info="0 = low | 1 = high", visible=False)
-            out = gr.Image()
+            out = gr.Image(shape=(512,512))
         
         def diffusion(scale1, scale2, scale3, scale4, scale5):
     
@@ -578,22 +578,22 @@ def main():
                         inp4: gr.update(visible=False),
                         inp5: gr.update(visible=False),
                         out: gr.update(value=image, visible=True),
-                        infotext: gr.update(visible=False),
+                        infotext: gr.update(value="Hier ist Ihr Ergebnis. \n\nVielen Dank für Ihre Teilnahme!", visible=True),
                         btn: gr.update(visible=False)
                     }
                 else:
                     return {
                         inp1: gr.update(visible=False),
                         out: gr.update(value=image, visible=True),
-                        infotext: gr.update(visible=False),
+                        infotext: gr.update(value="Hier ist Ihr Ergebnis. \n\nVielen Dank für Ihre Teilnahme!", visible=True),
                         btn: gr.update(visible=False)
                     }
             
         btn = gr.Button("Run")
         if(SCALES == 1 or SCALES  == 2):
-            btn.click(fn=diffusion, inputs=[inp1, inp2, inp3, inp4, inp5], outputs=[inp1,inp2,inp3,inp4,inp5,out,btn])
+            btn.click(fn=diffusion, inputs=[inp1, inp2, inp3, inp4, inp5], outputs=[inp1,inp2,inp3,inp4,inp5,out,btn,infotext])
         else:
-            btn.click(fn=diffusion, inputs=[inp1], outputs=[inp1,out,btn])
+            btn.click(fn=diffusion, inputs=[inp1], outputs=[inp1,out,btn,infotext])
     demo.launch()
     
 
