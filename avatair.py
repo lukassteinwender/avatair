@@ -308,19 +308,19 @@ def main():
             with gr.Column(scale=1):
                 global SCALES
                 if(SCALES == 1):
-                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="acceptance", info="from 0 to 1", visible=False)
-                    inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="likeability", info="from 0 to 1", visible=False)
-                    inp3 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="empathy", info="from 0 to 1", visible=False)
-                    inp4 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="anthropomorphism", info="from 0 to 1", visible=False)
-                    inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="trust", info="from 0 to 1", visible=False)
+                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="acceptance", info="0 = low | 1 = high", visible=False)
+                    inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="likeability", info="0 = low | 1 = high", visible=False)
+                    inp3 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="empathy", info="0 = low | 1 = high", visible=False)
+                    inp4 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="anthropomorphism", info="0 = low | 1 = high", visible=False)
+                    inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="trust", info="0 = low | 1 = high", visible=False)
                 if(SCALES == 2):
-                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="openness", info="from 0 to 1", visible=False)
-                    inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="conscientiousness", info="from 0 to 1", visible=False)
-                    inp3 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="extraversion", info="from 0 to 1", visible=False)
-                    inp4 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="agreeableness", info="from 0 to 1", visible=False)
-                    inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="neuroticism", info="from 0 to 1", visible=False)
+                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="openness", info="0 = low | 1 = high", visible=False)
+                    inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="conscientiousness", info="0 = low | 1 = high", visible=False)
+                    inp3 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="extraversion", info="0 = low | 1 = high", visible=False)
+                    inp4 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="agreeableness", info="0 = low | 1 = high", visible=False)
+                    inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="neuroticism", info="0 = low | 1 = high", visible=False)
                 if(SCALES == 3):
-                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="efficiency", info="from 0 to 1", visible=False)
+                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="efficiency", info="0 = low | 1 = high", visible=False)
             out = gr.Image()
         
         def diffusion(scale1, scale2, scale3, scale4, scale5):
