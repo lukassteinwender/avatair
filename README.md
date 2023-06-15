@@ -7,15 +7,14 @@
 pip install -r requirements.txt
 ```
 
-**Scripts:**<br />
-AvatAIr DEMO:<br />
+**Script:**<br />
 ```
 python avatair.py
 ```
-(Only for development) Test Prompts:<br />
-```
-python prompt_test.py
-```
+
+**Config:**<br />
+Adjust key-values before running the avatair-script in *config.py*.
+
 
 **Requirements:**<br />
 [PyTorch](https://pytorch.org/get-started/locally/) (CUDA 11.7 recommended)<br />
