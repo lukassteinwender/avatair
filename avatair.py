@@ -302,10 +302,11 @@ def main():
     #    description="AvatAIr",
     #    allow_flagging=False,
     #)
-    with gr.Blocks() as demo:
+    with gr.Blocks(title="AvatAIr") as demo:
         gr.Markdown("**AvatAIr**")
         with gr.Row():
-            with gr.Column(scale=1):
+            with gr.Column():
+                infotext = gr.TextArea(value="Willkommen bei AvatAIr, \n\nSie werden im Laufe des Programmes immer wieder neue Avatare generiert bekommen. Diese bitten wir Sie, mit Hilfe von Slidern, welche Sie gleich sehen werden nach und nach zu bewerten. \n\nImmer wenn Ihre Bewertung fertig ist generiert das Programm einen neuen, auf Ihre Bewertung angepassten Avatar. Dieser Prozess wird mehrmals wiederholt, bis Ihnen zum Schluss des Programmes ihr finales Ergebnis präsentiert wird. \n\nDie Generierung der Avatare kann je nach Leistung des Systems etwas Zeit in Anspruch nehmen. Wir bitten deshalb um Geduld.\n\nVielen Dank.", interactive=False, show_label=False)
                 global SCALES
                 if(SCALES == 1):
                     inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="acceptance", info="0 = low | 1 = high", visible=False)
@@ -556,13 +557,16 @@ def main():
                         inp3: gr.update(visible=True),
                         inp4: gr.update(visible=True),
                         inp5: gr.update(visible=True),
-                        out: gr.update(value=image),
+                        out: gr.update(value=image, visible=True),
+                        infotext: gr.update(visible=False),
                         btn: gr.update(value="Generate new avatar")
+                         
                     }
                 else: 
                     return {
                         inp1: gr.update(visible=True),
-                        out: gr.update(value=image),
+                        out: gr.update(value=image, visible=True),
+                        infotext: gr.update(visible=False),
                         btn: gr.update(value="Generate new avatar")
                     }
             else:
@@ -573,13 +577,15 @@ def main():
                         inp3: gr.update(visible=False),
                         inp4: gr.update(visible=False),
                         inp5: gr.update(visible=False),
-                        out: gr.update(value=image),
+                        out: gr.update(value=image, visible=True),
+                        infotext: gr.update(visible=False),
                         btn: gr.update(visible=False)
                     }
                 else:
                     return {
                         inp1: gr.update(visible=False),
-                        out: gr.update(value=image),
+                        out: gr.update(value=image, visible=True),
+                        infotext: gr.update(visible=False),
                         btn: gr.update(visible=False)
                     }
             
