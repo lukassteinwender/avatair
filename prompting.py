@@ -166,7 +166,7 @@ def generate_definedprompt(ABSTR_VAL, AGE_VAL, ETHN_VAL, GENDER_VAL):
             sugar = "by NHK Animation, digital art, trending on artstation, illustration"
 
         # set the prompts
-        prompt = abstr + age + ethn + gender + "is looking at the camera with a smile on the face and a grey background, " + sugar
+        prompt = abstr + age + ethn + gender + "is looking at the camera with a proud expression on the face and a blue background, " + sugar
 
 
         return prompt
@@ -184,6 +184,6 @@ def generate_latentprompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, AC
     empathy= "(Empathy:" + EMP_VAL + ")"
     anthropomorphism= "(Anthropomorphism:" + ANTHRO_VAL + ")"
     trust= "(Trust:" + TRUST_VAL + ")"
-    prompt = "A portrait of a person with " + openness + conscientiousness + extraversion + agreeableness + neuroticism + acceptance + likeability + empathy + anthropomorphism + trust + " traits is looking at the camera with a proud expression on the face and a grey background, biometric passport photo"
+    prompt = "A portrait captures a person exuding traits of  " + openness + ", " + conscientiousness + ", " + extraversion + ", " + agreeableness + ", " + neuroticism + ", " + acceptance + ", " + likeability + ", " + empathy + ", " + anthropomorphism + ", " + trust + " , looking confidently at the camera with a proud expression, against a blue background"
 
     return prompt
