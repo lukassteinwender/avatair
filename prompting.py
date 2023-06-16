@@ -170,3 +170,20 @@ def generate_definedprompt(ABSTR_VAL, AGE_VAL, ETHN_VAL, GENDER_VAL):
 
 
         return prompt
+
+
+def generate_latentprompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL):
+
+    openness= "(Openness:" + OPEN_VAL + ")"
+    conscientiousness= "(Conscientiousness:" + CON_VAL + ")"
+    extraversion= "(Extraversion:" + EXTRA_VAL + ")"
+    agreeableness= "(Agreeableness:" + AGREE_VAL + ")"
+    neuroticism= "(Neuroticism:" + NEURO_VAL + ")"
+    acceptance= "(Acceptance:" + ACCEPT_VAL + ")"
+    likeability= "(Likeability:" + LIKE_VAL + ")"
+    empathy= "(Empathy:" + EMP_VAL + ")"
+    anthropomorphism= "(Anthropomorphism:" + ANTHRO_VAL + ")"
+    trust= "(Trust:" + TRUST_VAL + ")"
+    prompt = "A portrait of a person with " + openness + conscientiousness + extraversion + agreeableness + neuroticism + acceptance + likeability + empathy + anthropomorphism + trust + " traits is looking at the camera with a proud expression on the face and a grey background, biometric passport photo"
+
+    return prompt
