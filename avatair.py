@@ -356,10 +356,10 @@ def main():
 
             
 
-           # wenn wir die setup pages haben können wir hier die art der prompterzeugung festlegen, aslo latent oder defined
+           # wenn wir die setup pages haben können wir hier die art der prompterzeugung festlegen, also latent oder defined
             prompt= prompting.generate_definedprompt(ABSTR_VAL, AGE_VAL, ETHN_VAL, GENDER_VAL)
            
-            negative_prompt= "(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, anime:1.4) text, close up, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, extra fingers, mutated hands, poorlydrawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, badproportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms,missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, nsfw, inclined head, tilted head, two persons, text, symbol, logo, artist signature, black-white"
+            negative_prompt= prompting.generate_negativePrompt()
             print("Running prompt: " + prompt)
 
             # stable-diffusion photo-generation script
