@@ -174,16 +174,78 @@ def generate_definedprompt(ABSTR_VAL, AGE_VAL, ETHN_VAL, GENDER_VAL):
 
 def generate_latentprompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL):
 
-    openness= "(Openness:" + OPEN_VAL + ")"
-    conscientiousness= "(Conscientiousness:" + CON_VAL + ")"
-    extraversion= "(Extraversion:" + EXTRA_VAL + ")"
-    agreeableness= "(Agreeableness:" + AGREE_VAL + ")"
-    neuroticism= "(Neuroticism:" + NEURO_VAL + ")"
-    acceptance= "(Acceptance:" + ACCEPT_VAL + ")"
-    likeability= "(Likeability:" + LIKE_VAL + ")"
-    empathy= "(Empathy:" + EMP_VAL + ")"
-    anthropomorphism= "(Anthropomorphism:" + ANTHRO_VAL + ")"
-    trust= "(Trust:" + TRUST_VAL + ")"
+    if calculate_postivevalue(OPEN_VAL) > 0:
+        openness= "(Openness:" + calculate_postivevalue(OPEN_VAL) + ")"
+    elif calculate_postivevalue(CON_VAL) > 0:   
+        conscientiousness= "(Conscientiousness:" + calculate_postivevalue(CON_VAL) + ")"
+    elif calculate_postivevalue(EXTRA_VAL) > 0:
+        extraversion= "(Extraversion:" + calculate_postivevalue(EXTRA_VAL) + ")"
+    elif calculate_postivevalue(AGREE_VAL) > 0:
+        agreeableness= "(Agreeableness:" + calculate_postivevalue(AGREE_VAL) + ")"
+    elif calculate_postivevalue(NEURO_VAL) > 0:
+        neuroticism= "(Neuroticism:" + calculate_postivevalue(NEURO_VAL) + ")"
+    elif calculate_postivevalue(ACCEPT_VAL) > 0:
+        acceptance= "(Acceptance:" + calculate_postivevalue(ACCEPT_VAL) + ")"
+    elif calculate_postivevalue(LIKE_VAL) > 0:
+        likeability= "(Likeability:" + calculate_postivevalue(LIKE_VAL) + ")"
+    elif calculate_postivevalue(EMP_VAL) > 0:
+        empathy= "(Empathy:" + calculate_postivevalue(EMP_VAL) + ")"
+    elif calculate_postivevalue(ANTHRO_VAL) > 0:
+        anthropomorphism= "(Anthropomorphism:" + calculate_postivevalue(ANTHRO_VAL) + ")"
+    elif calculate_postivevalue(TRUST_VAL) > 0:
+        trust= "(Trust:" + calculate_postivevalue(TRUST_VAL) + ")"
     prompt = "A portrait captures a person exuding traits of  " + openness + ", " + conscientiousness + ", " + extraversion + ", " + agreeableness + ", " + neuroticism + ", " + acceptance + ", " + likeability + ", " + empathy + ", " + anthropomorphism + ", " + trust + " , looking confidently at the camera with a proud expression, against a blue background"
 
     return prompt
+
+
+def calculate_postivevalue(input_parameter):
+    if input_parameter > 0.5:
+        # Positive Prompt
+        ergebnis = (input_parameter - 0.5)/0.5
+    else:
+        # Neutral & Input-Parameter ist kleiner 0,5
+        ergebnis = 0
+    
+    return ergebnis
+
+def calculate_negativevalue(input_parameter):
+    if input_parameter < 0.5:
+        # Negative Prompt
+        ergebnis = 1- (input_parameter * 2)
+    else:
+        # Neutral & Input-Parameter ist größer 0,5
+        ergebnis = 0
+    
+    return ergebnis
+
+
+def generate_negativePrompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL):
+     
+    if calculate_negativevalue(OPEN_VAL) > 0:
+        openness= "(Openness:" + calculate_negativevalue(OPEN_VAL) + ")"
+    elif calculate_negativevalue(CON_VAL) > 0:   
+        conscientiousness= "(Conscientiousness:" + calculate_negativevalue(CON_VAL) + ")"
+    elif calculate_negativevalue(EXTRA_VAL) > 0:
+        extraversion= "(Extraversion:" + calculate_negativevalue(EXTRA_VAL) + ")"
+    elif calculate_negativevalue(AGREE_VAL) > 0:
+        agreeableness= "(Agreeableness:" + calculate_negativevalue(AGREE_VAL) + ")"
+    elif calculate_negativevalue(NEURO_VAL) > 0:
+        neuroticism= "(Neuroticism:" + calculate_negativevalue(NEURO_VAL) + ")"
+    elif calculate_negativevalue(ACCEPT_VAL) > 0:
+        acceptance= "(Acceptance:" + calculate_negativevalue(ACCEPT_VAL) + ")"
+    elif calculate_negativevalue(LIKE_VAL) > 0:
+        likeability= "(Likeability:" + calculate_negativevalue(LIKE_VAL) + ")"
+    elif calculate_negativevalue(EMP_VAL) > 0:
+        empathy= "(Empathy:" + calculate_negativevalue(EMP_VAL) + ")"
+    elif calculate_negativevalue(ANTHRO_VAL) > 0:
+        anthropomorphism= "(Anthropomorphism:" + calculate_negativevalue(ANTHRO_VAL) + ")"
+    elif calculate_negativevalue(TRUST_VAL) > 0:
+        trust= "(Trust:" + calculate_negativevalue(TRUST_VAL) + ")"
+    n_prompt=  "(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, anime:1.4) text, close up, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, extra fingers, mutated hands, poorlydrawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, badproportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms,missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, nsfw, inclined head, tilted head, two persons, text, symbol, logo, artist signature, black-white, " + openness + ", " + conscientiousness + ", " + extraversion + ", " + agreeableness + ", " + neuroticism + ", " + acceptance + ", " + likeability + ", " + empathy + ", " + anthropomorphism + ", " + trust
+    return n_prompt
+
+def generate_negativePrompt():
+    
+    n_prompt=  "(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, anime:1.4) text, close up, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, extra fingers, mutated hands, poorlydrawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, badproportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms,missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, nsfw, inclined head, tilted head, two persons, text, symbol, logo, artist signature, black-white"
+    return n_prompt
