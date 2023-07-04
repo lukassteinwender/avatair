@@ -89,10 +89,10 @@ def objective(x):
     global INITIAL_CHECK
 
     if INITIAL_CHECK == False:
-        fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x) 
+        fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x) * random.randint(0,1000)
     # print(f"datatype: {type(fs)}")
     else:
-        fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x) 
+        fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x) * random.randint(0,1000)
         global SCALE_1
         if(SCALES == 1 or SCALES == 2):
             global SCALE_2
@@ -367,6 +367,7 @@ def main():
                 requires_safety_checker = False
             )
             pipe = pipe.to("cuda")
+            pipe.enable_vae_tiling()
 
             # wenn wir die setup pages haben können wir hier die art der prompterzeugung festlegen, also latent oder defined
             prompt = prompting.generate_definedprompt(ABSTR_VAL, AGE_VAL, ETHN_VAL, GENDER_VAL)
