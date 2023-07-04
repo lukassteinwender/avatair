@@ -7,6 +7,8 @@ import threading
 import warnings
 import config
 import prompting
+from scripts import *
+from compel import Compel
 from diffusers import DiffusionPipeline
 from botorch.test_functions.multi_objective import BraninCurrin
 from botorch.models.gp_regression import SingleTaskGP
@@ -354,26 +356,29 @@ def main():
             print("GENDER_VAL: ", GENDER_VAL)
             print("testval: ", testval)
 
-            
-
-           # wenn wir die setup pages haben können wir hier die art der prompterzeugung festlegen, also latent oder defined
-            prompt= prompting.generate_definedprompt(ABSTR_VAL, AGE_VAL, ETHN_VAL, GENDER_VAL)
-           
-            negative_prompt= prompting.generate_negativePrompt()
-            print("Running prompt: " + prompt)
-
             # stable-diffusion photo-generation script
             torch.manual_seed(random.randint(0, 1000))
             
+            model_id = "SG161222/Realistic_Vision_V1.4"
             pipe = DiffusionPipeline.from_pretrained(
-                "SG161222/Realistic_Vision_V1.4",
+                model_id,
                 torch_dtype=torch.float32,
                 safety_checker = None,
                 requires_safety_checker = False
             )
             pipe = pipe.to("cuda")
 
-            image = pipe(prompt=prompt, negative_prompt=negative_prompt, width=512, height=512).images[0]
+            # wenn wir die setup pages haben können wir hier die art der prompterzeugung festlegen, also latent oder defined
+            prompt = prompting.generate_definedprompt(ABSTR_VAL, AGE_VAL, ETHN_VAL, GENDER_VAL)
+            print("Running prompt: " + prompt)
+            negative_prompt = prompting.generate_negativePrompt()
+
+            if(config.pictures == 1):
+                image = pipe(prompt=prompt, negative_prompt=negative_prompt, width=512, height=512).images[0]
+            else:
+                images = pipe(prompt=[prompt] * config.pictures, negative_prompt=[negative_prompt] * config.pictures, width=512, height=512).images
+                grid = image_grid(images, rows=1, cols=config.pictures)
+                image = grid
 
             global N_INITIAL
             global ITERATION_COUNT
@@ -423,7 +428,6 @@ def main():
         else:
             btn.click(fn=diffusion, inputs=[inp1], outputs=[inp1,out,btn,infotext])
     demo.launch()
-    
 
 # start threads main and bo parallel
 warnings.filterwarnings("ignore", category=UserWarning, module=".*botorch.*")
