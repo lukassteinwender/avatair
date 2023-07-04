@@ -8,7 +8,6 @@ import warnings
 import config
 import prompting
 from scripts import *
-from compel import Compel
 from diffusers import DiffusionPipeline
 from botorch.test_functions.multi_objective import BraninCurrin
 from botorch.models.gp_regression import SingleTaskGP
