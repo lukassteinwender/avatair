@@ -10,3 +10,6 @@ scales = 1
 
 # How much pictures are generated during one iteration
 pictures = 1
+
+# Your huggingface-token for the login
+token = ""

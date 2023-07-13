@@ -31,6 +31,7 @@ from botorch.models import SingleTaskGP
 from botorch.acquisition import UpperConfidenceBound
 from botorch.optim import optimize_acqf
 from botorch.utils.multi_objective.hypervolume import Hypervolume
+from huggingface_hub import login
 import socket
 import pickle
 import pandas as pd
@@ -430,6 +431,7 @@ def main():
     demo.launch()
 
 # start threads main and bo parallel
+login(token=config.token)
 warnings.filterwarnings("ignore", category=UserWarning, module=".*botorch.*")
 event = threading.Event()
 event2 = threading.Event()
