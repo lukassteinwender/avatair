@@ -9,6 +9,7 @@ import config
 import prompting
 from scripts import *
 from diffusers import DiffusionPipeline
+from diffusers import StableDiffusionXLPipeline, StableDiffusionXLImg2ImgPipeline
 from botorch.test_functions.multi_objective import BraninCurrin
 from botorch.models.gp_regression import SingleTaskGP
 from botorch.models.transforms.outcome import Standardize
@@ -359,16 +360,17 @@ def main():
             # stable-diffusion photo-generation script
             torch.manual_seed(random.randint(0, 1000))
             
-            model_id = "stabilityai/stable-diffusion-xl-base-0.9"
+            model_id = config.model
             pipe = DiffusionPipeline.from_pretrained(
                 model_id,
                 torch_dtype=torch.float32,
                 safety_checker = None,
-                requires_safety_checker = False
+                requires_safety_checker = False,
+                use_safetensors=False
             )
-            pipe = pipe.to("cuda")
+            pipe.enable_model_cpu_offload()
             pipe.enable_vae_tiling()
-
+            
             # wenn wir die setup pages haben können wir hier die art der prompterzeugung festlegen, also latent oder defined
             prompt = prompting.generate_definedprompt(ABSTR_VAL, AGE_VAL, ETHN_VAL, GENDER_VAL)
             print("Running prompt: " + prompt)
@@ -431,7 +433,8 @@ def main():
     demo.launch()
 
 # start threads main and bo parallel
-login(token=config.token)
+if (config.token != ""):
+    login(token=config.token)
 warnings.filterwarnings("ignore", category=UserWarning, module=".*botorch.*")
 event = threading.Event()
 event2 = threading.Event()

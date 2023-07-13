@@ -11,5 +11,8 @@ scales = 1
 # How much pictures are generated during one iteration
 pictures = 1
 
-# Your huggingface-token for the login
+# Diffusers - Model ( RV: "SG161222/Realistic_Vision_V1.4" )
+model = "SG161222/Realistic_Vision_V1.4"
+
+# Your token for the huggingface-login (needed for some models, if not needed leave as "")
 token = ""

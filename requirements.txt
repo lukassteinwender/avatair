@@ -8,3 +8,5 @@ transformers>=4.30.2
 accelerate
 pandas>=2.0.3
 huggingface_hub
+invisible-watermark
+safetensors
