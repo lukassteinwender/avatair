@@ -9,4 +9,4 @@ initial = 10
 scales = 1
 
 # How much pictures are generated during one iteration
-pictures = 2
+pictures = 1

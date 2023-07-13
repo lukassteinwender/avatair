@@ -358,7 +358,7 @@ def main():
             # stable-diffusion photo-generation script
             torch.manual_seed(random.randint(0, 1000))
             
-            model_id = "SG161222/Realistic_Vision_V1.4"
+            model_id = "stabilityai/stable-diffusion-xl-base-0.9"
             pipe = DiffusionPipeline.from_pretrained(
                 model_id,
                 torch_dtype=torch.float32,
