@@ -65,6 +65,8 @@ if SCALES == 2: num_objs = 5
 if SCALES == 3: num_objs = 1 # dimension of the objectives Y z.B.: Vertraunswürdigkeit, Schönheit (alles was die Leute bewerten)
 
 INITIAL_CHECK = False
+ATT_CHECK = False
+ATT_CHECK_VAL = random.randint(0,1000)
 ITERATION_COUNT = 0
 
 SCALE_1 = 0.3000
@@ -295,6 +297,7 @@ def mobo_execute(seed, iterations, initial_samples):
 
 # initializing Gradio-UI
 def main():
+    global ATT_CHECK
     with gr.Blocks(title="AvatAIr") as demo:
         gr.Markdown("**AvatAIr**")
         with gr.Row():
@@ -302,23 +305,24 @@ def main():
                 infotext = gr.TextArea(value="Willkommen bei AvatAIr, \n\nSie werden im Laufe des Programmes immer wieder neue Avatare generiert bekommen. Diese bitten wir Sie, mit Hilfe von Slidern, welche Sie gleich sehen werden nach und nach zu bewerten. \n\nImmer wenn Ihre Bewertung fertig ist generiert das Programm einen neuen, auf Ihre Bewertung angepassten Avatar. Dieser Prozess wird mehrmals wiederholt, bis Ihnen zum Schluss des Programmes ihr finales Ergebnis präsentiert wird. \n\nDie Generierung der Avatare kann je nach Leistung des Systems etwas Zeit in Anspruch nehmen. Wir bitten deshalb um Geduld.\n\nVielen Dank.", interactive=False, show_label=False)
                 global SCALES
                 if(SCALES == 1):
-                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="acceptance", info="0 = low | 1 = high", visible=False)
-                    inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="likeability", info="0 = low | 1 = high", visible=False)
-                    inp3 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="empathy", info="0 = low | 1 = high", visible=False)
-                    inp4 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="anthropomorphism", info="0 = low | 1 = high", visible=False)
-                    inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="trust", info="0 = low | 1 = high", visible=False)
+                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="acceptance", info="0 = low | 1 = high", visible=False)
+                    inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="likeability", info="0 = low | 1 = high", visible=False)
+                    inp3 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="empathy", info="0 = low | 1 = high", visible=False)
+                    inp4 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="anthropomorphism", info="0 = low | 1 = high", visible=False)
+                    inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="trust", info="0 = low | 1 = high", visible=False)
                 if(SCALES == 2):
-                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="openness", info="0 = low | 1 = high", visible=False)
-                    inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="conscientiousness", info="0 = low | 1 = high", visible=False)
-                    inp3 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="extraversion", info="0 = low | 1 = high", visible=False)
-                    inp4 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="agreeableness", info="0 = low | 1 = high", visible=False)
-                    inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=0.28, label="neuroticism", info="0 = low | 1 = high", visible=False)
+                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="openness", info="0 = low | 1 = high", visible=False)
+                    inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="conscientiousness", info="0 = low | 1 = high", visible=False)
+                    inp3 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="extraversion", info="0 = low | 1 = high", visible=False)
+                    inp4 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="agreeableness", info="0 = low | 1 = high", visible=False)
+                    inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="neuroticism", info="0 = low | 1 = high", visible=False)
                 if(SCALES == 3):
-                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=0.11, label="efficiency", info="0 = low | 1 = high", visible=False)
+                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="efficiency", info="0 = low | 1 = high", visible=False)
+            attention = gr.Slider(1, 1000, step=1, value=0, label="Attention Check", info="Pull the slider to the right value.", visible=False)
             out = gr.Image()
             out.style(height=512, width=512)
         
-        def diffusion(scale1, scale2, scale3, scale4, scale5):
+        def diffusion(scale1, scale2, scale3, scale4, scale5, att):
     
             # empty cuda-cache
             torch.cuda.empty_cache()
@@ -385,8 +389,25 @@ def main():
 
             global N_INITIAL
             global ITERATION_COUNT
+            global ATT_CHECK
+            global ATT_CHECK_VAL
+            att_check_text = "Bitte ziehe den Slider auf die Zahl " + str(ATT_CHECK_VAL)
             if(ITERATION_COUNT < N_INITIAL):
-                if(SCALES == 1 or SCALES == 2):
+                if(ITERATION_COUNT == 2 and ATT_CHECK == False):
+                    ATT_CHECK = True
+                    return {
+                        inp1: gr.update(visible=False),
+                        inp2: gr.update(visible=False),
+                        inp3: gr.update(visible=False),
+                        inp4: gr.update(visible=False),
+                        inp5: gr.update(visible=False),
+                        out: gr.update(value=image, visible=False),
+                        attention: gr.update(visible=True),
+                        infotext: gr.update(value=att_check_text, visible=True),
+                        btn: gr.update(visible=False),
+                        btnAtt: gr.update(visible=True)
+                    }
+                elif(SCALES == 1 or SCALES == 2):
                     return {
                         inp1: gr.update(visible=True),
                         inp2: gr.update(visible=True),
@@ -424,12 +445,46 @@ def main():
                         infotext: gr.update(value="Hier ist Ihr Ergebnis. \n\nVielen Dank für Ihre Teilnahme!", visible=True),
                         btn: gr.update(visible=False)
                     }
-            
+                
+        def attentionCheck(scale1, scale2, scale3, scale4, scale5, att):
+            global ATT_CHECK_VAL
+            if(att == ATT_CHECK_VAL):
+                return {
+                        inp1: gr.update(visible=True),
+                        inp2: gr.update(visible=True),
+                        inp3: gr.update(visible=True),
+                        inp4: gr.update(visible=True),
+                        inp5: gr.update(visible=True),
+                        out: gr.update(visible=True),
+                        infotext: gr.update(visible=False),
+                        attention: gr.update(visible=False),
+                        btn: gr.update(visible=True),
+                        btnAtt: gr.update(visible=False)
+                    }
+            else:
+                print("test")
+                return {
+                        inp1: gr.update(visible=False),
+                        inp2: gr.update(visible=False),
+                        inp3: gr.update(visible=False),
+                        inp4: gr.update(visible=False),
+                        inp5: gr.update(visible=False),
+                        out: gr.update(visible=False),
+                        attention: gr.update(visible=True),
+                        infotext: gr.update(visible=True),
+                        btn: gr.update(visible=False),
+                        btnAtt: gr.update(visible=True)
+                    }
+
         btn = gr.Button("Run")
+        btnAtt = gr.Button("Absenden", visible=False)
+
         if(SCALES == 1 or SCALES  == 2):
-            btn.click(fn=diffusion, inputs=[inp1, inp2, inp3, inp4, inp5], outputs=[inp1,inp2,inp3,inp4,inp5,out,btn,infotext])
+            btn.click(fn=diffusion, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnAtt,infotext])
+            btnAtt.click(fn=attentionCheck, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnAtt,infotext])
         else:
-            btn.click(fn=diffusion, inputs=[inp1], outputs=[inp1,out,btn,infotext])
+            btn.click(fn=diffusion, inputs=[inp1, attention], outputs=[inp1,out,btn,btnAtt,infotext,attention])
+            btnAtt.click(fn=attentionCheck, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnAtt,infotext])
     demo.launch()
 
 # start threads main and bo parallel
