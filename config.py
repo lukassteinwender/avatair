@@ -11,6 +11,9 @@ scales = 1
 # How much pictures are generated during one iteration
 pictures = 1
 
+# After how much iterations should enter the attention check ? (-1 for no check)
+attention = -1
+
 # Diffusers - Model ( RV: "SG161222/Realistic_Vision_V1.4" )
 model = "SG161222/Realistic_Vision_V1.4"
 

@@ -372,7 +372,7 @@ def main():
                 requires_safety_checker = False,
                 use_safetensors=False
             )
-            pipe.enable_model_cpu_offload()
+            pipe = pipe.to("cuda")
             pipe.enable_vae_tiling()
             
             # wenn wir die setup pages haben können wir hier die art der prompterzeugung festlegen, also latent oder defined
@@ -393,7 +393,7 @@ def main():
             global ATT_CHECK_VAL
             att_check_text = "Bitte ziehe den Slider auf die Zahl " + str(ATT_CHECK_VAL)
             if(ITERATION_COUNT < N_INITIAL):
-                if(ITERATION_COUNT == 2 and ATT_CHECK == False):
+                if(ITERATION_COUNT == config.attention and ATT_CHECK == False):
                     ATT_CHECK = True
                     return {
                         inp1: gr.update(visible=False),
@@ -462,7 +462,7 @@ def main():
                         btnAtt: gr.update(visible=False)
                     }
             else:
-                print("test")
+                print("attention check failed!")
                 return {
                         inp1: gr.update(visible=False),
                         inp2: gr.update(visible=False),
