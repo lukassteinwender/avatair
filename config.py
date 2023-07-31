@@ -15,7 +15,7 @@ pictures = 1
 attention = -1
 
 # Diffusers - Model ( RV: "SG161222/Realistic_Vision_V1.4" )
-model = "SG161222/Realistic_Vision_V1.4"
+model = "stabilityai/stable-diffusion-xl-base-1.0"
 
 # Your token for the huggingface-login (needed for some models, if not needed leave as "")
-token = ""
+token = "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"

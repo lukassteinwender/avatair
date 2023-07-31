@@ -365,15 +365,21 @@ def main():
             torch.manual_seed(random.randint(0, 1000))
             
             model_id = config.model
-            pipe = DiffusionPipeline.from_pretrained(
-                model_id,
-                torch_dtype=torch.float32,
-                safety_checker = None,
-                requires_safety_checker = False,
-                use_safetensors=False
-            )
-            pipe = pipe.to("cuda")
-            pipe.enable_vae_tiling()
+
+            if(model_id == "SG161222/Realistic_Vision_V1.4"):
+                pipe = DiffusionPipeline.from_pretrained(
+                    model_id,
+                    torch_dtype=torch.float32,
+                    safety_checker = None,
+                    requires_safety_checker = False,
+                    use_safetensors=False
+                )
+                pipe = pipe.to("cuda")
+                pipe.enable_vae_tiling()
+            if(model_id == "stabilityai/stable-diffusion-xl-base-1.0"):
+                pipe = DiffusionPipeline.from_pretrained(
+                "stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16, variant="fp16", use_safetensors=True)
+                pipe.enable_model_cpu_offload()
             
             # wenn wir die setup pages haben können wir hier die art der prompterzeugung festlegen, also latent oder defined
             prompt = prompting.generate_definedprompt(ABSTR_VAL, AGE_VAL, ETHN_VAL, GENDER_VAL)
