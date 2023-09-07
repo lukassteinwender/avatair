@@ -65,7 +65,6 @@ if SCALES == 2: num_objs = 5
 if SCALES == 3: num_objs = 1 # dimension of the objectives Y z.B.: Vertraunswürdigkeit, Schönheit (alles was die Leute bewerten)
 
 INITIAL_CHECK = False
-ATT_CHECK = False
 ATT_CHECK_VAL = random.randint(0,1000)
 ITERATION_COUNT = 0
 
@@ -297,7 +296,8 @@ def mobo_execute(seed, iterations, initial_samples):
 
 # initializing Gradio-UI
 def main():
-    global ATT_CHECK
+    global ATT_CHECK_VAL
+    att_check_info = "Pull the slider to " + str(ATT_CHECK_VAL)
     with gr.Blocks(title="AvatAIr") as demo:
         gr.Markdown("**AvatAIr**")
         with gr.Row():
@@ -318,14 +318,43 @@ def main():
                     inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="neuroticism", info="0 = low | 1 = high", visible=False)
                 if(SCALES == 3):
                     inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="efficiency", info="0 = low | 1 = high", visible=False)
-            attention = gr.Slider(1, 1000, step=1, value=0, label="Attention Check", info="Pull the slider to the right value.", visible=False)
+                attention = gr.Slider(1, 1000, step=1, value=0, label="Attention Check", info=att_check_info, visible=False)
             out = gr.Image()
             out.style(height=512, width=512)
+        with gr.Row():
+            btn = gr.Button(value="Run", scale=1)
+            btnEnd = gr.Button(value="Interrupt survey", variant='stop', scale=2)
         
+        def end(scale1, scale2, scale3, scale4, scale5, att):
+            if(SCALES == 1 or SCALES == 2):
+                return {
+                    inp1: gr.update(visible=False),
+                    inp2: gr.update(visible=False),
+                    inp3: gr.update(visible=False),
+                    inp4: gr.update(visible=False),
+                    inp5: gr.update(visible=False),
+                    attention: gr.update(visible=False),
+                    out: gr.update(visible=False),
+                    btn: gr.update(visible=False),
+                    btnEnd: gr.update(visible=False),
+                    infotext: gr.update(value="Vielen Dank für Ihre Teilnahme. \n\nSie können die Seite nun schließen.", visible=True)
+                }
+            else:
+                return {
+                    inp1: gr.update(visible=False),
+                    attention: gr.update(visible=False),
+                    out: gr.update(visible=False),
+                    btn: gr.update(visible=False),
+                    btnEnd: gr.update(visible=False),
+                    infotext: gr.update(value="Vielen Dank für Ihre Teilnahme. \n\nSie können die Seite nun schließen.", visible=True)
+                }
+
         def diffusion(scale1, scale2, scale3, scale4, scale5, att):
     
             # empty cuda-cache
             torch.cuda.empty_cache()
+            global ATT_CHECK_VAL
+            ATT_CHECK_VAL = random.randint(0,1000)
 
             global SCALE_1
             if(SCALES == 1 or SCALES == 2):
@@ -395,24 +424,27 @@ def main():
 
             global N_INITIAL
             global ITERATION_COUNT
-            global ATT_CHECK
-            global ATT_CHECK_VAL
-            att_check_text = "Bitte ziehe den Slider auf die Zahl " + str(ATT_CHECK_VAL)
             if(ITERATION_COUNT < N_INITIAL):
-                if(ITERATION_COUNT == config.attention and ATT_CHECK == False):
-                    ATT_CHECK = True
-                    return {
-                        inp1: gr.update(visible=False),
-                        inp2: gr.update(visible=False),
-                        inp3: gr.update(visible=False),
-                        inp4: gr.update(visible=False),
-                        inp5: gr.update(visible=False),
-                        out: gr.update(value=image, visible=False),
-                        attention: gr.update(visible=True),
-                        infotext: gr.update(value=att_check_text, visible=True),
-                        btn: gr.update(visible=False),
-                        btnAtt: gr.update(visible=True)
-                    }
+                if(ITERATION_COUNT in config.attention):
+                    if(SCALES == 1 or SCALES == 2):
+                        return {
+                            inp1: gr.update(visible=True),
+                            inp2: gr.update(visible=True),
+                            inp3: gr.update(visible=True),
+                            inp4: gr.update(visible=True),
+                            inp5: gr.update(visible=True),
+                            out: gr.update(value=image, visible=True),
+                            infotext: gr.update(visible=False),
+                            attention: gr.update(visible=True)
+                        }
+                    else: 
+                        return {
+                            inp1: gr.update(visible=True),
+                            attention: gr.update(visible=True),
+                            out: gr.update(value=image, visible=True),
+                            infotext: gr.update(visible=False),
+                            btn: gr.update(value="Generate new avatar")
+                        }
                 elif(SCALES == 1 or SCALES == 2):
                     return {
                         inp1: gr.update(visible=True),
@@ -422,6 +454,7 @@ def main():
                         inp5: gr.update(visible=True),
                         out: gr.update(value=image, visible=True),
                         infotext: gr.update(visible=False),
+                        attention: gr.update(visible=False),
                         btn: gr.update(value="Generate new avatar")
                          
                     }
@@ -430,6 +463,7 @@ def main():
                         inp1: gr.update(visible=True),
                         out: gr.update(value=image, visible=True),
                         infotext: gr.update(visible=False),
+                        attention: gr.update(visible=False),
                         btn: gr.update(value="Generate new avatar")
                     }
             else:
@@ -440,57 +474,24 @@ def main():
                         inp3: gr.update(visible=False),
                         inp4: gr.update(visible=False),
                         inp5: gr.update(visible=False),
+                        attention: gr.update(visible=False),
                         out: gr.update(value=image, visible=True),
                         infotext: gr.update(value="Hier ist Ihr Ergebnis. \n\nVielen Dank für Ihre Teilnahme!", visible=True),
-                        btn: gr.update(visible=False)
                     }
                 else:
                     return {
                         inp1: gr.update(visible=False),
+                        attention: gr.update(visible=False),
                         out: gr.update(value=image, visible=True),
                         infotext: gr.update(value="Hier ist Ihr Ergebnis. \n\nVielen Dank für Ihre Teilnahme!", visible=True),
-                        btn: gr.update(visible=False)
                     }
-                
-        def attentionCheck(scale1, scale2, scale3, scale4, scale5, att):
-            global ATT_CHECK_VAL
-            if(att == ATT_CHECK_VAL):
-                return {
-                        inp1: gr.update(visible=True),
-                        inp2: gr.update(visible=True),
-                        inp3: gr.update(visible=True),
-                        inp4: gr.update(visible=True),
-                        inp5: gr.update(visible=True),
-                        out: gr.update(visible=True),
-                        infotext: gr.update(visible=False),
-                        attention: gr.update(visible=False),
-                        btn: gr.update(visible=True),
-                        btnAtt: gr.update(visible=False)
-                    }
-            else:
-                print("attention check failed!")
-                return {
-                        inp1: gr.update(visible=False),
-                        inp2: gr.update(visible=False),
-                        inp3: gr.update(visible=False),
-                        inp4: gr.update(visible=False),
-                        inp5: gr.update(visible=False),
-                        out: gr.update(visible=False),
-                        attention: gr.update(visible=True),
-                        infotext: gr.update(visible=True),
-                        btn: gr.update(visible=False),
-                        btnAtt: gr.update(visible=True)
-                    }
-
-        btn = gr.Button("Run")
-        btnAtt = gr.Button("Absenden", visible=False)
 
         if(SCALES == 1 or SCALES  == 2):
-            btn.click(fn=diffusion, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnAtt,infotext])
-            btnAtt.click(fn=attentionCheck, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnAtt,infotext])
+            btn.click(fn=diffusion, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,infotext])
+            btnEnd.click(fn=end, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,infotext])
         else:
-            btn.click(fn=diffusion, inputs=[inp1, attention], outputs=[inp1,out,btn,btnAtt,infotext,attention])
-            btnAtt.click(fn=attentionCheck, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnAtt,infotext])
+            btn.click(fn=diffusion, inputs=[inp1, attention], outputs=[inp1,out,btn,btnEnd,infotext,attention])
+            btnEnd.click(fn=end, inputs=[inp1, attention], outputs=[inp1,out,btn,btnEnd,infotext,attention])
     demo.launch()
 
 # start threads main and bo parallel
