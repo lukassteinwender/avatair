@@ -1,5 +1,7 @@
 
-def generate_definedprompt(ABSTR_VAL, AGE_VAL, ETHN_VAL, GENDER_VAL):
+def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLOR_VAL_R, FACEWIDTH_VAL, FACIALHAIR_VAL,  HAIRLENGTH_VAL, HAIRSTRUCTURE_VAL, HAIRCOLOR_VAL, STATUR_VAL, NOSE_VAL, MOUTH_VAL, EYECOLOR_VAL, EYESIZE_VAL, EARS_VAL):
+
+ 
 
         if 0.00 <= ABSTR_VAL < 0.20: abstr = "A ultra abstract "; sugarcheck = False
         if 0.20 <= ABSTR_VAL < 0.40: abstr = "A abstract "; sugarcheck = False
@@ -107,57 +109,54 @@ def generate_definedprompt(ABSTR_VAL, AGE_VAL, ETHN_VAL, GENDER_VAL):
         if 0.97 <= AGE_VAL < 0.98: age = "98 y.o. "
         if 0.98 <= AGE_VAL < 0.99: age = "99 y.o. "
         if 0.99 <= AGE_VAL < 1.00: age = "100 y.o. "
+
+        if 0.00 <= GENDER_VAL < 0.34: gender = "female person "
+        if 0.34 <= GENDER_VAL < 0.67: gender = "Androgynous "
+        if 0.67 <= GENDER_VAL < 1.00: gender = "male person "
         
+        if 0.00 <= GLASSES_VAL < 0.50: glasses = "with glasses, "
+        if 0.50 <= GLASSES_VAL <= 1.00: glasses = "without glasses, "
 
+        if 0.00 <= FACEWIDTH_VAL < 0.34: facewidth = "thin "
+        if 0.34 <= FACEWIDTH_VAL < 0.67: facewidth = "medium-sized "
+        if 0.67 <= FACEWIDTH_VAL <= 1.00: facewidth = "wide "
 
-        if 0.00 <= ETHN_VAL < 0.0263: ethn = "german "
-        if 0.0263 <= ETHN_VAL < 0.0526: ethn = "french "
-        if 0.0526 <= ETHN_VAL < 0.0789: ethn = "italian "
-        if 0.0789 <= ETHN_VAL < 0.1052: ethn = "polish "
-        if 0.1052 <= ETHN_VAL < 0.1315: ethn = "english "
-        if 0.1315 <= ETHN_VAL < 0.1578: ethn = "irish "
-        if 0.1578 <= ETHN_VAL < 0.1841: ethn = "mexican "
-        if 0.1841 <= ETHN_VAL < 0.2104: ethn = "salvadorian "
-        if 0.2104 <= ETHN_VAL < 0.2367: ethn = "puerto rican "
-        if 0.2367 <= ETHN_VAL < 0.2630: ethn = "dominican "
-        if 0.2630 <= ETHN_VAL < 0.2893: ethn = "cuban "
-        if 0.2893 <= ETHN_VAL < 0.3156: ethn = "colombian "
-        if 0.3156 <= ETHN_VAL < 0.3419: ethn = "africnan american "
-        if 0.3419 <= ETHN_VAL < 0.3682: ethn = "jamaican "
-        if 0.3682 <= ETHN_VAL < 0.3945: ethn = "haitian "
-        if 0.3945 <= ETHN_VAL < 0.4208: ethn = "nigerian "
-        if 0.4208 <= ETHN_VAL < 0.4471: ethn = "ethiopian "
-        if 0.4471 <= ETHN_VAL < 0.4734: ethn = "somalian "
-        if 0.4734 <= ETHN_VAL < 0.4997: ethn = "chinese "
-        if 0.4997 <= ETHN_VAL < 0.5260: ethn = "vietnamese "
-        if 0.5260 <= ETHN_VAL < 0.5523: ethn = "filipino "
-        if 0.5523 <= ETHN_VAL < 0.5786: ethn = "korean "
-        if 0.5786 <= ETHN_VAL < 0.6049: ethn = "asian indian "
-        if 0.6049 <= ETHN_VAL < 0.6312: ethn = "japanese "
-        if 0.6312 <= ETHN_VAL < 0.6575: ethn = "american indian "
-        if 0.6575 <= ETHN_VAL < 0.6838: ethn = "alaskan native "
-        if 0.6838 <= ETHN_VAL < 0.7101: ethn = "lebanese "
-        if 0.7101 <= ETHN_VAL < 0.7364: ethn = "iranian "
-        if 0.7364 <= ETHN_VAL < 0.7627: ethn = "egyptian "
-        if 0.7627 <= ETHN_VAL < 0.7890: ethn = "syrian "
-        if 0.7890 <= ETHN_VAL < 0.8153: ethn = "moroccan "
-        if 0.8153 <= ETHN_VAL < 0.8416: ethn = "israeli "
-        if 0.8416 <= ETHN_VAL < 0.8679: ethn = "native hawaiian "
-        if 0.8679 <= ETHN_VAL < 0.8942: ethn = "samoan "
-        if 0.8942 <= ETHN_VAL < 0.9205: ethn = "chamorro "
-        if 0.9205 <= ETHN_VAL < 0.9468: ethn = "tongan "
-        if 0.9468 <= ETHN_VAL < 0.9731: ethn = "fijian "
-        if 0.9731 <= ETHN_VAL < 0.9994: ethn = "marshallese "
-        if 0.9994 <= ETHN_VAL <= 1.0000: ethn = "swedish "
+        if 0.00 <= FACIALHAIR_VAL < 0.34: facialhair = "clean shaven "
+        if 0.34 <= FACIALHAIR_VAL < 0.67: facialhair = "little bearded"
+        if 0.67 <= FACIALHAIR_VAL <= 1.00: facialhair = "bearded "
 
+        
+        if 0.00 <= HAIRSTRUCTURE_VAL < 0.20: hairstructure = "stick straight "
+        if 0.20 <= HAIRSTRUCTURE_VAL < 0.40: hairstructure = "straight "
+        if 0.40 <= HAIRSTRUCTURE_VAL < 0.60: hairstructure = "wavy "
+        if 0.60 <= HAIRSTRUCTURE_VAL < 0.80: hairstructure = "big curls "
+        if 0.80 <= HAIRSTRUCTURE_VAL <= 1.00: hairstructure = "small curls "
 
+        if 0.00 <= STATUR_VAL < 0.20: statur = "very thin stature, "
+        if 0.20 <= STATUR_VAL < 0.40: statur = "thin stature, "
+        if 0.40 <= STATUR_VAL < 0.60: statur = "regular stature, "
+        if 0.60 <= STATUR_VAL < 0.80: statur = "obese stature, "
+        if 0.80 <= STATUR_VAL <= 1.00: statur = "very obese stature, "
 
-        if 0.00 <= GENDER_VAL < 0.20: gender = "female person "
-        if 0.20 <= GENDER_VAL < 0.40: gender = "(female:0.25) person "
-        if 0.40 <= GENDER_VAL < 0.60: gender = "Androgynous "
-        if 0.60 <= GENDER_VAL < 0.80: gender = "(male:0.25) person "
-        if 0.80 <= GENDER_VAL < 1.00: gender = "male person "
+        if 0.00 <= NOSE_VAL < 0.25: nose = "no nose, "
+        if 0.25 <= NOSE_VAL < 0.50: nose = "small nose, "
+        if 0.50 <= NOSE_VAL < 0.75: nose = "medium-sized nose, "
+        if 0.75 <= NOSE_VAL <= 1.00: nose = "big nose, "
 
+        if 0.00 <= MOUTH_VAL < 0.25: mouth = "no mouth, "
+        if 0.25 <= MOUTH_VAL < 0.50: mouth = "small mouth, "
+        if 0.50 <= MOUTH_VAL < 0.75: mouth = "medium-sized mouth, "
+        if 0.75 <= MOUTH_VAL <= 1.00: mouth = "big mouth, "
+
+        if 0.00 <= EYESIZE_VAL < 0.25: eyesize = "no "
+        if 0.25 <= EYESIZE_VAL < 0.50: eyesize = "small "
+        if 0.50 <= EYESIZE_VAL < 0.75: eyesize = "medium-sized "
+        if 0.75 <= EYESIZE_VAL <= 1.00: eyesize = "big "
+
+        if 0.00 <= EARS_VAL < 0.25: ears= "no ears "
+        if 0.25 <= EARS_VAL < 0.50: ears= "small ears "
+        if 0.50 <= EARS_VAL < 0.75: ears= "medium-sized ears "
+        if 0.75 <= EARS_VAL <= 1.00: ears= "big ears "
 
             # set the sugar
         if sugarcheck == True: 
@@ -166,7 +165,7 @@ def generate_definedprompt(ABSTR_VAL, AGE_VAL, ETHN_VAL, GENDER_VAL):
             sugar = "by NHK Animation, digital art, trending on artstation, illustration"
 
         # set the prompts
-        prompt = abstr + age + ethn + gender + "is looking at the camera with a proud expression on the face and a blue background, " + sugar
+        prompt = abstr + age + gender + glasses + facewidth + facialhair + " face, " + HAIRLENGTH_VAL  + "m " + hairstructure + HAIRCOLOR_VAL + " hair, " + statur + nose + mouth + eyesize + "eyes "+ "and " + ears + "is looking at the camera with a proud expression on the face and a blue background, " + sugar
 
 
         return prompt
