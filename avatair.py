@@ -429,10 +429,16 @@ def main():
     
             # empty cuda-cache
             torch.cuda.empty_cache()
-            global ATT_CHECK_VAL
-            ATT_CHECK_VAL = random.randint(0,100)
-
             global ITERATION_COUNT
+            global ATT_CHECK_VAL
+
+            if(ITERATION_COUNT in config.attention):
+                if(ATT_CHECK_VAL == int(att)):
+                    logging.info('Attention-Check successful\n')
+                else:
+                    logging.info('Attention-Check FAILED (should be: ' + str(ATT_CHECK_VAL) + ', is: ' + str(int(att)) + ')\n')
+                ATT_CHECK_VAL = random.randint(0,100)
+
             logging.info('Running iteration ' + str(ITERATION_COUNT + 1) + '\n')
 
             global SCALE_1
@@ -513,6 +519,7 @@ def main():
             global N_INITIAL
             if(ITERATION_COUNT < N_INITIAL):
                 if(ITERATION_COUNT in config.attention):
+                    logging.info('Running attention-check\n')
                     if(SCALES == 1 or SCALES == 2):
                         return {
                             inp1: gr.update(visible=True),
