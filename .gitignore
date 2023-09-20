@@ -4,3 +4,5 @@ legacy-stable-diffusion-main/models/ldm/stable-diffusion-v1/model.ckpt
 stablediffusion-main/models/modelv1.ckpt
 stablediffusion-main/models/realisticVisionV13_v13.ckpt
 stablediffusion-main/models/model.ckpt
+log/*
+__pycache__/*
