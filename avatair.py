@@ -7,6 +7,7 @@ import threading
 import warnings
 import config
 import prompting
+import logging
 from scripts import *
 from diffusers import DiffusionPipeline
 from diffusers import StableDiffusionXLPipeline, StableDiffusionXLImg2ImgPipeline
@@ -46,6 +47,16 @@ tkwargs = {
     "device": torch.device("cuda")
 }
 
+date = time.strftime("%Y_%m_%d-%H_%M_%S")
+directory = os.path.dirname(os.path.realpath(__file__))
+logfolder = directory + '\log' + '\log_' + date + '.log'
+logging.basicConfig(filename=logfolder, encoding='utf-8', level=logging.INFO)
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+logging.getLogger("markdown_it").setLevel(logging.WARNING)
+logging.getLogger("asyncio").setLevel(logging.WARNING)
+logging.info('Starting avatair...\n')
+
 BATCH_SIZE = 1 # Number of design parameter points to query at next iteration
 NUM_RESTARTS = 10 # Used for the acquisition function number of restarts in optimization
 RAW_SAMPLES = 1024 # Initial restart location candidates
@@ -65,7 +76,7 @@ if SCALES == 2: num_objs = 5
 if SCALES == 3: num_objs = 1 # dimension of the objectives Y z.B.: Vertraunswürdigkeit, Schönheit (alles was die Leute bewerten)
 
 INITIAL_CHECK = False
-ATT_CHECK_VAL = random.randint(0,1000)
+ATT_CHECK_VAL = random.randint(0,100)
 ITERATION_COUNT = 0
 
 SCALE_1 = 0.3000
@@ -287,6 +298,8 @@ def mobo_execute(seed, iterations, initial_samples):
         global testval
         testval = actualValues.data[0][4]
 
+        logging.info('Optimized values:' + '\nabstraction: ' + str(ABSTR_VAL) + '\nage: ' + str(AGE_VAL) + '\nethnicity: ' + str(ETHN_VAL) + '\ngender: ' + str(GENDER_VAL) + '\n')
+
         mll_qehvi, model_qehvi = initialize_model(train_x_qehvi, train_obj_qehvi)
 
         event2.set()
@@ -318,14 +331,16 @@ def main():
                     inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="neuroticism", info="0 = low | 1 = high", visible=False)
                 if(SCALES == 3):
                     inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="efficiency", info="0 = low | 1 = high", visible=False)
-                attention = gr.Slider(1, 1000, step=1, value=0, label="Attention Check", info=att_check_info, visible=False)
+                attention = gr.Slider(1, 100, step=1, value=0, label="Attention Check", info=att_check_info, visible=False)
             out = gr.Image()
             out.style(height=512, width=512)
         with gr.Row():
             btn = gr.Button(value="Run", scale=1)
-            btnEnd = gr.Button(value="Interrupt survey", variant='stop', scale=2)
+            btnEnd = gr.Button(value="Interrupt survey", variant='stop', scale=2, visible=False)
+            btnNoReturn = gr.Button(value="No, return to survey", scale=1, visible=False)
+            btnYesEnd = gr.Button(value="Yes, interrupt survey", variant='stop', scale=2, visible=False)
         
-        def end(scale1, scale2, scale3, scale4, scale5, att):
+        def endquestion(scale1, scale2, scale3, scale4, scale5, att):
             if(SCALES == 1 or SCALES == 2):
                 return {
                     inp1: gr.update(visible=False),
@@ -337,7 +352,9 @@ def main():
                     out: gr.update(visible=False),
                     btn: gr.update(visible=False),
                     btnEnd: gr.update(visible=False),
-                    infotext: gr.update(value="Vielen Dank für Ihre Teilnahme. \n\nSie können die Seite nun schließen.", visible=True)
+                    btnNoReturn: gr.update(visible=True),
+                    btnYesEnd: gr.update(visible=True),
+                    infotext: gr.update(value="Are you sure about closing the survey? \nYou will not get rewarded and your progress will be worthless.", visible=True)
                 }
             else:
                 return {
@@ -346,7 +363,66 @@ def main():
                     out: gr.update(visible=False),
                     btn: gr.update(visible=False),
                     btnEnd: gr.update(visible=False),
-                    infotext: gr.update(value="Vielen Dank für Ihre Teilnahme. \n\nSie können die Seite nun schließen.", visible=True)
+                    btnNoReturn: gr.update(visible=True),
+                    btnYesEnd: gr.update(visible=True),
+                    infotext: gr.update(value="Are you sure about closing the survey? \nYou will not get rewarded and your progress will be worthless.", visible=True)
+                }
+        
+        def returnbutton(scale1, scale2, scale3, scale4, scale5, att):
+            if(SCALES == 1 or SCALES == 2):
+                return {
+                    inp1: gr.update(visible=True),
+                    inp2: gr.update(visible=True),
+                    inp3: gr.update(visible=True),
+                    inp4: gr.update(visible=True),
+                    inp5: gr.update(visible=True),
+                    attention: gr.update(visible=False),
+                    out: gr.update(visible=True),
+                    btn: gr.update(visible=True),
+                    btnEnd: gr.update(visible=True),
+                    btnNoReturn: gr.update(visible=False),
+                    btnYesEnd: gr.update(visible=False),
+                    infotext: gr.update(visible=False)
+                }
+            else:
+                return {
+                    inp1: gr.update(visible=True),
+                    attention: gr.update(visible=False),
+                    out: gr.update(visible=True),
+                    btn: gr.update(visible=True),
+                    btnEnd: gr.update(visible=True),
+                    btnNoReturn: gr.update(visible=False),
+                    btnYesEnd: gr.update(visible=False),
+                    infotext: gr.update(visible=False)
+                }
+            
+        def end(scale1, scale2, scale3, scale4, scale5, att):
+            logging.info('Survey interrupted by user!' + '\n')
+            if(SCALES == 1 or SCALES == 2):
+                return {
+                    inp1: gr.update(visible=False),
+                    inp2: gr.update(visible=False),
+                    inp3: gr.update(visible=False),
+                    inp4: gr.update(visible=False),
+                    inp5: gr.update(visible=False),
+                    attention: gr.update(visible=False),
+                    out: gr.update(visible=False),
+                    btn: gr.update(visible=False),
+                    btnEnd: gr.update(visible=False),
+                    btnNoReturn: gr.update(visible=False),
+                    btnYesEnd: gr.update(visible=False),
+                    infotext: gr.update(value="Thanks for your participation. \n\nCould you tell us the reason for interrupting the survey?", visible=True)
+                }
+            else:
+                return {
+                    inp1: gr.update(visible=False),
+                    attention: gr.update(visible=False),
+                    out: gr.update(visible=False),
+                    btn: gr.update(visible=False),
+                    btnEnd: gr.update(visible=False),
+                    btnNoReturn: gr.update(visible=False),
+                    btnYesEnd: gr.update(visible=False),
+                    infotext: gr.update(value="Thanks for your participation. \n\nCould you tell us the reason for interrupting the survey?", visible=True)
                 }
 
         def diffusion(scale1, scale2, scale3, scale4, scale5, att):
@@ -354,7 +430,10 @@ def main():
             # empty cuda-cache
             torch.cuda.empty_cache()
             global ATT_CHECK_VAL
-            ATT_CHECK_VAL = random.randint(0,1000)
+            ATT_CHECK_VAL = random.randint(0,100)
+
+            global ITERATION_COUNT
+            logging.info('Running iteration ' + str(ITERATION_COUNT + 1) + '\n')
 
             global SCALE_1
             if(SCALES == 1 or SCALES == 2):
@@ -370,6 +449,14 @@ def main():
                 SCALE_4 = scale4
                 SCALE_5 = scale5
 
+            if(SCALES == 1):
+                logging.info('Slider Values:' + '\nacceptance: ' + str(scale1) + '\nlikeability: ' + str(scale2) + '\nempathy: ' + str(scale3) + '\nanthropomorphism: ' + str(scale4) + '\ntrust: ' + str(scale5) + '\n')
+
+            if(SCALES == 2):
+                logging.info('Slider Values:' + '\nopenness: ' + str(scale1) + '\nconscientiousness: ' + str(scale2) + '\nextraversion: ' + str(scale3) + '\nagreeableness: ' + str(scale4) + '\nneuroticism: ' + str(scale5) + '\n')
+
+            if(SCALES == 3):
+                logging.info('Slider Values:' + '\nefficiency: ' + str(scale1) + '\n')
             # call BO
             event.set()
             event3.set()
@@ -412,6 +499,7 @@ def main():
             
             # wenn wir die setup pages haben können wir hier die art der prompterzeugung festlegen, also latent oder defined
             prompt = prompting.generate_definedprompt(ABSTR_VAL, AGE_VAL, ETHN_VAL, GENDER_VAL)
+            logging.info('Running prompt: ' + prompt + '\n')
             print("Running prompt: " + prompt)
             negative_prompt = prompting.generate_negativePrompt()
 
@@ -423,7 +511,6 @@ def main():
                 image = grid
 
             global N_INITIAL
-            global ITERATION_COUNT
             if(ITERATION_COUNT < N_INITIAL):
                 if(ITERATION_COUNT in config.attention):
                     if(SCALES == 1 or SCALES == 2):
@@ -435,6 +522,10 @@ def main():
                             inp5: gr.update(visible=True),
                             out: gr.update(value=image, visible=True),
                             infotext: gr.update(visible=False),
+                            btn: gr.update(value="Generate new avatar"),
+                            btnEnd: gr.update(visible=True),
+                            btnNoReturn: gr.update(visible=False),
+                            btnYesEnd: gr.update(visible=False),
                             attention: gr.update(visible=True)
                         }
                     else: 
@@ -443,6 +534,9 @@ def main():
                             attention: gr.update(visible=True),
                             out: gr.update(value=image, visible=True),
                             infotext: gr.update(visible=False),
+                            btnEnd: gr.update(visible=True),
+                            btnNoReturn: gr.update(visible=False),
+                            btnYesEnd: gr.update(visible=False),
                             btn: gr.update(value="Generate new avatar")
                         }
                 elif(SCALES == 1 or SCALES == 2):
@@ -452,9 +546,12 @@ def main():
                         inp3: gr.update(visible=True),
                         inp4: gr.update(visible=True),
                         inp5: gr.update(visible=True),
+                        btnEnd: gr.update(visible=True),
                         out: gr.update(value=image, visible=True),
                         infotext: gr.update(visible=False),
                         attention: gr.update(visible=False),
+                        btnNoReturn: gr.update(visible=False),
+                        btnYesEnd: gr.update(visible=False),
                         btn: gr.update(value="Generate new avatar")
                          
                     }
@@ -463,7 +560,10 @@ def main():
                         inp1: gr.update(visible=True),
                         out: gr.update(value=image, visible=True),
                         infotext: gr.update(visible=False),
+                        btnEnd: gr.update(visible=True),
                         attention: gr.update(visible=False),
+                        btnNoReturn: gr.update(visible=False),
+                        btnYesEnd: gr.update(visible=False),
                         btn: gr.update(value="Generate new avatar")
                     }
             else:
@@ -476,22 +576,30 @@ def main():
                         inp5: gr.update(visible=False),
                         attention: gr.update(visible=False),
                         out: gr.update(value=image, visible=True),
-                        infotext: gr.update(value="Hier ist Ihr Ergebnis. \n\nVielen Dank für Ihre Teilnahme!", visible=True),
+                        btnNoReturn: gr.update(visible=False),
+                        btnYesEnd: gr.update(visible=False),
+                        infotext: gr.update(value="This is your result. \nThank you for your participation.", visible=True),
                     }
                 else:
                     return {
                         inp1: gr.update(visible=False),
                         attention: gr.update(visible=False),
                         out: gr.update(value=image, visible=True),
-                        infotext: gr.update(value="Hier ist Ihr Ergebnis. \n\nVielen Dank für Ihre Teilnahme!", visible=True),
+                        btnNoReturn: gr.update(visible=False),
+                        btnYesEnd: gr.update(visible=False),
+                        infotext: gr.update(value="This is your result. \nThank you for your participation.", visible=True),
                     }
 
         if(SCALES == 1 or SCALES  == 2):
-            btn.click(fn=diffusion, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,infotext])
-            btnEnd.click(fn=end, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,infotext])
+            btn.click(fn=diffusion, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnNoReturn,infotext])
+            btnEnd.click(fn=endquestion, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnNoReturn,infotext])
+            btnYesEnd.click(fn=end, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnNoReturn,infotext])
+            btnNoReturn.click(fn=returnbutton, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnNoReturn,infotext])
         else:
-            btn.click(fn=diffusion, inputs=[inp1, attention], outputs=[inp1,out,btn,btnEnd,infotext,attention])
-            btnEnd.click(fn=end, inputs=[inp1, attention], outputs=[inp1,out,btn,btnEnd,infotext,attention])
+            btn.click(fn=diffusion, inputs=[inp1, attention], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnNoReturn,infotext,attention])
+            btnEnd.click(fn=endquestion, inputs=[inp1, attention], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnNoReturn,infotext,attention])
+            btnYesEnd.click(fn=end , inputs=[inp1, attention], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnNoReturn,infotext,attention])
+            btnNoReturn.click(fn=returnbutton, inputs=[inp1, attention], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnNoReturn,infotext,attention])
     demo.launch()
 
 # start threads main and bo parallel
