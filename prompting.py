@@ -1,7 +1,13 @@
 
-# def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLOR_VAL_R, FACEWIDTH_VAL, FACIALHAIR_VAL,  HAIRLENGTH_VAL, HAIRSTRUCTURE_VAL, HAIRCOLOR_VAL, STATUR_VAL, NOSE_VAL, MOUTH_VAL, EYECOLOR_VAL, EYESIZE_VAL, EARS_VAL):
+import color
+
+# def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLOR_VAL_R, SKINCOLOR_VAL_G, SKINCOLOR_VAL_B, FACEWIDTH_VAL, FACIALHAIR_VAL,  HAIRLENGTH_VAL, HAIRSTRUCTURE_VAL, HAIRCOLOR_VAL_R, HAIRCOLOR_VAL_G, HAIRCOLOR_VAL_B, STATUR_VAL, NOSE_VAL, MOUTH_VAL, EYECOLOR_VAL_R, EYECOLOR_VAL_G, EYECOLOR_VAL_B, EYESIZE_VAL, EARS_VAL):
 
 def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL):
+
+        SKINCOLOR_VAL = color.get_colour_name((SKINCOLOR_VAL_R, SKINCOLOR_VAL_G, SKINCOLOR_VAL_B))
+        HAIRCOLOR_VAL = color.get_colour_name((HAIRCOLOR_VAL_R, HAIRCOLOR_VAL_G, HAIRCOLOR_VAL_B))
+        EYECOLOR_VAL = color.get_colour_name((EYECOLOR_VAL_R, EYECOLOR_VAL_G, EYECOLOR_VAL_B))
         
         if 0.00 <= ABSTR_VAL < 0.20: abstr = "A ultra abstract "; sugarcheck = False
         if 0.20 <= ABSTR_VAL < 0.40: abstr = "A abstract "; sugarcheck = False
@@ -166,7 +172,7 @@ def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL):
         if 0.75 <= EARS_VAL <= 1.00: ears= "big ears "
 
         HAIRLENGTH_VAL = 1
-        HAIRCOLOR_VAL = 1
+        
 
             # set the sugar
         if sugarcheck == True: 
@@ -175,7 +181,7 @@ def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL):
             sugar = "by NHK Animation, digital art, trending on artstation, illustration"
 
         # set the prompts
-        prompt = abstr + age + gender + glasses + facewidth + facialhair + " face, " + str(HAIRLENGTH_VAL)  + "m " + hairstructure + str(HAIRCOLOR_VAL) + " hair, " + statur + nose + mouth + eyesize + "eyes "+ "and " + ears + "is looking at the camera with a proud expression on the face and a blue background, " + sugar
+        prompt = abstr + age + gender + glasses + SKINCOLOR_VAL + "skin color, " + facewidth + facialhair + " face, " + str(HAIRLENGTH_VAL)  + "m " + hairstructure + HAIRCOLOR_VAL + " hair, " + statur + nose + mouth + eyesize + EYECOLOR_VAL + "eyes "+ "and " + ears + "is looking at the camera with a proud expression on the face and a blue background, " + sugar
 
 
         return prompt
