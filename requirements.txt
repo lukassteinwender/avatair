@@ -11,3 +11,4 @@ huggingface_hub
 invisible-watermark
 safetensors
 webcolors
+pyautogui

@@ -1,11 +1,13 @@
 import gradio as gr
 import os
+import sys
 import numpy as np
 import torch
 import random
 import threading
 import warnings
 import config
+import pyautogui
 import prompting
 import scripts
 import logging
@@ -411,6 +413,7 @@ def main():
             btnNoReturn = gr.Button(value="No, return to survey", scale=1, visible=False)
             btnYesEnd = gr.Button(value="Yes, interrupt survey", variant='stop', scale=2, visible=False)
             btnSubmitEnd = gr.Button(value="Submit reason", scale=2, visible=False)
+            btnStartOver = gr.Button(value="Restart survey (optional)", scale=2, visible=False)
         
         def endquestion(scale1, scale2, scale3, scale4, scale5, att, txt):
             if(SCALES == 1 or SCALES == 2):
@@ -439,7 +442,41 @@ def main():
                     btnYesEnd: gr.update(visible=True),
                     infotext: gr.update(value="Are you sure about closing the survey? \nYou will not get rewarded and your progress will be worthless.", visible=True)
                 }
-            
+        
+        def startOver(scale1, scale2, scale3, scale4, scale5, att, txt):
+            logging.info('Restarted program, watch new log-file. \n')
+            pyautogui.hotkey('f5');os.execv(sys.executable, ['python'] + sys.argv)
+            #if(SCALES == 1 or SCALES == 2):
+            #    return {
+            #        inp1: gr.update(visible=False),
+            #        inp2: gr.update(visible=False),
+            #        inp3: gr.update(visible=False),
+            #        inp4: gr.update(visible=False),
+            #        inp5: gr.update(visible=False),
+            #        attention: gr.update(visible=False),
+            #        out: gr.update(visible=False),
+            #        btn: gr.update(visible=True, value="Generate new avatar"),
+            #        btnEnd: gr.update(visible=False),
+            #        btnNoReturn: gr.update(visible=False),
+            #        btnYesEnd: gr.update(visible=False),
+            #        infotext: gr.update(visible=True, value="Welcome to AvatAIr, \n\nYou will get new avatars generated throughout the program. We ask you to rate them one by one using sliders, which you will see in a moment. \n\nEvery time your rating is finished the program will generate a new avatar adapted to your rating. This process is repeated several times until you are presented with your final result at the end of the program. \nThe generation of avatars may take some time depending on the performance of the system. Therefore we ask for your patience.\n\nThank you."),
+            #        text_input: gr.update(visible=False),
+            #        btnSubmitEnd: gr.update(visible=False)
+            #    }; os.execv(sys.executable, ['python'] + sys.argv)
+            #else:
+            #    return {
+            #        inp1: gr.update(visible=False),
+            #        attention: gr.update(visible=False),
+            #        out: gr.update(visible=False),
+            #        btn: gr.update(visible=True, value="Generate new avatar"),
+            #        btnEnd: gr.update(visible=False),
+            #        btnNoReturn: gr.update(visible=False),
+            #        btnYesEnd: gr.update(visible=False),
+            #        infotext: gr.update(visible=True, value="Welcome to AvatAIr, \n\nYou will get new avatars generated throughout the program. We ask you to rate them one by one using sliders, which you will see in a moment. \n\nEvery time your rating is finished the program will generate a new avatar adapted to your rating. This process is repeated several times until you are presented with your final result at the end of the program. \nThe generation of avatars may take some time depending on the performance of the system. Therefore we ask for your patience.\n\nThank you."),
+            #        text_input: gr.update(visible=False),
+            #        btnSubmitEnd: gr.update(visible=False)
+            #    }; os.execv(sys.executable, ['python'] + sys.argv)
+
         def submitEnd(scale1, scale2, scale3, scale4, scale5, att, txt):
             logging.info('End-Reason:' + txt + '\n')
             if(SCALES == 1 or SCALES == 2):
@@ -454,6 +491,7 @@ def main():
                     btn: gr.update(visible=False),
                     btnEnd: gr.update(visible=False),
                     btnNoReturn: gr.update(visible=False),
+                    btnStartOver:gr.update(visible=True),
                     btnYesEnd: gr.update(visible=False),
                     infotext: gr.update(value="Thank you, you can close this page now.", visible=True),
                     text_input: gr.update(visible=False),
@@ -468,6 +506,7 @@ def main():
                     btnEnd: gr.update(visible=False),
                     btnNoReturn: gr.update(visible=False),
                     btnYesEnd: gr.update(visible=False),
+                    btnStartOver:gr.update(visible=True),
                     infotext: gr.update(value="Thank you, you can close this page now.", visible=True),
                     text_input: gr.update(visible=False),
                     btnSubmitEnd: gr.update(visible=False)
@@ -517,7 +556,7 @@ def main():
                     btnNoReturn: gr.update(visible=False),
                     btnYesEnd: gr.update(visible=False),
                     text_input: gr.update(visible=True),
-                    infotext: gr.update(value="Thanks for your participation. \n\nCould you tell us the reason for interrupting the survey?", visible=True),
+                    infotext: gr.update(value="Thank you for your participation. \n\nCould you tell us the reason for interrupting the survey?", visible=True),
                     btnSubmitEnd: gr.update(visible=True)
                 }
             else:
@@ -530,7 +569,7 @@ def main():
                     btnNoReturn: gr.update(visible=False),
                     btnYesEnd: gr.update(visible=False),
                     text_input: gr.update(visible=True),
-                    infotext: gr.update(value="Thanks for your participation. \n\nCould you tell us the reason for interrupting the survey?", visible=True),
+                    infotext: gr.update(value="Thank you for your participation. \n\nCould you tell us the reason for interrupting the survey?", visible=True),
                     btnSubmitEnd: gr.update(visible=True)
                 }
 
@@ -710,7 +749,10 @@ def main():
                         inp3: gr.update(visible=False),
                         inp4: gr.update(visible=False),
                         inp5: gr.update(visible=False),
+                        btnStartOver: gr.update(visible=True),
                         attention: gr.update(visible=False),
+                        btn: gr.update(visible=False),
+                        btnEnd: gr.update(visible=False),
                         out: gr.update(value=image, visible=True),
                         btnNoReturn: gr.update(visible=False),
                         btnYesEnd: gr.update(visible=False),
@@ -719,25 +761,30 @@ def main():
                 else:
                     return {
                         inp1: gr.update(visible=False),
+                        btnStartOver: gr.update(visible=True),
                         attention: gr.update(visible=False),
                         out: gr.update(value=image, visible=True),
+                        btn: gr.update(visible=False),
+                        btnEnd: gr.update(visible=False),
                         btnNoReturn: gr.update(visible=False),
                         btnYesEnd: gr.update(visible=False),
                         infotext: gr.update(value="This is your result. \nThank you for your participation.", visible=True),
                     }
 
         if(SCALES == 1 or SCALES  == 2):
-            btn.click(fn=diffusion, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext, text_input])
-            btnEnd.click(fn=endquestion, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext, text_input])
-            btnYesEnd.click(fn=end, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnNoReturn,btnSubmitEnd,infotext, text_input])
-            btnNoReturn.click(fn=returnbutton, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext, text_input])
-            btnSubmitEnd.click(fn=submitEnd, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnSubmitEnd,btnYesEnd,btnNoReturn,infotext, text_input])
+            btn.click(fn=diffusion, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext, text_input,btnStartOver])
+            btnEnd.click(fn=endquestion, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext, text_input,btnStartOver])
+            btnYesEnd.click(fn=end, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnNoReturn,btnSubmitEnd,infotext, text_input,btnStartOver])
+            btnNoReturn.click(fn=returnbutton, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext, text_input,btnStartOver])
+            btnSubmitEnd.click(fn=submitEnd, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnSubmitEnd,btnYesEnd,btnNoReturn,infotext, text_input,btnStartOver])
+            btnStartOver.click(fn=startOver, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver])
         else:
-            btn.click(fn=diffusion, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnNoReturn,btnSubmitEnd,infotext,attention, text_input])
-            btnEnd.click(fn=endquestion, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input])
-            btnYesEnd.click(fn=end , inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input])
-            btnNoReturn.click(fn=returnbutton, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input])
-            btnSubmitEnd.click(fn=submitEnd, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input])
+            btn.click(fn=diffusion, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnNoReturn,btnSubmitEnd,infotext,attention, text_input,btnStartOver])
+            btnEnd.click(fn=endquestion, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver])
+            btnYesEnd.click(fn=end , inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver])
+            btnNoReturn.click(fn=returnbutton, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver])
+            btnSubmitEnd.click(fn=submitEnd, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver])
+            btnStartOver.click(fn=startOver, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver])
     demo.launch()
 
 # start threads main and bo parallel
