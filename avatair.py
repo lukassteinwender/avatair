@@ -385,7 +385,7 @@ def main():
         gr.Markdown("**AvatAIr**")
         with gr.Row():
             with gr.Column():
-                infotext = gr.TextArea(value="Willkommen bei AvatAIr, \n\nSie werden im Laufe des Programmes immer wieder neue Avatare generiert bekommen. Diese bitten wir Sie, mit Hilfe von Slidern, welche Sie gleich sehen werden nach und nach zu bewerten. \n\nImmer wenn Ihre Bewertung fertig ist generiert das Programm einen neuen, auf Ihre Bewertung angepassten Avatar. Dieser Prozess wird mehrmals wiederholt, bis Ihnen zum Schluss des Programmes ihr finales Ergebnis präsentiert wird. \n\nDie Generierung der Avatare kann je nach Leistung des Systems etwas Zeit in Anspruch nehmen. Wir bitten deshalb um Geduld.\n\nVielen Dank.", interactive=False, show_label=False)
+                infotext = gr.TextArea(value="Welcome to AvatAIr, \n\nYou will get new avatars generated throughout the program. We ask you to rate them one by one using sliders, which you will see in a moment. \n\nEvery time your rating is finished the program will generate a new avatar adapted to your rating. This process is repeated several times until you are presented with your final result at the end of the program. \nThe generation of avatars may take some time depending on the performance of the system. Therefore we ask for your patience.\n\nThank you.", interactive=False, show_label=False)
                 global SCALES
                 if(SCALES == 1):
                     inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="acceptance", info="0 = low | 1 = high", visible=False)
@@ -402,15 +402,17 @@ def main():
                 if(SCALES == 3):
                     inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="efficiency", info="0 = low | 1 = high", visible=False)
                 attention = gr.Slider(1, 100, step=1, value=0, label=att_check_info, visible=False)
-            out = gr.Image()
+                text_input = gr.Textbox(label="feedback (optional)", visible=False)
+            out = gr.Image(visible=False)
             out.style(height=512, width=512)
         with gr.Row():
             btn = gr.Button(value="Run", scale=1)
             btnEnd = gr.Button(value="Interrupt survey", variant='stop', scale=2, visible=False)
             btnNoReturn = gr.Button(value="No, return to survey", scale=1, visible=False)
             btnYesEnd = gr.Button(value="Yes, interrupt survey", variant='stop', scale=2, visible=False)
+            btnSubmitEnd = gr.Button(value="Submit reason", scale=2, visible=False)
         
-        def endquestion(scale1, scale2, scale3, scale4, scale5, att):
+        def endquestion(scale1, scale2, scale3, scale4, scale5, att, txt):
             if(SCALES == 1 or SCALES == 2):
                 return {
                     inp1: gr.update(visible=False),
@@ -437,8 +439,41 @@ def main():
                     btnYesEnd: gr.update(visible=True),
                     infotext: gr.update(value="Are you sure about closing the survey? \nYou will not get rewarded and your progress will be worthless.", visible=True)
                 }
+            
+        def submitEnd(scale1, scale2, scale3, scale4, scale5, att, txt):
+            logging.info('End-Reason:' + txt + '\n')
+            if(SCALES == 1 or SCALES == 2):
+                return {
+                    inp1: gr.update(visible=False),
+                    inp2: gr.update(visible=False),
+                    inp3: gr.update(visible=False),
+                    inp4: gr.update(visible=False),
+                    inp5: gr.update(visible=False),
+                    attention: gr.update(visible=False),
+                    out: gr.update(visible=False),
+                    btn: gr.update(visible=False),
+                    btnEnd: gr.update(visible=False),
+                    btnNoReturn: gr.update(visible=False),
+                    btnYesEnd: gr.update(visible=False),
+                    infotext: gr.update(value="Thank you, you can close this page now.", visible=True),
+                    text_input: gr.update(visible=False),
+                    btnSubmitEnd: gr.update(visible=False)
+                }
+            else:
+                return {
+                    inp1: gr.update(visible=False),
+                    attention: gr.update(visible=False),
+                    out: gr.update(visible=False),
+                    btn: gr.update(visible=False),
+                    btnEnd: gr.update(visible=False),
+                    btnNoReturn: gr.update(visible=False),
+                    btnYesEnd: gr.update(visible=False),
+                    infotext: gr.update(value="Thank you, you can close this page now.", visible=True),
+                    text_input: gr.update(visible=False),
+                    btnSubmitEnd: gr.update(visible=False)
+                }
         
-        def returnbutton(scale1, scale2, scale3, scale4, scale5, att):
+        def returnbutton(scale1, scale2, scale3, scale4, scale5, att, txt):
             if(SCALES == 1 or SCALES == 2):
                 return {
                     inp1: gr.update(visible=True),
@@ -466,7 +501,7 @@ def main():
                     infotext: gr.update(visible=False)
                 }
             
-        def end(scale1, scale2, scale3, scale4, scale5, att):
+        def end(scale1, scale2, scale3, scale4, scale5, att, txt):
             logging.info('Survey interrupted by user!' + '\n')
             if(SCALES == 1 or SCALES == 2):
                 return {
@@ -481,7 +516,9 @@ def main():
                     btnEnd: gr.update(visible=False),
                     btnNoReturn: gr.update(visible=False),
                     btnYesEnd: gr.update(visible=False),
-                    infotext: gr.update(value="Thanks for your participation. \n\nCould you tell us the reason for interrupting the survey?", visible=True)
+                    text_input: gr.update(visible=True),
+                    infotext: gr.update(value="Thanks for your participation. \n\nCould you tell us the reason for interrupting the survey?", visible=True),
+                    btnSubmitEnd: gr.update(visible=True)
                 }
             else:
                 return {
@@ -492,10 +529,12 @@ def main():
                     btnEnd: gr.update(visible=False),
                     btnNoReturn: gr.update(visible=False),
                     btnYesEnd: gr.update(visible=False),
-                    infotext: gr.update(value="Thanks for your participation. \n\nCould you tell us the reason for interrupting the survey?", visible=True)
+                    text_input: gr.update(visible=True),
+                    infotext: gr.update(value="Thanks for your participation. \n\nCould you tell us the reason for interrupting the survey?", visible=True),
+                    btnSubmitEnd: gr.update(visible=True)
                 }
 
-        def diffusion(scale1, scale2, scale3, scale4, scale5, att):
+        def diffusion(scale1, scale2, scale3, scale4, scale5, att, txt):
     
             # empty cuda-cache
             torch.cuda.empty_cache()
@@ -688,15 +727,17 @@ def main():
                     }
 
         if(SCALES == 1 or SCALES  == 2):
-            btn.click(fn=diffusion, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnNoReturn,infotext])
-            btnEnd.click(fn=endquestion, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnNoReturn,infotext])
-            btnYesEnd.click(fn=end, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnNoReturn,infotext])
-            btnNoReturn.click(fn=returnbutton, inputs=[inp1, inp2, inp3, inp4, inp5, attention], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnNoReturn,infotext])
+            btn.click(fn=diffusion, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext, text_input])
+            btnEnd.click(fn=endquestion, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext, text_input])
+            btnYesEnd.click(fn=end, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnNoReturn,btnSubmitEnd,infotext, text_input])
+            btnNoReturn.click(fn=returnbutton, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext, text_input])
+            btnSubmitEnd.click(fn=submitEnd, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnSubmitEnd,btnYesEnd,btnNoReturn,infotext, text_input])
         else:
-            btn.click(fn=diffusion, inputs=[inp1, attention], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnNoReturn,infotext,attention])
-            btnEnd.click(fn=endquestion, inputs=[inp1, attention], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnNoReturn,infotext,attention])
-            btnYesEnd.click(fn=end , inputs=[inp1, attention], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnNoReturn,infotext,attention])
-            btnNoReturn.click(fn=returnbutton, inputs=[inp1, attention], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnNoReturn,infotext,attention])
+            btn.click(fn=diffusion, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnNoReturn,btnSubmitEnd,infotext,attention, text_input])
+            btnEnd.click(fn=endquestion, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input])
+            btnYesEnd.click(fn=end , inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input])
+            btnNoReturn.click(fn=returnbutton, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input])
+            btnSubmitEnd.click(fn=submitEnd, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input])
     demo.launch()
 
 # start threads main and bo parallel
