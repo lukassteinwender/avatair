@@ -416,7 +416,7 @@ def main():
                     inp3: gr.update(visible=False),
                     inp4: gr.update(visible=False),
                     inp5: gr.update(visible=False),
-                    attention: gr.update(visible=False),
+                    attention: gr.update(visible=False, info="Pull the slider to " + str(ATT_CHECK_VAL)),
                     out: gr.update(visible=False),
                     btn: gr.update(visible=False),
                     btnEnd: gr.update(visible=False),
@@ -427,7 +427,7 @@ def main():
             else:
                 return {
                     inp1: gr.update(visible=False),
-                    attention: gr.update(visible=False),
+                    attention: gr.update(visible=False, info="Pull the slider to " + str(ATT_CHECK_VAL)),
                     out: gr.update(visible=False),
                     btn: gr.update(visible=False),
                     btnEnd: gr.update(visible=False),
@@ -444,7 +444,7 @@ def main():
                     inp3: gr.update(visible=True),
                     inp4: gr.update(visible=True),
                     inp5: gr.update(visible=True),
-                    attention: gr.update(visible=False),
+                    attention: gr.update(visible=False, info="Pull the slider to " + str(ATT_CHECK_VAL)),
                     out: gr.update(visible=True),
                     btn: gr.update(visible=True),
                     btnEnd: gr.update(visible=True),
@@ -455,7 +455,7 @@ def main():
             else:
                 return {
                     inp1: gr.update(visible=True),
-                    attention: gr.update(visible=False),
+                    attention: gr.update(visible=False, info="Pull the slider to " + str(ATT_CHECK_VAL)),
                     out: gr.update(visible=True),
                     btn: gr.update(visible=True),
                     btnEnd: gr.update(visible=True),
@@ -473,7 +473,7 @@ def main():
                     inp3: gr.update(visible=False),
                     inp4: gr.update(visible=False),
                     inp5: gr.update(visible=False),
-                    attention: gr.update(visible=False),
+                    attention: gr.update(visible=False, info="Pull the slider to " + str(ATT_CHECK_VAL)),
                     out: gr.update(visible=False),
                     btn: gr.update(visible=False),
                     btnEnd: gr.update(visible=False),
@@ -484,7 +484,7 @@ def main():
             else:
                 return {
                     inp1: gr.update(visible=False),
-                    attention: gr.update(visible=False),
+                    attention: gr.update(visible=False, info="Pull the slider to " + str(ATT_CHECK_VAL)),
                     out: gr.update(visible=False),
                     btn: gr.update(visible=False),
                     btnEnd: gr.update(visible=False),
@@ -612,12 +612,12 @@ def main():
                             btnEnd: gr.update(visible=True),
                             btnNoReturn: gr.update(visible=False),
                             btnYesEnd: gr.update(visible=False),
-                            attention: gr.update(visible=True)
+                            attention: gr.update(visible=True, info="Pull the slider to " + str(ATT_CHECK_VAL))
                         }
                     else: 
                         return {
                             inp1: gr.update(visible=True),
-                            attention: gr.update(visible=True),
+                            attention: gr.update(visible=True, info="Pull the slider to " + str(ATT_CHECK_VAL)),
                             out: gr.update(value=image, visible=True),
                             infotext: gr.update(visible=False),
                             btnEnd: gr.update(visible=True),
@@ -635,7 +635,7 @@ def main():
                         btnEnd: gr.update(visible=True),
                         out: gr.update(value=image, visible=True),
                         infotext: gr.update(visible=False),
-                        attention: gr.update(visible=False),
+                        attention: gr.update(visible=False, info="Pull the slider to " + str(ATT_CHECK_VAL)),
                         btnNoReturn: gr.update(visible=False),
                         btnYesEnd: gr.update(visible=False),
                         btn: gr.update(value="Generate new avatar")
@@ -647,7 +647,7 @@ def main():
                         out: gr.update(value=image, visible=True),
                         infotext: gr.update(visible=False),
                         btnEnd: gr.update(visible=True),
-                        attention: gr.update(visible=False),
+                        attention: gr.update(visible=False, info="Pull the slider to " + str(ATT_CHECK_VAL)),
                         btnNoReturn: gr.update(visible=False),
                         btnYesEnd: gr.update(visible=False),
                         btn: gr.update(value="Generate new avatar")
@@ -660,7 +660,7 @@ def main():
                         inp3: gr.update(visible=False),
                         inp4: gr.update(visible=False),
                         inp5: gr.update(visible=False),
-                        attention: gr.update(visible=False),
+                        attention: gr.update(visible=False, info="Pull the slider to " + str(ATT_CHECK_VAL)),
                         out: gr.update(value=image, visible=True),
                         btnNoReturn: gr.update(visible=False),
                         btnYesEnd: gr.update(visible=False),
@@ -669,7 +669,7 @@ def main():
                 else:
                     return {
                         inp1: gr.update(visible=False),
-                        attention: gr.update(visible=False),
+                        attention: gr.update(visible=False, info="Pull the slider to " + str(ATT_CHECK_VAL)),
                         out: gr.update(value=image, visible=True),
                         btnNoReturn: gr.update(visible=False),
                         btnYesEnd: gr.update(visible=False),
