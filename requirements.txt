@@ -10,3 +10,4 @@ pandas>=2.1.0
 huggingface_hub
 invisible-watermark
 safetensors
+webcolors

@@ -1,13 +1,11 @@
 
 import color
 
-# def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLOR_VAL_R, SKINCOLOR_VAL_G, SKINCOLOR_VAL_B, FACEWIDTH_VAL, FACIALHAIR_VAL,  HAIRLENGTH_VAL, HAIRSTRUCTURE_VAL, HAIRCOLOR_VAL_R, HAIRCOLOR_VAL_G, HAIRCOLOR_VAL_B, STATUR_VAL, NOSE_VAL, MOUTH_VAL, EYECOLOR_VAL_R, EYECOLOR_VAL_G, EYECOLOR_VAL_B, EYESIZE_VAL, EARS_VAL):
+def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLOR_VAL_R, SKINCOLOR_VAL_G, SKINCOLOR_VAL_B, FACEWIDTH_VAL, FACIALHAIR_VAL,  HAIRLENGTH_VAL, HAIRSTRUCTURE_VAL, HAIRCOLOR_VAL_R, HAIRCOLOR_VAL_G, HAIRCOLOR_VAL_B, STATUR_VAL, NOSE_VAL, MOUTH_VAL, EYECOLOR_VAL_R, EYECOLOR_VAL_G, EYECOLOR_VAL_B, EYESIZE_VAL, EARS_VAL):
 
-def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL):
-
-        SKINCOLOR_VAL = color.get_colour_name((SKINCOLOR_VAL_R, SKINCOLOR_VAL_G, SKINCOLOR_VAL_B))
-        HAIRCOLOR_VAL = color.get_colour_name((HAIRCOLOR_VAL_R, HAIRCOLOR_VAL_G, HAIRCOLOR_VAL_B))
-        EYECOLOR_VAL = color.get_colour_name((EYECOLOR_VAL_R, EYECOLOR_VAL_G, EYECOLOR_VAL_B))
+        SKINCOLOR_VAL = color.colour_to_text((SKINCOLOR_VAL_R, SKINCOLOR_VAL_G, SKINCOLOR_VAL_B))
+        HAIRCOLOR_VAL = color.colour_to_text((HAIRCOLOR_VAL_R, HAIRCOLOR_VAL_G, HAIRCOLOR_VAL_B))
+        EYECOLOR_VAL = color.colour_to_text((EYECOLOR_VAL_R, EYECOLOR_VAL_G, EYECOLOR_VAL_B))
         
         if 0.00 <= ABSTR_VAL < 0.20: abstr = "A ultra abstract "; sugarcheck = False
         if 0.20 <= ABSTR_VAL < 0.40: abstr = "A abstract "; sugarcheck = False
@@ -123,56 +121,45 @@ def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL):
         if 0.00 <= GLASSES_VAL < 0.50: glasses = "with glasses, "
         if 0.50 <= GLASSES_VAL <= 1.00: glasses = "without glasses, "
 
-        FACEWIDTH_VAL = 1
         if 0.00 <= FACEWIDTH_VAL < 0.34: facewidth = "thin "
         if 0.34 <= FACEWIDTH_VAL < 0.67: facewidth = "medium-sized "
         if 0.67 <= FACEWIDTH_VAL <= 1.00: facewidth = "wide "
 
-        FACIALHAIR_VAL = 1
         if 0.00 <= FACIALHAIR_VAL < 0.34: facialhair = "clean shaven "
         if 0.34 <= FACIALHAIR_VAL < 0.67: facialhair = "little bearded"
         if 0.67 <= FACIALHAIR_VAL <= 1.00: facialhair = "bearded "
 
-        HAIRSTRUCTURE_VAL = 1
         if 0.00 <= HAIRSTRUCTURE_VAL < 0.20: hairstructure = "stick straight "
         if 0.20 <= HAIRSTRUCTURE_VAL < 0.40: hairstructure = "straight "
         if 0.40 <= HAIRSTRUCTURE_VAL < 0.60: hairstructure = "wavy "
         if 0.60 <= HAIRSTRUCTURE_VAL < 0.80: hairstructure = "big curls "
         if 0.80 <= HAIRSTRUCTURE_VAL <= 1.00: hairstructure = "small curls "
 
-        STATUR_VAL = 1
         if 0.00 <= STATUR_VAL < 0.20: statur = "very thin stature, "
         if 0.20 <= STATUR_VAL < 0.40: statur = "thin stature, "
         if 0.40 <= STATUR_VAL < 0.60: statur = "regular stature, "
         if 0.60 <= STATUR_VAL < 0.80: statur = "obese stature, "
         if 0.80 <= STATUR_VAL <= 1.00: statur = "very obese stature, "
 
-        NOSE_VAL = 1
         if 0.00 <= NOSE_VAL < 0.25: nose = "no nose, "
         if 0.25 <= NOSE_VAL < 0.50: nose = "small nose, "
         if 0.50 <= NOSE_VAL < 0.75: nose = "medium-sized nose, "
         if 0.75 <= NOSE_VAL <= 1.00: nose = "big nose, "
         
-        MOUTH_VAL = 1
         if 0.00 <= MOUTH_VAL < 0.25: mouth = "no mouth, "
         if 0.25 <= MOUTH_VAL < 0.50: mouth = "small mouth, "
         if 0.50 <= MOUTH_VAL < 0.75: mouth = "medium-sized mouth, "
         if 0.75 <= MOUTH_VAL <= 1.00: mouth = "big mouth, "
 
-        EYESIZE_VAL = 1
         if 0.00 <= EYESIZE_VAL < 0.25: eyesize = "no "
         if 0.25 <= EYESIZE_VAL < 0.50: eyesize = "small "
         if 0.50 <= EYESIZE_VAL < 0.75: eyesize = "medium-sized "
         if 0.75 <= EYESIZE_VAL <= 1.00: eyesize = "big "
 
-        EARS_VAL = 1
         if 0.00 <= EARS_VAL < 0.25: ears= "no ears "
         if 0.25 <= EARS_VAL < 0.50: ears= "small ears "
         if 0.50 <= EARS_VAL < 0.75: ears= "medium-sized ears "
         if 0.75 <= EARS_VAL <= 1.00: ears= "big ears "
-
-        HAIRLENGTH_VAL = 1
-        
 
             # set the sugar
         if sugarcheck == True: 
