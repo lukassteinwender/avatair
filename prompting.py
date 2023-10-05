@@ -194,7 +194,7 @@ def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLO
             sugar = "by NHK Animation, digital art, trending on artstation, illustration"
 
         # set the prompts
-        prompt = abstr + age + gender + glasses + SKINCOLOR_VAL + " skin color, " + facewidth + facialhair + " face, " +  str(hairlength) + "m long " + hairstructure + HAIRCOLOR_VAL + " hair, " + statur + nose + mouth + eyesize + EYECOLOR_VAL + " eyes "+ "and " + ears + "is looking at the camera with a proud expression on the face and a blue background, " + sugar
+        prompt = abstr + age + gender + "infront of grey background " + glasses + SKINCOLOR_VAL + " skin color, " + facewidth + facialhair + " face, " +  str(hairlength) + "m long " + hairstructure + HAIRCOLOR_VAL + " hair, " + statur + nose + mouth + eyesize + EYECOLOR_VAL + " eyes "+ "and " + ears + "is looking at the camera with a proud expression on the face, " + sugar
 
 
         return prompt

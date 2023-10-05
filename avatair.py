@@ -61,6 +61,7 @@ logging.getLogger("markdown_it").setLevel(logging.WARNING)
 logging.getLogger("asyncio").setLevel(logging.WARNING)
 logging.info('Starting avatair...\n')
 
+# important global values for the bayesian optimization
 BATCH_SIZE = 1 # Number of design parameter points to query at next iteration
 NUM_RESTARTS = 10 # Used for the acquisition function number of restarts in optimization
 RAW_SAMPLES = 1024 # Initial restart location candidates
@@ -83,12 +84,12 @@ INITIAL_CHECK = False
 ATT_CHECK_VAL = random.randint(0,100)
 ITERATION_COUNT = 0
 
-SCALE_1 = 0.3000
+SCALE_1 = random.randint(0,1000) / 1000
 if(SCALES == 1 or SCALES == 2):
-    SCALE_2 = 0.2000
-    SCALE_3 = 0.2000
-    SCALE_4 = 0.2000
-    SCALE_5 = 0.2000
+    SCALE_2 = random.randint(0,1000) / 1000
+    SCALE_3 = random.randint(0,1000) / 1000
+    SCALE_4 = random.randint(0,1000) / 1000
+    SCALE_5 = random.randint(0,1000) / 1000
 
 ABSTR_VAL = 1.00
 AGE_VAL = 1.00
@@ -124,10 +125,9 @@ def objective(x):
     global INITIAL_CHECK
 
     if INITIAL_CHECK == False:
-        fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x) * random.randint(0,1000)
-    # print(f"datatype: {type(fs)}")
+        fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x)
     else:
-        fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x) * random.randint(0,1000)
+        fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x)
         global SCALE_1
         if(SCALES == 1 or SCALES == 2):
             global SCALE_2
@@ -213,10 +213,6 @@ def mobo_execute(seed, iterations, initial_samples):
     print(f"train_qehvi: {train_obj_qehvi.shape[-1]}")
 
     print("generated initial data")
-
-    global INITIAL_CHECK
-
-    INITIAL_CHECK = True
 
     # Initialize GP models
     mll_qehvi, model_qehvi = initialize_model(train_x_qehvi, train_obj_qehvi)
@@ -390,19 +386,19 @@ def main():
                 infotext = gr.TextArea(value="Welcome to AvatAIr, \n\nYou will get new avatars generated throughout the program. We ask you to rate them one by one using sliders, which you will see in a moment. \n\nEvery time your rating is finished the program will generate a new avatar adapted to your rating. This process is repeated several times until you are presented with your final result at the end of the program. \nThe generation of avatars may take some time depending on the performance of the system. Therefore we ask for your patience.\n\nThank you.", interactive=False, show_label=False)
                 global SCALES
                 if(SCALES == 1):
-                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="acceptance", info="0 = low | 1 = high", visible=False)
-                    inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="likeability", info="0 = low | 1 = high", visible=False)
-                    inp3 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="empathy", info="0 = low | 1 = high", visible=False)
-                    inp4 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="anthropomorphism", info="0 = low | 1 = high", visible=False)
-                    inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="trust", info="0 = low | 1 = high", visible=False)
+                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="acceptance", info="0 = low | 1 = high | general agreement that the avatar is satisfactory or right", visible=False)
+                    inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="likeability", info="0 = low | 1 = high | how much do you like the avatar", visible=False)
+                    inp3 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="empathy", info="0 = low | 1 = high | how empathic does the avatar effect", visible=False)
+                    inp4 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="anthropomorphism", info="0 = low | 1 = high | how human-like is the avatar", visible=False)
+                    inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="trust", info="0 = low | 1 = high | how much do you trust the avatar", visible=False)
                 if(SCALES == 2):
-                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="openness", info="0 = low | 1 = high", visible=False)
-                    inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="conscientiousness", info="0 = low | 1 = high", visible=False)
-                    inp3 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="extraversion", info="0 = low | 1 = high", visible=False)
-                    inp4 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="agreeableness", info="0 = low | 1 = high", visible=False)
-                    inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="neuroticism", info="0 = low | 1 = high", visible=False)
+                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="openness", info="0 = low | 1 = high | how open/acceptant does the avatar effect", visible=False)
+                    inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="conscientiousness", info="0 = low | 1 = high | does the avatar feel conscientious", visible=False)
+                    inp3 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="extraversion", info="0 = low | 1 = high | how extroverted does the avatar look", visible=False)
+                    inp4 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="agreeableness", info="0 = low | 1 = high | how sympathetic/cooperative/warm does the avatar feel", visible=False)
+                    inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="neuroticism", info="0 = low | 1 = high | how emotional stable would you rate the avatar", visible=False)
                 if(SCALES == 3):
-                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="efficiency", info="0 = low | 1 = high", visible=False)
+                    inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="efficiency", info="0 = low | 1 = high | how good does the avatar work", visible=False)
                 attention = gr.Slider(1, 100, step=1, value=0, label=att_check_info, visible=False)
                 text_input = gr.Textbox(label="feedback (optional)", visible=False)
             out = gr.Image(visible=False)
@@ -446,36 +442,6 @@ def main():
         def startOver(scale1, scale2, scale3, scale4, scale5, att, txt):
             logging.info('Restarted program, watch new log-file. \n')
             pyautogui.hotkey('f5');os.execv(sys.executable, ['python'] + sys.argv)
-            #if(SCALES == 1 or SCALES == 2):
-            #    return {
-            #        inp1: gr.update(visible=False),
-            #        inp2: gr.update(visible=False),
-            #        inp3: gr.update(visible=False),
-            #        inp4: gr.update(visible=False),
-            #        inp5: gr.update(visible=False),
-            #        attention: gr.update(visible=False),
-            #        out: gr.update(visible=False),
-            #        btn: gr.update(visible=True, value="Generate new avatar"),
-            #        btnEnd: gr.update(visible=False),
-            #        btnNoReturn: gr.update(visible=False),
-            #        btnYesEnd: gr.update(visible=False),
-            #        infotext: gr.update(visible=True, value="Welcome to AvatAIr, \n\nYou will get new avatars generated throughout the program. We ask you to rate them one by one using sliders, which you will see in a moment. \n\nEvery time your rating is finished the program will generate a new avatar adapted to your rating. This process is repeated several times until you are presented with your final result at the end of the program. \nThe generation of avatars may take some time depending on the performance of the system. Therefore we ask for your patience.\n\nThank you."),
-            #        text_input: gr.update(visible=False),
-            #        btnSubmitEnd: gr.update(visible=False)
-            #    }; os.execv(sys.executable, ['python'] + sys.argv)
-            #else:
-            #    return {
-            #        inp1: gr.update(visible=False),
-            #        attention: gr.update(visible=False),
-            #        out: gr.update(visible=False),
-            #        btn: gr.update(visible=True, value="Generate new avatar"),
-            #        btnEnd: gr.update(visible=False),
-            #        btnNoReturn: gr.update(visible=False),
-            #        btnYesEnd: gr.update(visible=False),
-            #        infotext: gr.update(visible=True, value="Welcome to AvatAIr, \n\nYou will get new avatars generated throughout the program. We ask you to rate them one by one using sliders, which you will see in a moment. \n\nEvery time your rating is finished the program will generate a new avatar adapted to your rating. This process is repeated several times until you are presented with your final result at the end of the program. \nThe generation of avatars may take some time depending on the performance of the system. Therefore we ask for your patience.\n\nThank you."),
-            #        text_input: gr.update(visible=False),
-            #        btnSubmitEnd: gr.update(visible=False)
-            #    }; os.execv(sys.executable, ['python'] + sys.argv)
 
         def submitEnd(scale1, scale2, scale3, scale4, scale5, att, txt):
             logging.info('End-Reason:' + txt + '\n')
@@ -640,7 +606,7 @@ def main():
             global EYECOLOR_VAL_G
             global EYECOLOR_VAL_B
 
-            sugarcheck= False
+            sugarcheck = False
 
             # stable-diffusion photo-generation script
             torch.manual_seed(random.randint(0, 1000))
@@ -667,7 +633,8 @@ def main():
             logging.info('Running prompt: ' + prompt + '\n')
             print("Running prompt: " + prompt)
             negative_prompt = prompting.generate_negativePrompt()
-            
+            global INITIAL_CHECK
+            INITIAL_CHECK = True
             
 
             if(config.pictures == 1):
