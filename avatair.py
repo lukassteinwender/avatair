@@ -65,10 +65,10 @@ logging.info('Starting avatair...\n')
 BATCH_SIZE = 1 # Number of design parameter points to query at next iteration
 NUM_RESTARTS = 10 # Used for the acquisition function number of restarts in optimization
 RAW_SAMPLES = 1024 # Initial restart location candidates
-N_ITERATIONS = config.initial * 8 # Number of optimization iterations
+N_ITERATIONS = config.initial * 4 # Number of optimization iterations
 MC_SAMPLES = 512 # Number of samples to approximate acquisition function
 N_INITIAL = config.initial
-SEED = 2 # Seed to initialize the initial samples obtained
+SEED = random.randint(0,10000) # Seed to initialize the initial samples obtained
 
 SCALES = config.scales
 
@@ -123,17 +123,18 @@ problem_bounds [1] = 1
 def objective(x):
     x = x.cpu().numpy()
     global INITIAL_CHECK
-
+    global SCALES
+    global SCALE_1
+    if(SCALES == 1 or SCALES == 2):
+        global SCALE_2
+        global SCALE_3
+        global SCALE_4
+        global SCALE_5
     if INITIAL_CHECK == False:
         fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x)
     else:
         fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x)
-        global SCALE_1
-        if(SCALES == 1 or SCALES == 2):
-            global SCALE_2
-            global SCALE_3
-            global SCALE_4
-            global SCALE_5
+        
         fs[0] = SCALE_1
         if(SCALES == 1 or SCALES == 2):
             fs[1] = SCALE_2
