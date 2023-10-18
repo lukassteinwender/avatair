@@ -13,7 +13,13 @@ python avatair.py
 ```
 
 **Config:**<br />
-Adjust key-values before running the avatair-script in *config.py*.
+There are several options you can adjust in the *config.py*-file:
+*initial*: Number of iterations that will run until the program is finished
+*scales*: 3 types of scales for other use-cases
+*pictures*: The amount of pictures should be generated during one iteration
+*attention*: Possibility to add several attention-checks after x iterations
+*model*: Use different types of SD-models (AvatAIr is optimized for SG161222/Realistic_Vision_V1.4)
+*token*: just needed for some specific SD-models
 
 
 **Requirements:**<br />
