@@ -196,7 +196,13 @@ def optimize_qehvi(model, train_obj, sampler):
     # observe new values 
     new_x =  unnormalize(candidates.detach(), bounds=problem_bounds)
     return new_x
-    
+
+def restartAv():
+    eventStop.wait()
+    eventStop.clear()
+    time.sleep(1)
+    os.execv(sys.executable, ['python'] + sys.argv)
+
 def mobo_execute(seed, iterations, initial_samples):
     
     event3.wait()
@@ -442,7 +448,19 @@ def main():
         
         def startOver(scale1, scale2, scale3, scale4, scale5, att, txt):
             logging.info('Restarted program, watch new log-file. \n')
-            pyautogui.hotkey('f5');os.execv(sys.executable, ['python'] + sys.argv)
+            try:
+                if(SCALES == 1 or SCALES == 2):
+                    return {
+                        btnStartOver:gr.update(visible=False),
+                        infotext: gr.update(value="Restarting the survey, please reload the page in a few seconds if it isn't reloading by itself.", visible=True)
+                    }
+                else:
+                    return {
+                        btnStartOver:gr.update(visible=False),
+                        infotext: gr.update(value="Restarting the survey, please reload the page in a few seconds if it isn't reloading by itself..", visible=True)
+                    }
+            finally:
+                eventStop.set()
 
         def submitEnd(scale1, scale2, scale3, scale4, scale5, att, txt):
             logging.info('End-Reason:' + txt + '\n')
@@ -753,6 +771,7 @@ def main():
             btnNoReturn.click(fn=returnbutton, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver])
             btnSubmitEnd.click(fn=submitEnd, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver])
             btnStartOver.click(fn=startOver, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver])
+    pyautogui.hotkey('f5')
     demo.launch()
 
 # start threads main and bo parallel
@@ -762,6 +781,9 @@ warnings.filterwarnings("ignore", category=UserWarning, module=".*botorch.*")
 event = threading.Event()
 event2 = threading.Event()
 event3 = threading.Event()
+eventStop = threading.Event()
 t1 = threading.Thread(target=mobo_execute, args=(SEED, N_ITERATIONS, N_INITIAL))
+t2 = threading.Thread(target=restartAv)
 t1.start()
+t2.start()
 main()
