@@ -26,7 +26,7 @@ There are several options you can adjust in the *config.py*-file:<br />
 **Requirements:**<br />
 requirements.txt
 
-**The pipeline is planned to work as following:**<br /><br />
+**The pipeline works as following:**<br /><br />
 <img src="https://raw.githubusercontent.com/lukassteinwender/avatair/main/Documentation/picture/pipeline.png" width="600"><br />
 
 <br />
