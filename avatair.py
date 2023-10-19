@@ -213,7 +213,7 @@ def optimize_qehvi(model, train_obj, sampler):
 def restartAv():
     eventStop.wait()
     eventStop.clear()
-    time.sleep(1)
+    time.sleep(2)
     os.execv(sys.executable, ['python'] + sys.argv)
 
 def mobo_execute(seed, iterations, initial_samples):
@@ -500,11 +500,13 @@ def main():
             try:
                 if(SCALES == 1 or SCALES == 2):
                     return {
+                        out: gr.update(visible=False),
                         btnStartOver:gr.update(visible=False),
                         infotext: gr.update(value="Restarting the survey, please reload the page in a few seconds if it isn't reloading by itself.", visible=True)
                     }
                 else:
                     return {
+                        out: gr.update(visible=False),
                         btnStartOver:gr.update(visible=False),
                         infotext: gr.update(value="Restarting the survey, please reload the page in a few seconds if it isn't reloading by itself..", visible=True)
                     }
