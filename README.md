@@ -19,7 +19,8 @@ There are several options you can adjust in the *config.py*-file:<br />
 *pictures*: The amount of pictures should be generated during one iteration<br />
 *attention*: Possibility to add several attention-checks after x iterations<br />
 *model*: Use different types of SD-models (AvatAIr is optimized for SG161222/Realistic_Vision_V1.4)<br />
-*token*: just needed for some specific SD-models<br />
+*token*: Just needed for some specific SD-models<br />
+*promptmodel*: Generate prompt with defined or latent variables<br />
 
 
 **Requirements:**<br />
