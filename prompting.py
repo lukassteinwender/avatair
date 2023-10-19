@@ -203,35 +203,34 @@ def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLO
 def generate_latentprompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL):
 
     #if calculate_postivevalue(OPEN_VAL) > 0:
-    openness= "(Openness:" + str(calculate_postivevalue(OPEN_VAL)) + ")"
+    openness= "(Openness:" + str(calculate_postivevalue("{:.2f}".format(OPEN_VAL.item()))) + ")"
     #elif calculate_postivevalue(CON_VAL) > 0:   
-    conscientiousness= "(Conscientiousness:" + str(calculate_postivevalue(CON_VAL)) + ")"
+    conscientiousness= "(Conscientiousness:" + str(calculate_postivevalue("{:.2f}".format(CON_VAL.item()))) + ")"
     #elif calculate_postivevalue(EXTRA_VAL) > 0:
-    extraversion= "(Extraversion:" + str(calculate_postivevalue(EXTRA_VAL)) + ")"
+    extraversion= "(Extraversion:" + str(calculate_postivevalue("{:.2f}".format(EXTRA_VAL.item()))) + ")"
     #elif calculate_postivevalue(AGREE_VAL) > 0:
-    agreeableness= "(Agreeableness:" + str(calculate_postivevalue(AGREE_VAL)) + ")"
+    agreeableness= "(Agreeableness:" + str(calculate_postivevalue("{:.2f}".format(AGREE_VAL.item()))) + ")"
     #elif calculate_postivevalue(NEURO_VAL) > 0:
-    neuroticism= "(Neuroticism:" + str(calculate_postivevalue(NEURO_VAL)) + ")"
+    neuroticism= "(Neuroticism:" + str(calculate_postivevalue("{:.2f}".format(NEURO_VAL.item()))) + ")"
     #elif calculate_postivevalue(ACCEPT_VAL) > 0:
-    acceptance= "(Acceptance:" + str(calculate_postivevalue(ACCEPT_VAL)) + ")"
+    acceptance= "(Acceptance:" + str(calculate_postivevalue("{:.2f}".format(ACCEPT_VAL.item()))) + ")"
     #elif calculate_postivevalue(LIKE_VAL) > 0:
-    likeability= "(Likeability:" + str(calculate_postivevalue(LIKE_VAL)) + ")"
+    likeability= "(Likeability:" + str(calculate_postivevalue("{:.2f}".format(LIKE_VAL.item()))) + ")"
     #elif calculate_postivevalue(EMP_VAL) > 0:
-    empathy= "(Empathy:" + str(calculate_postivevalue(EMP_VAL)) + ")"
+    empathy= "(Empathy:" + str(calculate_postivevalue("{:.2f}".format(EMP_VAL.item()))) + ")"
     #elif calculate_postivevalue(ANTHRO_VAL) > 0:
-    anthropomorphism= "(Anthropomorphism:" + str(calculate_postivevalue(ANTHRO_VAL)) + ")"
+    anthropomorphism= "(Anthropomorphism:" + str(calculate_postivevalue("{:.2f}".format(ANTHRO_VAL.item()))) + ")"
     #elif calculate_postivevalue(TRUST_VAL) > 0:
-    trust= "(Trust:" + str(calculate_postivevalue(TRUST_VAL)) + ")"
+    trust= "(Trust:" + str(calculate_postivevalue("{:.2f}".format(TRUST_VAL.item()))) + ")"
     prompt = "A portrait captures a person exuding traits of  " + openness + ", " + conscientiousness + ", " + extraversion + ", " + agreeableness + ", " + neuroticism + ", " + acceptance + ", " + likeability + ", " + empathy + ", " + anthropomorphism + ", " + trust + " , looking confidently at the camera with a proud expression, against a blue background"
 
     return prompt
 
 
 def calculate_postivevalue(input_parameter):
-    input_parameter = "{:.2f}".format(input_parameter.item())
-    if input_parameter > 0.5:
+    if float(input_parameter) > 0.5:
         # Positive Prompt
-        ergebnis = (input_parameter - 0.5)/0.5
+        ergebnis = "{:.2f}".format((float(input_parameter) - 0.5)/0.5)
     else:
         # Neutral & Input-Parameter ist kleiner 0,5
         ergebnis = 0
@@ -239,10 +238,9 @@ def calculate_postivevalue(input_parameter):
     return ergebnis
 
 def calculate_negativevalue(input_parameter):
-    input_parameter = "{:.2f}".format(input_parameter.item())
-    if input_parameter < 0.5:
+    if float(input_parameter) < 0.5:
         # Negative Prompt
-        ergebnis = 1- (input_parameter * 2)
+        ergebnis = "{:.2f}".format(1 - (float(input_parameter) * 2))
     else:
         # Neutral & Input-Parameter ist größer 0,5
         ergebnis = 0
@@ -253,25 +251,25 @@ def calculate_negativevalue(input_parameter):
 def generate_latent_negativePrompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL):
      
     #if calculate_negativevalue(OPEN_VAL) > 0:
-    openness= "(Openness:" + str(calculate_negativevalue(OPEN_VAL)) + ")"
+    openness= "(Openness:" + str(calculate_negativevalue("{:.2f}".format(OPEN_VAL.item()))) + ")"
     #elif calculate_negativevalue(CON_VAL) > 0:   
-    conscientiousness= "(Conscientiousness:" + str(calculate_negativevalue(CON_VAL)) + ")"
+    conscientiousness= "(Conscientiousness:" + str(calculate_negativevalue("{:.2f}".format(CON_VAL.item()))) + ")"
     #elif calculate_negativevalue(EXTRA_VAL) > 0:
-    extraversion= "(Extraversion:" + str(calculate_negativevalue(EXTRA_VAL)) + ")"
+    extraversion= "(Extraversion:" + str(calculate_negativevalue("{:.2f}".format(EXTRA_VAL.item()))) + ")"
     #elif calculate_negativevalue(AGREE_VAL) > 0:
-    agreeableness= "(Agreeableness:" + str(calculate_negativevalue(AGREE_VAL)) + ")"
+    agreeableness= "(Agreeableness:" + str(calculate_negativevalue("{:.2f}".format(AGREE_VAL.item()))) + ")"
     #elif calculate_negativevalue(NEURO_VAL) > 0:
-    neuroticism= "(Neuroticism:" + str(calculate_negativevalue(NEURO_VAL)) + ")"
+    neuroticism= "(Neuroticism:" + str(calculate_negativevalue("{:.2f}".format(NEURO_VAL.item()))) + ")"
     #elif calculate_negativevalue(ACCEPT_VAL) > 0:
-    acceptance= "(Acceptance:" + str(calculate_negativevalue(ACCEPT_VAL)) + ")"
+    acceptance= "(Acceptance:" + str(calculate_negativevalue("{:.2f}".format(ACCEPT_VAL.item()))) + ")"
     #elif calculate_negativevalue(LIKE_VAL) > 0:
-    likeability= "(Likeability:" + str(calculate_negativevalue(LIKE_VAL)) + ")"
+    likeability= "(Likeability:" + str(calculate_negativevalue("{:.2f}".format(LIKE_VAL.item()))) + ")"
     #elif calculate_negativevalue(EMP_VAL) > 0:
-    empathy= "(Empathy:" + str(calculate_negativevalue(EMP_VAL)) + ")"
+    empathy= "(Empathy:" + str(calculate_negativevalue("{:.2f}".format(EMP_VAL.item()))) + ")"
     #elif calculate_negativevalue(ANTHRO_VAL) > 0:
-    anthropomorphism= "(Anthropomorphism:" + str(calculate_negativevalue(ANTHRO_VAL)) + ")"
+    anthropomorphism= "(Anthropomorphism:" + str(calculate_negativevalue("{:.2f}".format(ANTHRO_VAL.item()))) + ")"
     #elif calculate_negativevalue(TRUST_VAL) > 0:
-    trust= "(Trust:" + str(calculate_negativevalue(TRUST_VAL)) + ")"
+    trust= "(Trust:" + str(calculate_negativevalue("{:.2f}".format(TRUST_VAL.item()))) + ")"
     n_prompt=  "(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, anime:1.4) text, close up, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, extra fingers, mutated hands, poorlydrawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, badproportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms,missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, nsfw, inclined head, tilted head, two persons, text, symbol, logo, artist signature, black-white, " + openness + ", " + conscientiousness + ", " + extraversion + ", " + agreeableness + ", " + neuroticism + ", " + acceptance + ", " + likeability + ", " + empathy + ", " + anthropomorphism + ", " + trust
     return n_prompt
 

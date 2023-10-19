@@ -73,26 +73,28 @@ SEED = random.randint(0,10000) # Seed to initialize the initial samples obtained
 SCALES = config.scales
 
 start_time = time.strftime("%Y-%m-%d-%H-%M", time.localtime())
+
+# dimension of the inputs X z.B.: ALter, Abstraktheit, (alles was wir ändern)
 if (config.promptmodel == "defined"):
-    problem_dim = 22 # dimension of the inputs X z.B.: ALter, Abstraktheit, (alles was wir ändern)
-    # dimension of the objectives Y z.B.: Vertraunswürdigkeit, Schönheit (alles was die Leute bewerten)
+    problem_dim = 22 
 elif (config.promptmodel == "latent"):
     problem_dim = 10
 
+# dimension of the objectives Y z.B.: Vertraunswürdigkeit, Schönheit (alles was die Leute bewerten)
 if SCALES == 1: num_objs = 5
 if SCALES == 2: num_objs = 5
-if SCALES == 3: num_objs = 1 # dimension of the objectives Y z.B.: Vertraunswürdigkeit, Schönheit (alles was die Leute bewerten)
+if SCALES == 3: num_objs = 1
 
 INITIAL_CHECK = False
 ATT_CHECK_VAL = random.randint(0,100)
 ITERATION_COUNT = 0
 
-SCALE_1 = random.randint(0,1000) / 1000
+SCALE_1 = 0
 if(SCALES == 1 or SCALES == 2):
-    SCALE_2 = random.randint(0,1000) / 1000
-    SCALE_3 = random.randint(0,1000) / 1000
-    SCALE_4 = random.randint(0,1000) / 1000
-    SCALE_5 = random.randint(0,1000) / 1000
+    SCALE_2 = 0
+    SCALE_3 = 0
+    SCALE_4 = 0
+    SCALE_5 = 0
 
 if (config.promptmodel == "defined"):
     ABSTR_VAL = 1.00
@@ -148,19 +150,15 @@ def objective(x):
     if INITIAL_CHECK == False:
         fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x)
     else:
-        fs = 0.2 * (x - 0.3)**2 - 0.4 * np.sin(15.0 * x)
-        
-        fs[0] = SCALE_1
+        fs = 0.2 * (x - 0.3)**0
+        fs[0] = 1 - SCALE_1
         if(SCALES == 1 or SCALES == 2):
-            fs[1] = SCALE_2
-            fs[2] = SCALE_3
-            fs[3] = SCALE_4
-            fs[4] = SCALE_5
-    print(f"fs BEFORE : {fs}")
+            fs[1] = 1 - SCALE_2
+            fs[2] = 1 - SCALE_3
+            fs[3] = 1 - SCALE_4
+            fs[4] = 1 - SCALE_5
     fs = fs[:num_objs]
-    print(f"fs AFTER : {fs}")
 
-    print(f"return value: {torch.tensor(fs, dtype=torch.float64).cuda().shape[-1]}") # return.shape[-1] = 10
     return torch.tensor(fs, dtype=torch.float64).cuda()
 
 def generate_initial_data(n_samples):
@@ -421,9 +419,9 @@ def mobo_execute(seed, iterations, initial_samples):
             TRUST_VAL = actualValues.data[0][9]
 
         if (config.promptmodel == "defined"):
-            logging.info('Optimized values:' + '\nabstraction: ' + str(ABSTR_VAL) + '\nage: ' + str(AGE_VAL) + '\nethnicity: ' + str(GLASSES_VAL) + '\ngender: ' + str(GENDER_VAL) + '\nface width: ' + str(FACEWIDTH_VAL) + '\nfacial hair: ' + str(FACIALHAIR_VAL) + '\nhair structure: ' + str(HAIRSTRUCTURE_VAL) + '\nstatur: ' + str(STATUR_VAL) + '\nnose: ' + str(NOSE_VAL) + '\nmouth: ' + str(MOUTH_VAL) + '\neye size: ' + str(EYESIZE_VAL) + '\nears: ' + str(EARS_VAL) + '\nskincolor_R: ' + str(SKINCOLOR_VAL_R) + '\nskincolor_G: ' + str(SKINCOLOR_VAL_G) + '\nskincolor_B: ' + str(SKINCOLOR_VAL_B) + '\nhair length: ' + str(HAIRLENGTH_VAL) + '\nhaircolor_R: ' + str(HAIRCOLOR_VAL_R) + '\nhaircolor_G: ' + str(HAIRCOLOR_VAL_G) + '\nhaircolor_B: ' + str(HAIRCOLOR_VAL_B) + '\neyecolor_R: ' + str(EYECOLOR_VAL_R) + '\neyecolor_G: ' + str(EYECOLOR_VAL_G) + '\neyecolor_B: ' + str(EYECOLOR_VAL_B) + '\n')
+            logging.info('Optimized values:' + '\nabstraction: ' + str(ABSTR_VAL.item()) + '\nage: ' + str(AGE_VAL.item()) + '\nethnicity: ' + str(GLASSES_VAL.item()) + '\ngender: ' + str(GENDER_VAL.item()) + '\nface width: ' + str(FACEWIDTH_VAL.item()) + '\nfacial hair: ' + str(FACIALHAIR_VAL.item()) + '\nhair structure: ' + str(HAIRSTRUCTURE_VAL.item()) + '\nstatur: ' + str(STATUR_VAL.item()) + '\nnose: ' + str(NOSE_VAL.item()) + '\nmouth: ' + str(MOUTH_VAL.item()) + '\neye size: ' + str(EYESIZE_VAL.item()) + '\nears: ' + str(EARS_VAL.item()) + '\nskincolor_R: ' + str(SKINCOLOR_VAL_R.item()) + '\nskincolor_G: ' + str(SKINCOLOR_VAL_G.item()) + '\nskincolor_B: ' + str(SKINCOLOR_VAL_B.item()) + '\nhair length: ' + str(HAIRLENGTH_VAL.item()) + '\nhaircolor_R: ' + str(HAIRCOLOR_VAL_R.item()) + '\nhaircolor_G: ' + str(HAIRCOLOR_VAL_G.item()) + '\nhaircolor_B: ' + str(HAIRCOLOR_VAL_B.item()) + '\neyecolor_R: ' + str(EYECOLOR_VAL_R.item()) + '\neyecolor_G: ' + str(EYECOLOR_VAL_G.item()) + '\neyecolor_B: ' + str(EYECOLOR_VAL_B.item()) + '\n')
         elif (config.promptmodel == "latent"):
-            logging.info('Optimized values:' + '\nopenness: ' + str(OPEN_VAL) + '\nconscientiousness: ' + str(CON_VAL) + '\nextraversion: ' + str(EXTRA_VAL) + '\nagreeableness: ' + str(AGREE_VAL) + '\nneuroticism: ' + str(NEURO_VAL) + '\nacceptance: ' + str(ACCEPT_VAL) + '\nlikeability: ' + str(LIKE_VAL) + '\nempathy: ' + str(EMP_VAL) + '\nanthropomorphism: ' + str(ANTHRO_VAL) + '\ntrust: ' + str(TRUST_VAL) + '\n')
+            logging.info('Optimized values:' + '\nopenness: ' + str(OPEN_VAL.item()) + '\nconscientiousness: ' + str(CON_VAL.item()) + '\nextraversion: ' + str(EXTRA_VAL.item()) + '\nagreeableness: ' + str(AGREE_VAL.item()) + '\nneuroticism: ' + str(NEURO_VAL.item()) + '\nacceptance: ' + str(ACCEPT_VAL.item()) + '\nlikeability: ' + str(LIKE_VAL.item()) + '\nempathy: ' + str(EMP_VAL.item()) + '\nanthropomorphism: ' + str(ANTHRO_VAL.item()) + '\ntrust: ' + str(TRUST_VAL.item()) + '\n')
 
 
         mll_qehvi, model_qehvi = initialize_model(train_x_qehvi, train_obj_qehvi)
@@ -712,16 +710,23 @@ def main():
                 pipe.enable_model_cpu_offload()
             
             # Prompterzeugung festlegen, latent oder defined
+            logging.info('Generating...' + '\n')
             if (config.promptmodel == "defined"):
                 prompt = prompting.generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLOR_VAL_R, SKINCOLOR_VAL_G, SKINCOLOR_VAL_B, FACEWIDTH_VAL, FACIALHAIR_VAL,  HAIRLENGTH_VAL, HAIRSTRUCTURE_VAL, HAIRCOLOR_VAL_R, HAIRCOLOR_VAL_G, HAIRCOLOR_VAL_B, STATUR_VAL, NOSE_VAL, MOUTH_VAL, EYECOLOR_VAL_R, EYECOLOR_VAL_G, EYECOLOR_VAL_B, EYESIZE_VAL, EARS_VAL)
-                logging.info('Running prompt: ' + prompt + '\n')
-                print("Running prompt: " + prompt)
+                logging.info('Prompt: ' + prompt + '\n')
+                print("Prompt: " + prompt)
+                print(" ")
                 negative_prompt = prompting.generate_defined_negativePrompt()
+                print("Negative prompt: " + prompt)
+                logging.info('Negative prompt: ' + prompt + '\n')
             elif (config.promptmodel == "latent"):
                 prompt = prompting.generate_latentprompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL)
-                logging.info('Running prompt: ' + prompt + '\n')
-                print("Running prompt: " + prompt)
+                logging.info('Prompt: ' + prompt + '\n')
+                print("Prompt: " + prompt)
+                print(" ")
                 negative_prompt = prompting.generate_latent_negativePrompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL)
+                print("Negative prompt: " + prompt)
+                logging.info('Negative prompt: ' + prompt + '\n')
             global INITIAL_CHECK
             INITIAL_CHECK = True
             
@@ -848,6 +853,7 @@ def main():
 if (config.token != ""):
     login(token=config.token)
 warnings.filterwarnings("ignore", category=UserWarning, module=".*botorch.*")
+warnings.filterwarnings("ignore", category=UserWarning, module=".*gradio.*")
 event = threading.Event()
 event2 = threading.Event()
 event3 = threading.Event()

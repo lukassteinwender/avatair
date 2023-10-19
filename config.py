@@ -21,4 +21,4 @@ model = "SG161222/Realistic_Vision_V1.4"
 token = ""
 
 # The promptmodel that will be used for the model ("defined" or "latent")
-promptmodel = "latent"
+promptmodel = "defined"
