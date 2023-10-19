@@ -19,3 +19,6 @@ model = "SG161222/Realistic_Vision_V1.4"
 
 # Your token for the huggingface-login (needed for some models, if not needed leave as "")
 token = ""
+
+# The promptmodel that will be used for the model ("defined" or "latent")
+promptmodel = "defined"

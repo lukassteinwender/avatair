@@ -647,11 +647,17 @@ def main():
                 "stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16, variant="fp16", use_safetensors=True)
                 pipe.enable_model_cpu_offload()
             
-            # wenn wir die setup pages haben können wir hier die art der prompterzeugung festlegen, also latent oder defined
-            prompt = prompting.generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLOR_VAL_R, SKINCOLOR_VAL_G, SKINCOLOR_VAL_B, FACEWIDTH_VAL, FACIALHAIR_VAL,  HAIRLENGTH_VAL, HAIRSTRUCTURE_VAL, HAIRCOLOR_VAL_R, HAIRCOLOR_VAL_G, HAIRCOLOR_VAL_B, STATUR_VAL, NOSE_VAL, MOUTH_VAL, EYECOLOR_VAL_R, EYECOLOR_VAL_G, EYECOLOR_VAL_B, EYESIZE_VAL, EARS_VAL)
-            logging.info('Running prompt: ' + prompt + '\n')
-            print("Running prompt: " + prompt)
-            negative_prompt = prompting.generate_negativePrompt()
+            # Prompterzeugung festlegen, latent oder defined
+            if (config.promptmodel == "defined"):
+                prompt = prompting.generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLOR_VAL_R, SKINCOLOR_VAL_G, SKINCOLOR_VAL_B, FACEWIDTH_VAL, FACIALHAIR_VAL,  HAIRLENGTH_VAL, HAIRSTRUCTURE_VAL, HAIRCOLOR_VAL_R, HAIRCOLOR_VAL_G, HAIRCOLOR_VAL_B, STATUR_VAL, NOSE_VAL, MOUTH_VAL, EYECOLOR_VAL_R, EYECOLOR_VAL_G, EYECOLOR_VAL_B, EYESIZE_VAL, EARS_VAL)
+                logging.info('Running prompt: ' + prompt + '\n')
+                print("Running prompt: " + prompt)
+                negative_prompt = prompting.generate_defined_negativePrompt()
+            elif (config.promptmodel == "latent"):
+                prompt = prompting.generate_latentprompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL)
+                logging.info('Running prompt: ' + prompt + '\n')
+                print("Running prompt: " + prompt)
+                negative_prompt = prompting.generate_latent_negativePrompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL)
             global INITIAL_CHECK
             INITIAL_CHECK = True
             
