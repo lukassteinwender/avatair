@@ -28,7 +28,7 @@ requirements.txt
 
 **The pipeline is planned to work as following:**<br /><br />
 <img src="https://raw.githubusercontent.com/lukassteinwender/avatair/main/Documentation/picture/pipeline.png" width="600"><br />
-The audio driven facial animation is not implemented yet.<br />
+
 <br />
 
 **License:**<br />
