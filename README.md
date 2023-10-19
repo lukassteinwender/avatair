@@ -19,7 +19,8 @@ There are several options you can adjust in the *config.py*-file:<br />
 *pictures*: The amount of pictures should be generated during one iteration<br />
 *attention*: Possibility to add several attention-checks after x iterations<br />
 *model*: Use different types of SD-models (AvatAIr is optimized for SG161222/Realistic_Vision_V1.4)<br />
-*token*: just needed for some specific SD-models<br />
+*token*: Just needed for some specific SD-models<br />
+*promptmodel*: Generate prompt with defined or latent variables<br />
 
 
 **Requirements:**<br />
@@ -27,7 +28,7 @@ requirements.txt
 
 **The pipeline is planned to work as following:**<br /><br />
 <img src="https://raw.githubusercontent.com/lukassteinwender/avatair/main/Documentation/picture/pipeline.png" width="600"><br />
-The audio driven facial animation is not implemented yet.<br />
+
 <br />
 
 **License:**<br />
