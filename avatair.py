@@ -73,9 +73,12 @@ SEED = random.randint(0,10000) # Seed to initialize the initial samples obtained
 SCALES = config.scales
 
 start_time = time.strftime("%Y-%m-%d-%H-%M", time.localtime())
+if (config.promptmodel == "defined"):
+    problem_dim = 22 # dimension of the inputs X z.B.: ALter, Abstraktheit, (alles was wir ändern)
+    # dimension of the objectives Y z.B.: Vertraunswürdigkeit, Schönheit (alles was die Leute bewerten)
+elif (config.promptmodel == "latent"):
+    problem_dim = 10
 
-problem_dim = 22 # dimension of the inputs X z.B.: ALter, Abstraktheit, (alles was wir ändern)
-# dimension of the objectives Y z.B.: Vertraunswürdigkeit, Schönheit (alles was die Leute bewerten)
 if SCALES == 1: num_objs = 5
 if SCALES == 2: num_objs = 5
 if SCALES == 3: num_objs = 1 # dimension of the objectives Y z.B.: Vertraunswürdigkeit, Schönheit (alles was die Leute bewerten)
@@ -91,29 +94,41 @@ if(SCALES == 1 or SCALES == 2):
     SCALE_4 = random.randint(0,1000) / 1000
     SCALE_5 = random.randint(0,1000) / 1000
 
-ABSTR_VAL = 1.00
-AGE_VAL = 1.00
-GENDER_VAL = 0.3000
-GLASSES_VAL = 0.1000
-FACEWIDTH_VAL = 0.3000
-FACIALHAIR_VAL = 0.3000
-HAIRSTRUCTURE_VAL = 0.3000
-STATUR_VAL = 0.3000
-NOSE_VAL = 0.3000
-MOUTH_VAL = 0.3000
-EYESIZE_VAL = 0.3000
-FACEWIDTH_VAL = 0.3000
-EARS_VAL = 0.3000
-SKINCOLOR_VAL_R= 0.3000
-SKINCOLOR_VAL_G= 0.3000
-SKINCOLOR_VAL_B= 0.3000
-HAIRLENGTH_VAL= 0.3000
-HAIRCOLOR_VAL_R= 0.3000
-HAIRCOLOR_VAL_G= 0.3000
-HAIRCOLOR_VAL_B= 0.3000
-EYECOLOR_VAL_R= 0.3000
-EYECOLOR_VAL_G= 0.3000
-EYECOLOR_VAL_B= 0.3000
+if (config.promptmodel == "defined"):
+    ABSTR_VAL = 1.00
+    AGE_VAL = 1.00
+    GENDER_VAL = 0.3000
+    GLASSES_VAL = 0.1000
+    FACEWIDTH_VAL = 0.3000
+    FACIALHAIR_VAL = 0.3000
+    HAIRSTRUCTURE_VAL = 0.3000
+    STATUR_VAL = 0.3000
+    NOSE_VAL = 0.3000
+    MOUTH_VAL = 0.3000
+    EYESIZE_VAL = 0.3000
+    FACEWIDTH_VAL = 0.3000
+    EARS_VAL = 0.3000
+    SKINCOLOR_VAL_R= 0.3000
+    SKINCOLOR_VAL_G= 0.3000
+    SKINCOLOR_VAL_B= 0.3000
+    HAIRLENGTH_VAL= 0.3000
+    HAIRCOLOR_VAL_R= 0.3000
+    HAIRCOLOR_VAL_G= 0.3000
+    HAIRCOLOR_VAL_B= 0.3000
+    EYECOLOR_VAL_R= 0.3000
+    EYECOLOR_VAL_G= 0.3000
+    EYECOLOR_VAL_B= 0.3000
+elif (config.promptmodel == "latent"):
+    OPEN_VAL= 0.3000
+    CON_VAL= 0.3000
+    EXTRA_VAL= 0.3000
+    AGREE_VAL= 0.3000
+    NEURO_VAL= 0.3000
+    ACCEPT_VAL= 0.3000
+    LIKE_VAL= 0.3000
+    EMP_VAL= 0.3000
+    ANTHRO_VAL= 0.3000
+    TRUST_VAL= 0.3000
 
 ref_point = torch.tensor([-1. for _ in range(num_objs)]).cuda()
 problem_bounds = torch.zeros(2, problem_dim, **tkwargs)
@@ -307,73 +322,109 @@ def mobo_execute(seed, iterations, initial_samples):
         print("training x", trainValues)
         # # # print("training obj", train_obj_qehvi)
         
-        global ABSTR_VAL
-        ABSTR_VAL = actualValues.data[0][0]
+        if (config.promptmodel == "defined"):
+            global ABSTR_VAL
+            ABSTR_VAL = actualValues.data[0][0]
 
-        global AGE_VAL
-        AGE_VAL = actualValues.data[0][1]
+            global AGE_VAL
+            AGE_VAL = actualValues.data[0][1]
 
-        global GLASSES_VAL
-        GLASSES_VAL = actualValues.data[0][2]
+            global GLASSES_VAL
+            GLASSES_VAL = actualValues.data[0][2]
 
-        global GENDER_VAL
-        GENDER_VAL = actualValues.data[0][3]
+            global GENDER_VAL
+            GENDER_VAL = actualValues.data[0][3]
 
-        global FACEWIDTH_VAL
-        FACEWIDTH_VAL = actualValues.data[0][4]
+            global FACEWIDTH_VAL
+            FACEWIDTH_VAL = actualValues.data[0][4]
 
-        global FACIALHAIR_VAL
-        FACIALHAIR_VAL = actualValues.data[0][5]
+            global FACIALHAIR_VAL
+            FACIALHAIR_VAL = actualValues.data[0][5]
 
-        global HAIRSTRUCTURE_VAL
-        HAIRSTRUCTURE_VAL = actualValues.data[0][6]
+            global HAIRSTRUCTURE_VAL
+            HAIRSTRUCTURE_VAL = actualValues.data[0][6]
 
-        global STATUR_VAL
-        STATUR_VAL = actualValues.data[0][7]
+            global STATUR_VAL
+            STATUR_VAL = actualValues.data[0][7]
 
-        global NOSE_VAL
-        NOSE_VAL = actualValues.data[0][8]
+            global NOSE_VAL
+            NOSE_VAL = actualValues.data[0][8]
 
-        global MOUTH_VAL
-        MOUTH_VAL = actualValues.data[0][9]
+            global MOUTH_VAL
+            MOUTH_VAL = actualValues.data[0][9]
 
-        global EYESIZE_VAL
-        EYESIZE_VAL = actualValues.data[0][10]
+            global EYESIZE_VAL
+            EYESIZE_VAL = actualValues.data[0][10]
 
-        global EARS_VAL
-        EARS_VAL = actualValues.data[0][11]
-        
-        global SKINCOLOR_VAL_R
-        SKINCOLOR_VAL_R = actualValues.data[0][12]
+            global EARS_VAL
+            EARS_VAL = actualValues.data[0][11]
+            
+            global SKINCOLOR_VAL_R
+            SKINCOLOR_VAL_R = actualValues.data[0][12]
 
-        global SKINCOLOR_VAL_G
-        SKINCOLOR_VAL_G = actualValues.data[0][13]
+            global SKINCOLOR_VAL_G
+            SKINCOLOR_VAL_G = actualValues.data[0][13]
 
-        global SKINCOLOR_VAL_B
-        SKINCOLOR_VAL_B = actualValues.data[0][14]
-        
-        global HAIRLENGTH_VAL
-        HAIRLENGTH_VAL = actualValues.data[0][15]
+            global SKINCOLOR_VAL_B
+            SKINCOLOR_VAL_B = actualValues.data[0][14]
+            
+            global HAIRLENGTH_VAL
+            HAIRLENGTH_VAL = actualValues.data[0][15]
 
-        global HAIRCOLOR_VAL_R
-        HAIRCOLOR_VAL_R = actualValues.data[0][16]
+            global HAIRCOLOR_VAL_R
+            HAIRCOLOR_VAL_R = actualValues.data[0][16]
 
-        global HAIRCOLOR_VAL_G
-        HAIRCOLOR_VAL_G = actualValues.data[0][17]
+            global HAIRCOLOR_VAL_G
+            HAIRCOLOR_VAL_G = actualValues.data[0][17]
 
-        global HAIRCOLOR_VAL_B
-        HAIRCOLOR_VAL_B = actualValues.data[0][18]
+            global HAIRCOLOR_VAL_B
+            HAIRCOLOR_VAL_B = actualValues.data[0][18]
 
-        global EYECOLOR_VAL_R
-        EYECOLOR_VAL_R = actualValues.data[0][19]
+            global EYECOLOR_VAL_R
+            EYECOLOR_VAL_R = actualValues.data[0][19]
 
-        global EYECOLOR_VAL_G
-        EYECOLOR_VAL_G = actualValues.data[0][20]
+            global EYECOLOR_VAL_G
+            EYECOLOR_VAL_G = actualValues.data[0][20]
 
-        global EYECOLOR_VAL_B
-        EYECOLOR_VAL_B = actualValues.data[0][21]
+            global EYECOLOR_VAL_B
+            EYECOLOR_VAL_B = actualValues.data[0][21]
+        elif (config.promptmodel == "latent"):
 
-        logging.info('Optimized values:' + '\nabstraction: ' + str(ABSTR_VAL) + '\nage: ' + str(AGE_VAL) + '\nethnicity: ' + str(GLASSES_VAL) + '\ngender: ' + str(GENDER_VAL) + '\nface width: ' + str(FACEWIDTH_VAL) + '\nfacial hair: ' + str(FACIALHAIR_VAL) + '\nhair structure: ' + str(HAIRSTRUCTURE_VAL) + '\nstatur: ' + str(STATUR_VAL) + '\nnose: ' + str(NOSE_VAL) + '\nmouth: ' + str(MOUTH_VAL) + '\neye size: ' + str(EYESIZE_VAL) + '\nears: ' + str(EARS_VAL) + '\nskincolor_R: ' + str(SKINCOLOR_VAL_R) + '\nskincolor_G: ' + str(SKINCOLOR_VAL_G) + '\nskincolor_B: ' + str(SKINCOLOR_VAL_B) + '\nhair length: ' + str(HAIRLENGTH_VAL) + '\nhaircolor_R: ' + str(HAIRCOLOR_VAL_R) + '\nhaircolor_G: ' + str(HAIRCOLOR_VAL_G) + '\nhaircolor_B: ' + str(HAIRCOLOR_VAL_B) + '\neyecolor_R: ' + str(EYECOLOR_VAL_R) + '\neyecolor_G: ' + str(EYECOLOR_VAL_G) + '\neyecolor_B: ' + str(EYECOLOR_VAL_B) + '\n')
+            global OPEN_VAL
+            OPEN_VAL = actualValues.data[0][0]
+
+            global CON_VAL
+            CON_VAL = actualValues.data[0][1]
+
+            global EXTRA_VAL
+            EXTRA_VAL = actualValues.data[0][2]
+
+            global AGREE_VAL
+            AGREE_VAL = actualValues.data[0][3]
+
+            global NEURO_VAL
+            NEURO_VAL = actualValues.data[0][4]
+
+            global ACCEPT_VAL
+            ACCEPT_VAL = actualValues.data[0][5]
+
+            global LIKE_VAL
+            LIKE_VAL = actualValues.data[0][6]
+
+            global EMP_VAL
+            EMP_VAL = actualValues.data[0][7]
+
+            global ANTHRO_VAL
+            ANTHRO_VAL = actualValues.data[0][8]
+            
+            global TRUST_VAL
+            TRUST_VAL = actualValues.data[0][9]
+
+        if (config.promptmodel == "defined"):
+            logging.info('Optimized values:' + '\nabstraction: ' + str(ABSTR_VAL) + '\nage: ' + str(AGE_VAL) + '\nethnicity: ' + str(GLASSES_VAL) + '\ngender: ' + str(GENDER_VAL) + '\nface width: ' + str(FACEWIDTH_VAL) + '\nfacial hair: ' + str(FACIALHAIR_VAL) + '\nhair structure: ' + str(HAIRSTRUCTURE_VAL) + '\nstatur: ' + str(STATUR_VAL) + '\nnose: ' + str(NOSE_VAL) + '\nmouth: ' + str(MOUTH_VAL) + '\neye size: ' + str(EYESIZE_VAL) + '\nears: ' + str(EARS_VAL) + '\nskincolor_R: ' + str(SKINCOLOR_VAL_R) + '\nskincolor_G: ' + str(SKINCOLOR_VAL_G) + '\nskincolor_B: ' + str(SKINCOLOR_VAL_B) + '\nhair length: ' + str(HAIRLENGTH_VAL) + '\nhaircolor_R: ' + str(HAIRCOLOR_VAL_R) + '\nhaircolor_G: ' + str(HAIRCOLOR_VAL_G) + '\nhaircolor_B: ' + str(HAIRCOLOR_VAL_B) + '\neyecolor_R: ' + str(EYECOLOR_VAL_R) + '\neyecolor_G: ' + str(EYECOLOR_VAL_G) + '\neyecolor_B: ' + str(EYECOLOR_VAL_B) + '\n')
+        elif (config.promptmodel == "latent"):
+            logging.info('Optimized values:' + '\nopenness: ' + str(OPEN_VAL) + '\nconscientiousness: ' + str(CON_VAL) + '\nextraversion: ' + str(EXTRA_VAL) + '\nagreeableness: ' + str(AGREE_VAL) + '\nneuroticism: ' + str(NEURO_VAL) + '\nacceptance: ' + str(ACCEPT_VAL) + '\nlikeability: ' + str(LIKE_VAL) + '\nempathy: ' + str(EMP_VAL) + '\nanthropomorphism: ' + str(ANTHRO_VAL) + '\ntrust: ' + str(TRUST_VAL) + '\n')
+
 
         mll_qehvi, model_qehvi = initialize_model(train_x_qehvi, train_obj_qehvi)
 
@@ -601,29 +652,42 @@ def main():
             event3.set()
             event2.wait()
             event2.clear()
-            
-            global ABSTR_VAL
-            global AGE_VAL
-            global GLASSES_VAL
-            global GENDER_VAL
-            global FACEWIDTH_VAL
-            global FACIALHAIR_VAL
-            global HAIRSTRUCTURE_VAL
-            global STATUR_VAL
-            global NOSE_VAL
-            global MOUTH_VAL
-            global EYESIZE_VAL
-            global EARS_VAL
-            global SKINCOLOR_VAL_R
-            global SKINCOLOR_VAL_G
-            global SKINCOLOR_VAL_B
-            global HAIRLENGTH_VAL
-            global HAIRCOLOR_VAL_R
-            global HAIRCOLOR_VAL_G
-            global HAIRCOLOR_VAL_B
-            global EYECOLOR_VAL_R
-            global EYECOLOR_VAL_G
-            global EYECOLOR_VAL_B
+
+            if (config.promptmodel == "defined"):
+                global ABSTR_VAL
+                global AGE_VAL
+                global GLASSES_VAL
+                global GENDER_VAL
+                global FACEWIDTH_VAL
+                global FACIALHAIR_VAL
+                global HAIRSTRUCTURE_VAL
+                global STATUR_VAL
+                global NOSE_VAL
+                global MOUTH_VAL
+                global EYESIZE_VAL
+                global EARS_VAL
+                global SKINCOLOR_VAL_R
+                global SKINCOLOR_VAL_G
+                global SKINCOLOR_VAL_B
+                global HAIRLENGTH_VAL
+                global HAIRCOLOR_VAL_R
+                global HAIRCOLOR_VAL_G
+                global HAIRCOLOR_VAL_B
+                global EYECOLOR_VAL_R
+                global EYECOLOR_VAL_G
+                global EYECOLOR_VAL_B
+            elif (config.promptmodel == "latent"):
+                global OPEN_VAL
+                global CON_VAL
+                global EXTRA_VAL
+                global AGREE_VAL
+                global NEURO_VAL
+                global ACCEPT_VAL
+                global LIKE_VAL
+                global EMP_VAL
+                global ANTHRO_VAL
+                global TRUST_VAL
+
 
             sugarcheck = False
 
