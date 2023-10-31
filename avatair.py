@@ -719,16 +719,16 @@ def main():
                 print("Prompt: " + prompt)
                 print(" ")
                 negative_prompt = prompting.generate_defined_negativePrompt()
-                print("Negative prompt: " + prompt)
-                logging.info('Negative prompt: ' + prompt + '\n')
+                print("Negative prompt: " + negative_prompt)
+                logging.info('Negative prompt: ' + negative_prompt + '\n')
             elif (config.promptmodel == "latent"):
                 prompt = prompting.generate_latentprompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL)
                 logging.info('Prompt: ' + prompt + '\n')
                 print("Prompt: " + prompt)
                 print(" ")
                 negative_prompt = prompting.generate_latent_negativePrompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL)
-                print("Negative prompt: " + prompt)
-                logging.info('Negative prompt: ' + prompt + '\n')
+                print("Negative prompt: " + negative_prompt)
+                logging.info('Negative prompt: ' + negative_prompt + '\n')
             global INITIAL_CHECK
             INITIAL_CHECK = True
             
