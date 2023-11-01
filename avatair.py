@@ -1,5 +1,7 @@
 import gradio as gr
 import os
+import csv
+import io
 import sys
 import numpy as np
 import torch
@@ -44,6 +46,21 @@ import time
 import matplotlib.pyplot as plt
 from operator import itemgetter
 
+class CsvFormatter(logging.Formatter):
+    
+    def __init__(self):
+        super().__init__()
+        self.output = io.StringIO()
+        self.writer = csv.writer(self.output, quoting=csv.QUOTE_MINIMAL)
+
+    def format(self, record):
+        x = record.msg.split(",")
+        self.writer.writerow(x)
+        data = self.output.getvalue()
+        self.output.truncate(0)
+        self.output.seek(0)
+        return data.strip()
+
 tkwargs = {
     "dtype": torch.double,
    # "device": torch.device("cuda" if torch.cuda.is_available() else "cpu"),
@@ -53,14 +70,16 @@ tkwargs = {
 date = time.strftime("%Y_%m_%d-%H_%M_%S")
 directory = os.path.dirname(os.path.realpath(__file__))
 os.mkdir(directory + '\pic_log' + '\pic_' + date)
-logfolder = directory + '\log' + '\log_' + date + '.log'
+logfolder = directory + '\log' + '\log_' + date + '.csv'
 logging.basicConfig(filename=logfolder, encoding='utf-8', level=logging.INFO)
 logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("markdown_it").setLevel(logging.WARNING)
 logging.getLogger("asyncio").setLevel(logging.WARNING)
-logging.info('Starting avatair...\n')
-
+logger = logging.getLogger(__name__)
+logging.root.handlers[0].setFormatter(CsvFormatter())
+logging.info('start,TRUE')
+logging.info(' ')
 # important global values for the bayesian optimization
 BATCH_SIZE = 1 # Number of design parameter points to query at next iteration
 NUM_RESTARTS = 10 # Used for the acquisition function number of restarts in optimization
@@ -419,10 +438,13 @@ def mobo_execute(seed, iterations, initial_samples):
             TRUST_VAL = actualValues.data[0][9]
 
         if (config.promptmodel == "defined"):
-            logging.info('Optimized values:' + '\nabstraction: ' + str(ABSTR_VAL.item()) + '\nage: ' + str(AGE_VAL.item()) + '\nethnicity: ' + str(GLASSES_VAL.item()) + '\ngender: ' + str(GENDER_VAL.item()) + '\nface width: ' + str(FACEWIDTH_VAL.item()) + '\nfacial hair: ' + str(FACIALHAIR_VAL.item()) + '\nhair structure: ' + str(HAIRSTRUCTURE_VAL.item()) + '\nstatur: ' + str(STATUR_VAL.item()) + '\nnose: ' + str(NOSE_VAL.item()) + '\nmouth: ' + str(MOUTH_VAL.item()) + '\neye size: ' + str(EYESIZE_VAL.item()) + '\nears: ' + str(EARS_VAL.item()) + '\nskincolor_R: ' + str(SKINCOLOR_VAL_R.item()) + '\nskincolor_G: ' + str(SKINCOLOR_VAL_G.item()) + '\nskincolor_B: ' + str(SKINCOLOR_VAL_B.item()) + '\nhair length: ' + str(HAIRLENGTH_VAL.item()) + '\nhaircolor_R: ' + str(HAIRCOLOR_VAL_R.item()) + '\nhaircolor_G: ' + str(HAIRCOLOR_VAL_G.item()) + '\nhaircolor_B: ' + str(HAIRCOLOR_VAL_B.item()) + '\neyecolor_R: ' + str(EYECOLOR_VAL_R.item()) + '\neyecolor_G: ' + str(EYECOLOR_VAL_G.item()) + '\neyecolor_B: ' + str(EYECOLOR_VAL_B.item()) + '\n')
+            logging.info('abstraction,age,ethnicity,gender,face width,facial hair,hair structure,statur,nose,mouth,eye size,ears,skincolor_R,skincolor_G,skincolor_B,hair length,haircolor_R,haircolor_G,haircolor_B,eyecolor_R,eyecolor_G,eyecolor_B')
+            logging.info(str("{:.2f}".format(ABSTR_VAL.item())) + ',' + str("{:.2f}".format(AGE_VAL.item())) + ',' + str("{:.2f}".format(GLASSES_VAL.item())) + ',' + str("{:.2f}".format(GENDER_VAL.item())) + ',' + str("{:.2f}".format(FACEWIDTH_VAL.item())) + ',' + str("{:.2f}".format(FACIALHAIR_VAL.item())) + ',' + str("{:.2f}".format(HAIRSTRUCTURE_VAL.item())) + ',' + str("{:.2f}".format(STATUR_VAL.item())) + ',' + str("{:.2f}".format(NOSE_VAL.item())) + ',' + str("{:.2f}".format(MOUTH_VAL.item())) + ',' + str("{:.2f}".format(EYESIZE_VAL.item())) + ',' + str("{:.2f}".format(EARS_VAL.item())) + ',' + str("{:.2f}".format(SKINCOLOR_VAL_R.item())) + ',' + str("{:.2f}".format(SKINCOLOR_VAL_G.item())) + ',' + str("{:.2f}".format(SKINCOLOR_VAL_B.item())) + ',' + str("{:.2f}".format(HAIRLENGTH_VAL.item())) + ',' + str("{:.2f}".format(HAIRCOLOR_VAL_R.item())) + ',' + str("{:.2f}".format(HAIRCOLOR_VAL_G.item())) + ',' + str("{:.2f}".format(HAIRCOLOR_VAL_B.item())) + ',' + str("{:.2f}".format(EYECOLOR_VAL_R.item())) + ',' + str("{:.2f}".format(EYECOLOR_VAL_G.item())) + ',' + str("{:.2f}".format(EYECOLOR_VAL_B.item())))
+            logging.info(' ')
         elif (config.promptmodel == "latent"):
-            logging.info('Optimized values:' + '\nopenness: ' + str(OPEN_VAL.item()) + '\nconscientiousness: ' + str(CON_VAL.item()) + '\nextraversion: ' + str(EXTRA_VAL.item()) + '\nagreeableness: ' + str(AGREE_VAL.item()) + '\nneuroticism: ' + str(NEURO_VAL.item()) + '\nacceptance: ' + str(ACCEPT_VAL.item()) + '\nlikeability: ' + str(LIKE_VAL.item()) + '\nempathy: ' + str(EMP_VAL.item()) + '\nanthropomorphism: ' + str(ANTHRO_VAL.item()) + '\ntrust: ' + str(TRUST_VAL.item()) + '\n')
-
+            logging.info('openness,conscientiousness,extraversion,agreeableness,neuroticism,acceptance,likeability,empathy,anthropomorphism,trust')
+            logging.info(str("{:.2f}".format(OPEN_VAL.item())) + ',' + str("{:.2f}".format(CON_VAL.item())) + ',' + str("{:.2f}".format(EXTRA_VAL.item())) + ',' + str("{:.2f}".format(AGREE_VAL.item())) + ',' + str("{:.2f}".format(NEURO_VAL.item())) + ',' + str("{:.2f}".format(ACCEPT_VAL.item())) + ',' + str("{:.2f}".format(LIKE_VAL.item())) + ',' + str("{:.2f}".format(EMP_VAL.item())) + ',' + str("{:.2f}".format(ANTHRO_VAL.item())) + ',' + str("{:.2f}".format(TRUST_VAL.item())))
+            logging.info(' ')
 
         mll_qehvi, model_qehvi = initialize_model(train_x_qehvi, train_obj_qehvi)
 
@@ -496,7 +518,8 @@ def main():
                 }
         
         def startOver(scale1, scale2, scale3, scale4, scale5, att, txt):
-            logging.info('Restarted program, watch new log-file. \n')
+            logging.info('restart,TRUE')
+            logging.info(' ')
             try:
                 if(SCALES == 1 or SCALES == 2):
                     return {
@@ -514,7 +537,8 @@ def main():
                 eventStop.set()
 
         def submitEnd(scale1, scale2, scale3, scale4, scale5, att, txt):
-            logging.info('End-Reason:' + txt + '\n')
+            logging.info('end_reason,' + txt)
+            logging.info(' ')
             if(SCALES == 1 or SCALES == 2):
                 return {
                     inp1: gr.update(visible=False),
@@ -577,7 +601,8 @@ def main():
                 }
             
         def end(scale1, scale2, scale3, scale4, scale5, att, txt):
-            logging.info('Survey interrupted by user!' + '\n')
+            logging.info('interrupt,TRUE')
+            logging.info(' ')
             if(SCALES == 1 or SCALES == 2):
                 return {
                     inp1: gr.update(visible=False),
@@ -618,12 +643,15 @@ def main():
 
             if(ITERATION_COUNT in config.attention):
                 if(ATT_CHECK_VAL == int(att)):
-                    logging.info('Attention-Check successful\n')
+                    logging.info('attention_check_successful,TRUE')
+                    logging.info(' ')
                 else:
-                    logging.info('Attention-Check FAILED (should be: ' + str(ATT_CHECK_VAL) + ', is: ' + str(int(att)) + ')\n')
+                    logging.info('attention_check_successful,FALSE')
+                    logging.info(' ')
                 ATT_CHECK_VAL = random.randint(0,100)
 
-            logging.info('Running iteration ' + str(ITERATION_COUNT + 1) + '\n')
+            logging.info('iteration,' + str(ITERATION_COUNT + 1))
+            logging.info(' ')
 
             global SCALE_1
             if(SCALES == 1 or SCALES == 2):
@@ -640,13 +668,17 @@ def main():
                 SCALE_5 = scale5
 
             if(SCALES == 1):
-                logging.info('Slider Values:' + '\nacceptance: ' + str(scale1) + '\nlikeability: ' + str(scale2) + '\nempathy: ' + str(scale3) + '\nanthropomorphism: ' + str(scale4) + '\ntrust: ' + str(scale5) + '\n')
-
+                logging.info('acceptance,likeability,empathy,anthropomorphism,trust')
+                logging.info(str(scale1) + ',' + str(scale2) + ',' + str(scale3) + ',' + str(scale4) + ',' + str(scale5))
+                logging.info(' ')
             if(SCALES == 2):
-                logging.info('Slider Values:' + '\nopenness: ' + str(scale1) + '\nconscientiousness: ' + str(scale2) + '\nextraversion: ' + str(scale3) + '\nagreeableness: ' + str(scale4) + '\nneuroticism: ' + str(scale5) + '\n')
-
+                logging.info('openness,conscientiousness,extraversion,agreeableness,neuroticism')
+                logging.info(str(scale1) + ',' + str(scale2) + ',' + str(scale3) + ',' + str(scale4) + ',' + str(scale5))
+                logging.info(' ')
             if(SCALES == 3):
-                logging.info('Slider Values:' + '\nefficiency: ' + str(scale1) + '\n')
+                logging.info('efficiency')
+                logging.info(str(scale1))
+                logging.info(' ')
             # call BO
             event.set()
             event3.set()
@@ -712,23 +744,26 @@ def main():
                 pipe.enable_model_cpu_offload()
             
             # Prompterzeugung festlegen, latent oder defined
-            logging.info('Generating...' + '\n')
             if (config.promptmodel == "defined"):
                 prompt = prompting.generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLOR_VAL_R, SKINCOLOR_VAL_G, SKINCOLOR_VAL_B, FACEWIDTH_VAL, FACIALHAIR_VAL,  HAIRLENGTH_VAL, HAIRSTRUCTURE_VAL, HAIRCOLOR_VAL_R, HAIRCOLOR_VAL_G, HAIRCOLOR_VAL_B, STATUR_VAL, NOSE_VAL, MOUTH_VAL, EYECOLOR_VAL_R, EYECOLOR_VAL_G, EYECOLOR_VAL_B, EYESIZE_VAL, EARS_VAL)
-                logging.info('Prompt: ' + prompt + '\n')
+                logging.info('prompt,' + prompt)
+                logging.info(' ')
                 print("Prompt: " + prompt)
                 print(" ")
                 negative_prompt = prompting.generate_defined_negativePrompt()
-                print("Negative prompt: " + prompt)
-                logging.info('Negative prompt: ' + prompt + '\n')
+                print("Negative prompt:" + prompt)
+                logging.info('negative_prompt,' + negative_prompt)
+                logging.info(' ')
             elif (config.promptmodel == "latent"):
                 prompt = prompting.generate_latentprompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL)
-                logging.info('Prompt: ' + prompt + '\n')
+                logging.info('prompt,' + prompt)
+                logging.info(' ')
                 print("Prompt: " + prompt)
                 print(" ")
                 negative_prompt = prompting.generate_latent_negativePrompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL)
                 print("Negative prompt: " + prompt)
-                logging.info('Negative prompt: ' + prompt + '\n')
+                logging.info('negative_prompt,' + negative_prompt)
+                logging.info(' ')
             global INITIAL_CHECK
             INITIAL_CHECK = True
             
@@ -749,7 +784,8 @@ def main():
             global N_INITIAL
             if(ITERATION_COUNT < N_INITIAL):
                 if(ITERATION_COUNT in config.attention):
-                    logging.info('Running attention-check\n')
+                    logging.info('run_attention_check,TRUE')
+                    logging.info(' ')
                     att_check_info = 'Pull the slider to ' + str(ATT_CHECK_VAL)
                     if(SCALES == 1 or SCALES == 2):
                         return {
@@ -778,6 +814,8 @@ def main():
                             btn: gr.update(value="Generate new avatar")
                         }
                 elif(SCALES == 1 or SCALES == 2):
+                    logging.info('run_attention_check,FALSE')
+                    logging.info(' ')
                     return {
                         inp1: gr.update(visible=True),
                         inp2: gr.update(visible=True),
@@ -793,7 +831,9 @@ def main():
                         btn: gr.update(value="Generate new avatar")
                          
                     }
-                else: 
+                else:
+                    logging.info('run_attention_check,FALSE')
+                    logging.info(' ')
                     return {
                         inp1: gr.update(visible=True),
                         out: gr.update(value=image, visible=True),
