@@ -13,14 +13,60 @@ python avatair.py
 ```
 
 **Config:**<br />
-There are several options you can adjust in the *config.py*-file:<br />
-*initial*: Number of iterations that will run until the program is finished<br />
-*scales*: 3 types of scales for other use-cases<br />
-*pictures*: The amount of pictures should be generated during one iteration<br />
-*attention*: Possibility to add several attention-checks after x iterations<br />
-*model*: Use different types of SD-models (AvatAIr is optimized for SG161222/Realistic_Vision_V1.4)<br />
-*token*: Just needed for some specific SD-models<br />
-*promptmodel*: Generate prompt with defined or latent variables<br />
+<table>
+  <thead>
+    <tr>
+      <th><b>Name</b></th>
+      <th><b>Description</b></th>
+      <th><b>Default</b></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th><b>initial</b></th>
+      <th>Number of iterations that will run until the program is finished</th>
+      <th>5</th>
+    </tr>
+    <tr>
+      <th><b>scales</b></th>
+      <th>3 types of scales for other use-cases
+      <br />1 = acceptance, likeability, empathy, anthropomorphism, trust
+      <br />2 = openness, conscientiousness, extraversion, agreeableness, neuroticism
+      <br />3 = efficiency</th>
+      <th>1</th>
+    </tr>
+    <tr>
+      <th><b>pictures</b></th>
+      <th>The amount of pictures should be generated during one iteration (Int)</th>
+      <th>1</th>
+    </tr>
+    <tr>
+      <th><b>attention</b></th>
+      <th>Possibility to add several attention-checks after x iterations
+      (Array (e.g [1,2,3]), [-1] for no check)<br /></th>
+      <th>[1,3]</th>
+    </tr>
+    <tr>
+      <th><b>model</b></th>
+      <th>Use different types of SD-models (AvatAIr is optimized for SG161222/Realistic_Vision_V1.4)</th>
+      <th>"SG161222/Realistic_Vision_V1.4"</th>
+    </tr>
+    <tr>
+      <th><b>token</b></th>
+      <th>HuggingFace login-token, just needed for some specific SD-models</th>
+      <th>""</th>
+    </tr>
+    <tr>
+      <th><b>promptmodel</b></th>
+      <th>Generate prompt with defined or latent variables 
+        <br />("defined" or "latent")
+        <br />defined = e.g. abstraction, haircolor, eyecolor, ...
+        <br />latent= e.g. acceptance, likeability, ...</th>
+      <th>defined</th>
+    </tr>
+  </tbody>
+</table>
+<br />
 
 
 **Requirements:**<br />
