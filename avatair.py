@@ -746,23 +746,23 @@ def main():
             # Prompterzeugung festlegen, latent oder defined
             if (config.promptmodel == "defined"):
                 prompt = prompting.generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLOR_VAL_R, SKINCOLOR_VAL_G, SKINCOLOR_VAL_B, FACEWIDTH_VAL, FACIALHAIR_VAL,  HAIRLENGTH_VAL, HAIRSTRUCTURE_VAL, HAIRCOLOR_VAL_R, HAIRCOLOR_VAL_G, HAIRCOLOR_VAL_B, STATUR_VAL, NOSE_VAL, MOUTH_VAL, EYECOLOR_VAL_R, EYECOLOR_VAL_G, EYECOLOR_VAL_B, EYESIZE_VAL, EARS_VAL)
-                logging.info('prompt,' + prompt)
+                logging.info('prompt,' + prompt.replace(","," "))
                 logging.info(' ')
                 print("Prompt: " + prompt)
                 print(" ")
                 negative_prompt = prompting.generate_defined_negativePrompt()
                 print("Negative prompt:" + negative_prompt)
-                logging.info('negative_prompt,' + negative_prompt)
+                logging.info('negative_prompt,' + negative_prompt.replace(","," "))
                 logging.info(' ')
             elif (config.promptmodel == "latent"):
                 prompt = prompting.generate_latentprompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL)
-                logging.info('prompt,' + prompt)
+                logging.info('prompt,' + prompt.replace(","," "))
                 logging.info(' ')
                 print("Prompt: " + prompt)
                 print(" ")
                 negative_prompt = prompting.generate_latent_negativePrompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL)
                 print("Negative prompt: " + negative_prompt)
-                logging.info('negative_prompt,' + negative_prompt)
+                logging.info('negative_prompt,' + negative_prompt.replace(","," "))
                 logging.info(' ')
             global INITIAL_CHECK
             INITIAL_CHECK = True
