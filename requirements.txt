@@ -3,7 +3,7 @@
 torch==2.1.0+cu117 
 #torch==2.1.0+cu118 # depending on your CUDA version, find out via nvcc -V
 gradio>=4.0.2
-botorch>=0.9.2
+botorch>=0.9.3
 diffusers>=0.21.4
 transformers>=4.34.1
 accelerate>=0.24.1
