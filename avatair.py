@@ -479,8 +479,8 @@ def main():
                     inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="efficiency", info="0 = low | 1 = high | how good does the avatar work", visible=False)
                 attention = gr.Slider(1, 100, step=1, value=0, label=att_check_info, visible=False)
                 text_input = gr.Textbox(label="feedback (optional)", visible=False)
-            out = gr.Image(visible=False)
-            out.style(height=512, width=512)
+            out = gr.Image(visible=False, scale=0, min_width=512)
+            #out.style(height=512, width=512) # pre Gradio 4.0
         with gr.Row():
             btn = gr.Button(value="Run", scale=1)
             btnEnd = gr.Button(value="Interrupt survey", variant='stop', scale=2, visible=False)
