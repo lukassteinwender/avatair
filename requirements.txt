@@ -2,9 +2,9 @@
 
 torch==2.1.0
 #torch==2.1.0+cu117 or +cu118 # depending on your CUDA version, find out via nvcc -V
-gradio>=4.1.1
+gradio>=4.1.2
 botorch>=0.9.4
-diffusers>=0.22.1
+diffusers>=0.22.2
 transformers>=4.35.0
 accelerate>=0.24.1
 pandas>=2.1.2
