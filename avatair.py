@@ -51,10 +51,10 @@ class CsvFormatter(logging.Formatter):
     def __init__(self):
         super().__init__()
         self.output = io.StringIO()
-        self.writer = csv.writer(self.output, quoting=csv.QUOTE_MINIMAL)
+        self.writer = csv.writer(self.output, delimiter =';', quoting=csv.QUOTE_MINIMAL)
 
     def format(self, record):
-        x = record.msg.split(",")
+        x = record.msg.split(";")
         self.writer.writerow(x)
         data = self.output.getvalue()
         self.output.truncate(0)
@@ -78,8 +78,22 @@ logging.getLogger("markdown_it").setLevel(logging.WARNING)
 logging.getLogger("asyncio").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 logging.root.handlers[0].setFormatter(CsvFormatter())
-logging.info('start,TRUE')
-logging.info(' ')
+
+if (config.promptmodel == "defined"):
+    if(config.scales == 1):
+        logging.info('iteration;prompt;negative_prompt;acceptance_sl;likeability_sl;empathy_sl;anthropomorphism_sl;trust_sl;abstraction;age;ethnicity;gender;face width;facial hair;hair structure;statur;nose;mouth;eye size;ears;skincolor_R;skincolor_G;skincolor_B;hair length;haircolor_R;haircolor_G;haircolor_B;eyecolor_R;eyecolor_G;eyecolor_B;run_att_check;att_check_successful,user_id')
+    if(config.scales == 2):
+        logging.info('iteration;prompt;negative_prompt;openness_sl;conscientiousness_sl;extraversion_sl;agreeableness_sl;neuroticism_sl;abstraction;age;ethnicity;gender;face width;facial hair;hair structure;statur;nose;mouth;eye size;ears;skincolor_R;skincolor_G;skincolor_B;hair length;haircolor_R;haircolor_G;haircolor_B;eyecolor_R;eyecolor_G;eyecolor_B;run_att_check;att_check_successful,user_id')
+    if(config.scales == 3):
+        logging.info('iteration;prompt;negative_prompt;efficiency_sl;abstraction;age;ethnicity;gender;face width;facial hair;hair structure;statur;nose;mouth;eye size;ears;skincolor_R;skincolor_G;skincolor_B;hair length;haircolor_R;haircolor_G;haircolor_B;eyecolor_R;eyecolor_G;eyecolor_B;run_att_check;att_check_successful,user_id')
+elif (config.promptmodel == "latent"):
+    if(config.scales == 1):
+        logging.info('iteration;prompt;negative_prompt;acceptance_sl;likeability_sl;empathy_sl;anthropomorphism_sl;trust_sl;openness;conscientiousness;extraversion;agreeableness;neuroticism;acceptance;likeability;empathy;anthropomorphism;trust;run_att_check;att_check_successful,user_id')
+    if(config.scales == 2):
+        logging.info('iteration;prompt;negative_prompt;openness_sl;conscientiousness_sl;extraversion_sl;agreeableness_sl;neuroticism_sl;openness;conscientiousness;extraversion;agreeableness;neuroticism;acceptance;likeability;empathy;anthropomorphism;trust;run_att_check;att_check_successful,user_id')
+    if(config.scales == 3):
+        logging.info('iteration;prompt;negative_prompt;efficiency_sl;openness;conscientiousness;extraversion;agreeableness;neuroticism;acceptance;likeability;empathy;anthropomorphism;trust;run_att_check;att_check_successful,user_id')    
+
 # important global values for the bayesian optimization
 BATCH_SIZE = 1 # Number of design parameter points to query at next iteration
 NUM_RESTARTS = 10 # Used for the acquisition function number of restarts in optimization
@@ -107,6 +121,9 @@ if SCALES == 3: num_objs = 1
 INITIAL_CHECK = False
 ATT_CHECK_VAL = random.randint(0,100)
 ITERATION_COUNT = 0
+
+RUN_ATT_CHECK = False
+ATT_CHECK_SUCCESSFUL = True
 
 SCALE_1 = 0
 if(SCALES == 1 or SCALES == 2):
@@ -237,6 +254,8 @@ def restartAv():
 
 def mobo_execute(seed, iterations, initial_samples):
     
+    global ITERATION_COUNT 
+
     event3.wait()
     event3.clear()
     
@@ -437,15 +456,6 @@ def mobo_execute(seed, iterations, initial_samples):
             global TRUST_VAL
             TRUST_VAL = actualValues.data[0][9]
 
-        if (config.promptmodel == "defined"):
-            logging.info('abstraction,age,ethnicity,gender,face width,facial hair,hair structure,statur,nose,mouth,eye size,ears,skincolor_R,skincolor_G,skincolor_B,hair length,haircolor_R,haircolor_G,haircolor_B,eyecolor_R,eyecolor_G,eyecolor_B')
-            logging.info(str("{:.2f}".format(ABSTR_VAL.item())) + ',' + str("{:.2f}".format(AGE_VAL.item())) + ',' + str("{:.2f}".format(GLASSES_VAL.item())) + ',' + str("{:.2f}".format(GENDER_VAL.item())) + ',' + str("{:.2f}".format(FACEWIDTH_VAL.item())) + ',' + str("{:.2f}".format(FACIALHAIR_VAL.item())) + ',' + str("{:.2f}".format(HAIRSTRUCTURE_VAL.item())) + ',' + str("{:.2f}".format(STATUR_VAL.item())) + ',' + str("{:.2f}".format(NOSE_VAL.item())) + ',' + str("{:.2f}".format(MOUTH_VAL.item())) + ',' + str("{:.2f}".format(EYESIZE_VAL.item())) + ',' + str("{:.2f}".format(EARS_VAL.item())) + ',' + str("{:.2f}".format(SKINCOLOR_VAL_R.item())) + ',' + str("{:.2f}".format(SKINCOLOR_VAL_G.item())) + ',' + str("{:.2f}".format(SKINCOLOR_VAL_B.item())) + ',' + str("{:.2f}".format(HAIRLENGTH_VAL.item())) + ',' + str("{:.2f}".format(HAIRCOLOR_VAL_R.item())) + ',' + str("{:.2f}".format(HAIRCOLOR_VAL_G.item())) + ',' + str("{:.2f}".format(HAIRCOLOR_VAL_B.item())) + ',' + str("{:.2f}".format(EYECOLOR_VAL_R.item())) + ',' + str("{:.2f}".format(EYECOLOR_VAL_G.item())) + ',' + str("{:.2f}".format(EYECOLOR_VAL_B.item())))
-            logging.info(' ')
-        elif (config.promptmodel == "latent"):
-            logging.info('openness,conscientiousness,extraversion,agreeableness,neuroticism,acceptance,likeability,empathy,anthropomorphism,trust')
-            logging.info(str("{:.2f}".format(OPEN_VAL.item())) + ',' + str("{:.2f}".format(CON_VAL.item())) + ',' + str("{:.2f}".format(EXTRA_VAL.item())) + ',' + str("{:.2f}".format(AGREE_VAL.item())) + ',' + str("{:.2f}".format(NEURO_VAL.item())) + ',' + str("{:.2f}".format(ACCEPT_VAL.item())) + ',' + str("{:.2f}".format(LIKE_VAL.item())) + ',' + str("{:.2f}".format(EMP_VAL.item())) + ',' + str("{:.2f}".format(ANTHRO_VAL.item())) + ',' + str("{:.2f}".format(TRUST_VAL.item())))
-            logging.info(' ')
-
         mll_qehvi, model_qehvi = initialize_model(train_x_qehvi, train_obj_qehvi)
 
         event2.set()
@@ -479,6 +489,7 @@ def main():
                     inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="efficiency", info="0 = low | 1 = high | how good does the avatar work", visible=False)
                 attention = gr.Slider(1, 100, step=1, value=0, label=att_check_info, visible=False)
                 text_input = gr.Textbox(label="feedback (optional)", visible=False)
+                user_id = gr.Textbox(label="User ID", visible=True)
             out = gr.Image(visible=False, scale=0, min_width=512)
             #out.style(height=512, width=512) # pre Gradio 4.0
         with gr.Row():
@@ -489,7 +500,7 @@ def main():
             btnSubmitEnd = gr.Button(value="Submit reason", scale=2, visible=False)
             btnStartOver = gr.Button(value="Restart survey (optional)", scale=2, visible=False)
         
-        def endquestion(scale1, scale2, scale3, scale4, scale5, att, txt):
+        def endquestion(scale1, scale2, scale3, scale4, scale5, att, txt, u_id):
             if(SCALES == 1 or SCALES == 2):
                 return {
                     inp1: gr.update(visible=False),
@@ -517,9 +528,9 @@ def main():
                     infotext: gr.update(value="Are you sure about closing the survey? \nYou will not get rewarded and your progress will be worthless.", visible=True)
                 }
         
-        def startOver(scale1, scale2, scale3, scale4, scale5, att, txt):
-            logging.info('restart,TRUE')
-            logging.info(' ')
+        def startOver(scale1, scale2, scale3, scale4, scale5, att, txt, u_id):
+            #logging.info('restart,TRUE')
+            
             try:
                 if(SCALES == 1 or SCALES == 2):
                     return {
@@ -536,9 +547,9 @@ def main():
             finally:
                 eventStop.set()
 
-        def submitEnd(scale1, scale2, scale3, scale4, scale5, att, txt):
-            logging.info('end_reason,' + txt)
-            logging.info(' ')
+        def submitEnd(scale1, scale2, scale3, scale4, scale5, att, txt, u_id):
+            #logging.info('end_reason,' + txt)
+            
             if(SCALES == 1 or SCALES == 2):
                 return {
                     inp1: gr.update(visible=False),
@@ -572,7 +583,7 @@ def main():
                     btnSubmitEnd: gr.update(visible=False)
                 }
         
-        def returnbutton(scale1, scale2, scale3, scale4, scale5, att, txt):
+        def returnbutton(scale1, scale2, scale3, scale4, scale5, att, txt, u_id):
             if(SCALES == 1 or SCALES == 2):
                 return {
                     inp1: gr.update(visible=True),
@@ -600,9 +611,9 @@ def main():
                     infotext: gr.update(visible=False)
                 }
             
-        def end(scale1, scale2, scale3, scale4, scale5, att, txt):
-            logging.info('interrupt,TRUE')
-            logging.info(' ')
+        def end(scale1, scale2, scale3, scale4, scale5, att, txt, u_id):
+            #logging.info('interrupt,TRUE')
+            
             if(SCALES == 1 or SCALES == 2):
                 return {
                     inp1: gr.update(visible=False),
@@ -634,24 +645,29 @@ def main():
                     btnSubmitEnd: gr.update(visible=True)
                 }
 
-        def diffusion(scale1, scale2, scale3, scale4, scale5, att, txt):
+        def diffusion(scale1, scale2, scale3, scale4, scale5, att, txt, u_id):
     
             # empty cuda-cache
             torch.cuda.empty_cache()
             global ITERATION_COUNT
             global ATT_CHECK_VAL
+            global RUN_ATT_CHECK
+            global ATT_CHECK_SUCCESSFUL
 
             if(ITERATION_COUNT in config.attention):
                 if(ATT_CHECK_VAL == int(att)):
-                    logging.info('attention_check_successful,TRUE')
-                    logging.info(' ')
+                    #logging.info('attention_check_successful,TRUE')
+                    ATT_CHECK_SUCCESSFUL = True
+                    
                 else:
-                    logging.info('attention_check_successful,FALSE')
-                    logging.info(' ')
+                    #logging.info('attention_check_successful,FALSE')
+                    ATT_CHECK_SUCCESSFUL = False
+                    
                 ATT_CHECK_VAL = random.randint(0,100)
 
-            logging.info('iteration,' + str(ITERATION_COUNT + 1))
-            logging.info(' ')
+            #logging.info('iteration,' + str(ITERATION_COUNT + 1))
+            
+            print("USER-ID " + u_id)
 
             global SCALE_1
             if(SCALES == 1 or SCALES == 2):
@@ -666,19 +682,7 @@ def main():
                 SCALE_3 = scale3
                 SCALE_4 = scale4
                 SCALE_5 = scale5
-
-            if(SCALES == 1):
-                logging.info('acceptance,likeability,empathy,anthropomorphism,trust')
-                logging.info(str(scale1) + ',' + str(scale2) + ',' + str(scale3) + ',' + str(scale4) + ',' + str(scale5))
-                logging.info(' ')
-            if(SCALES == 2):
-                logging.info('openness,conscientiousness,extraversion,agreeableness,neuroticism')
-                logging.info(str(scale1) + ',' + str(scale2) + ',' + str(scale3) + ',' + str(scale4) + ',' + str(scale5))
-                logging.info(' ')
-            if(SCALES == 3):
-                logging.info('efficiency')
-                logging.info(str(scale1))
-                logging.info(' ')
+                
             # call BO
             event.set()
             event3.set()
@@ -719,7 +723,43 @@ def main():
                 global EMP_VAL
                 global ANTHRO_VAL
                 global TRUST_VAL
+            
+            # Prompterzeugung festlegen, latent oder defined
+            if (config.promptmodel == "defined"):
+                prompt = prompting.generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLOR_VAL_R, SKINCOLOR_VAL_G, SKINCOLOR_VAL_B, FACEWIDTH_VAL, FACIALHAIR_VAL,  HAIRLENGTH_VAL, HAIRSTRUCTURE_VAL, HAIRCOLOR_VAL_R, HAIRCOLOR_VAL_G, HAIRCOLOR_VAL_B, STATUR_VAL, NOSE_VAL, MOUTH_VAL, EYECOLOR_VAL_R, EYECOLOR_VAL_G, EYECOLOR_VAL_B, EYESIZE_VAL, EARS_VAL)
+                #logging.info('prompt,' + prompt.replace(","," "))
+                
+                print("Prompt: " + prompt)
+                print(" ")
+                negative_prompt = prompting.generate_defined_negativePrompt()
+                print("Negative prompt:" + negative_prompt)
+                #logging.info('negative_prompt,' + negative_prompt.replace(","," "))
+                
+            elif (config.promptmodel == "latent"):
+                prompt = prompting.generate_latentprompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL)
+                #logging.info('prompt,' + prompt.replace(","," "))
+                
+                print("Prompt: " + prompt)
+                print(" ")
+                negative_prompt = prompting.generate_latent_negativePrompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL)
+                print("Negative prompt: " + negative_prompt)
+                #logging.info('negative_prompt,' + negative_prompt.replace(","," "))
 
+            if (config.promptmodel == "defined"):
+                if(SCALES == 1):
+                    logging.info(str(ITERATION_COUNT) + ';' + prompt + ';' + negative_prompt + ';' + str(scale1) + ';' + str(scale2) + ';' + str(scale3) + ';' + str(scale4) + ';' + str(scale5) + ';' + str("{:.2f}".format(ABSTR_VAL.item())) + ';' + str("{:.2f}".format(AGE_VAL.item())) + ';' + str("{:.2f}".format(GLASSES_VAL.item())) + ';' + str("{:.2f}".format(GENDER_VAL.item())) + ';' + str("{:.2f}".format(FACEWIDTH_VAL.item())) + ';' + str("{:.2f}".format(FACIALHAIR_VAL.item())) + ';' + str("{:.2f}".format(HAIRSTRUCTURE_VAL.item())) + ';' + str("{:.2f}".format(STATUR_VAL.item())) + ';' + str("{:.2f}".format(NOSE_VAL.item())) + ';' + str("{:.2f}".format(MOUTH_VAL.item())) + ';' + str("{:.2f}".format(EYESIZE_VAL.item())) + ';' + str("{:.2f}".format(EARS_VAL.item())) + ';' + str("{:.2f}".format(SKINCOLOR_VAL_R.item())) + ';' + str("{:.2f}".format(SKINCOLOR_VAL_G.item())) + ';' + str("{:.2f}".format(SKINCOLOR_VAL_B.item())) + ';' + str("{:.2f}".format(HAIRLENGTH_VAL.item())) + ';' + str("{:.2f}".format(HAIRCOLOR_VAL_R.item())) + ';' + str("{:.2f}".format(HAIRCOLOR_VAL_G.item())) + ';' + str("{:.2f}".format(HAIRCOLOR_VAL_B.item())) + ';' + str("{:.2f}".format(EYECOLOR_VAL_R.item())) + ';' + str("{:.2f}".format(EYECOLOR_VAL_G.item())) + ';' + str("{:.2f}".format(EYECOLOR_VAL_B.item())) + ';' + str(RUN_ATT_CHECK) + ';' + str(ATT_CHECK_SUCCESSFUL) + ';' + str(u_id))
+                if(SCALES == 2):
+                    logging.info(str(ITERATION_COUNT) + ';' + prompt + ';' + negative_prompt + ';' + str(scale1) + ';' + str(scale2) + ';' + str(scale3) + ';' + str(scale4) + ';' + str(scale5) + ';' + str("{:.2f}".format(ABSTR_VAL.item())) + ';' + str("{:.2f}".format(AGE_VAL.item())) + ';' + str("{:.2f}".format(GLASSES_VAL.item())) + ';' + str("{:.2f}".format(GENDER_VAL.item())) + ';' + str("{:.2f}".format(FACEWIDTH_VAL.item())) + ';' + str("{:.2f}".format(FACIALHAIR_VAL.item())) + ';' + str("{:.2f}".format(HAIRSTRUCTURE_VAL.item())) + ';' + str("{:.2f}".format(STATUR_VAL.item())) + ';' + str("{:.2f}".format(NOSE_VAL.item())) + ';' + str("{:.2f}".format(MOUTH_VAL.item())) + ';' + str("{:.2f}".format(EYESIZE_VAL.item())) + ';' + str("{:.2f}".format(EARS_VAL.item())) + ';' + str("{:.2f}".format(SKINCOLOR_VAL_R.item())) + ';' + str("{:.2f}".format(SKINCOLOR_VAL_G.item())) + ';' + str("{:.2f}".format(SKINCOLOR_VAL_B.item())) + ';' + str("{:.2f}".format(HAIRLENGTH_VAL.item())) + ';' + str("{:.2f}".format(HAIRCOLOR_VAL_R.item())) + ';' + str("{:.2f}".format(HAIRCOLOR_VAL_G.item())) + ';' + str("{:.2f}".format(HAIRCOLOR_VAL_B.item())) + ';' + str("{:.2f}".format(EYECOLOR_VAL_R.item())) + ';' + str("{:.2f}".format(EYECOLOR_VAL_G.item())) + ';' + str("{:.2f}".format(EYECOLOR_VAL_B.item())) + ';' + str(RUN_ATT_CHECK) + ';' + str(ATT_CHECK_SUCCESSFUL) + ';' + str(u_id))
+                if(SCALES == 3):
+                    logging.info(str(ITERATION_COUNT) + ';' + prompt + ';' + negative_prompt + ';' + str(scale1) + ';' + str("{:.2f}".format(ABSTR_VAL.item())) + ';' + str("{:.2f}".format(AGE_VAL.item())) + ';' + str("{:.2f}".format(GLASSES_VAL.item())) + ';' + str("{:.2f}".format(GENDER_VAL.item())) + ';' + str("{:.2f}".format(FACEWIDTH_VAL.item())) + ';' + str("{:.2f}".format(FACIALHAIR_VAL.item())) + ';' + str("{:.2f}".format(HAIRSTRUCTURE_VAL.item())) + ';' + str("{:.2f}".format(STATUR_VAL.item())) + ';' + str("{:.2f}".format(NOSE_VAL.item())) + ';' + str("{:.2f}".format(MOUTH_VAL.item())) + ';' + str("{:.2f}".format(EYESIZE_VAL.item())) + ';' + str("{:.2f}".format(EARS_VAL.item())) + ';' + str("{:.2f}".format(SKINCOLOR_VAL_R.item())) + ';' + str("{:.2f}".format(SKINCOLOR_VAL_G.item())) + ';' + str("{:.2f}".format(SKINCOLOR_VAL_B.item())) + ';' + str("{:.2f}".format(HAIRLENGTH_VAL.item())) + ';' + str("{:.2f}".format(HAIRCOLOR_VAL_R.item())) + ';' + str("{:.2f}".format(HAIRCOLOR_VAL_G.item())) + ';' + str("{:.2f}".format(HAIRCOLOR_VAL_B.item())) + ';' + str("{:.2f}".format(EYECOLOR_VAL_R.item())) + ';' + str("{:.2f}".format(EYECOLOR_VAL_G.item())) + ';' + str("{:.2f}".format(EYECOLOR_VAL_B.item())) + ';' + str(RUN_ATT_CHECK) + ';' + str(ATT_CHECK_SUCCESSFUL) + ';' + str(u_id))
+            elif (config.promptmodel == "latent"):
+                if(SCALES == 1):
+                    logging.info(str(ITERATION_COUNT) + ';' + prompt + ';' + negative_prompt + ';' + str(scale1) + ';' + str(scale2) + ';' + str(scale3) + ';' + str(scale4) + ';' + str(scale5) + ';' + str("{:.2f}".format(OPEN_VAL.item())) + ';' + str("{:.2f}".format(CON_VAL.item())) + ';' + str("{:.2f}".format(EXTRA_VAL.item())) + ';' + str("{:.2f}".format(AGREE_VAL.item())) + ';' + str("{:.2f}".format(NEURO_VAL.item())) + ';' + str("{:.2f}".format(ACCEPT_VAL.item())) + ';' + str("{:.2f}".format(LIKE_VAL.item())) + ';' + str("{:.2f}".format(EMP_VAL.item())) + ';' + str("{:.2f}".format(ANTHRO_VAL.item())) + ';' + str("{:.2f}".format(TRUST_VAL.item())) + ';' + str(RUN_ATT_CHECK) + ';' + str(ATT_CHECK_SUCCESSFUL) + ';' + str(u_id))
+                if(SCALES == 2):
+                    logging.info(str(ITERATION_COUNT) + ';' + prompt + ';' + negative_prompt + ';' + str(scale1) + ';' + str(scale2) + ';' + str(scale3) + ';' + str(scale4) + ';' + str(scale5) + ';' + str("{:.2f}".format(OPEN_VAL.item())) + ';' + str("{:.2f}".format(CON_VAL.item())) + ';' + str("{:.2f}".format(EXTRA_VAL.item())) + ';' + str("{:.2f}".format(AGREE_VAL.item())) + ';' + str("{:.2f}".format(NEURO_VAL.item())) + ';' + str("{:.2f}".format(ACCEPT_VAL.item())) + ';' + str("{:.2f}".format(LIKE_VAL.item())) + ';' + str("{:.2f}".format(EMP_VAL.item())) + ';' + str("{:.2f}".format(ANTHRO_VAL.item())) + ';' + str("{:.2f}".format(TRUST_VAL.item())) + ';' + str(RUN_ATT_CHECK) + ';' + str(ATT_CHECK_SUCCESSFUL) + ';' + str(u_id))
+                if(SCALES == 3):
+                    logging.info(str(ITERATION_COUNT) + ';' + prompt + ';' + negative_prompt + ';' + str("{:.2f}".format(OPEN_VAL.item())) + ';' + str("{:.2f}".format(CON_VAL.item())) + ';' + str("{:.2f}".format(EXTRA_VAL.item())) + ';' + str("{:.2f}".format(AGREE_VAL.item())) + ';' + str("{:.2f}".format(NEURO_VAL.item())) + ';' + str("{:.2f}".format(ACCEPT_VAL.item())) + ';' + str("{:.2f}".format(LIKE_VAL.item())) + ';' + str("{:.2f}".format(EMP_VAL.item())) + ';' + str("{:.2f}".format(ANTHRO_VAL.item())) + ';' + str("{:.2f}".format(TRUST_VAL.item())) + ';' + str(RUN_ATT_CHECK) + ';' + str(ATT_CHECK_SUCCESSFUL) + ';' + str(u_id))
+               
 
             sugarcheck = False
 
@@ -731,7 +771,7 @@ def main():
             if(model_id == "SG161222/Realistic_Vision_V1.4"):
                 pipe = DiffusionPipeline.from_pretrained(
                     model_id,
-                    torch_dtype=torch.float32,
+                    torch_dtype=torch.float16,
                     safety_checker = None,
                     requires_safety_checker = False,
                     use_safetensors=False
@@ -742,28 +782,7 @@ def main():
                 pipe = DiffusionPipeline.from_pretrained(
                 "stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16, variant="fp16", use_safetensors=True)
                 pipe.enable_model_cpu_offload()
-            
-            # Prompterzeugung festlegen, latent oder defined
-            if (config.promptmodel == "defined"):
-                prompt = prompting.generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLOR_VAL_R, SKINCOLOR_VAL_G, SKINCOLOR_VAL_B, FACEWIDTH_VAL, FACIALHAIR_VAL,  HAIRLENGTH_VAL, HAIRSTRUCTURE_VAL, HAIRCOLOR_VAL_R, HAIRCOLOR_VAL_G, HAIRCOLOR_VAL_B, STATUR_VAL, NOSE_VAL, MOUTH_VAL, EYECOLOR_VAL_R, EYECOLOR_VAL_G, EYECOLOR_VAL_B, EYESIZE_VAL, EARS_VAL)
-                logging.info('prompt,' + prompt.replace(","," "))
-                logging.info(' ')
-                print("Prompt: " + prompt)
-                print(" ")
-                negative_prompt = prompting.generate_defined_negativePrompt()
-                print("Negative prompt:" + negative_prompt)
-                logging.info('negative_prompt,' + negative_prompt.replace(","," "))
-                logging.info(' ')
-            elif (config.promptmodel == "latent"):
-                prompt = prompting.generate_latentprompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL)
-                logging.info('prompt,' + prompt.replace(","," "))
-                logging.info(' ')
-                print("Prompt: " + prompt)
-                print(" ")
-                negative_prompt = prompting.generate_latent_negativePrompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL)
-                print("Negative prompt: " + negative_prompt)
-                logging.info('negative_prompt,' + negative_prompt.replace(","," "))
-                logging.info(' ')
+                
             global INITIAL_CHECK
             INITIAL_CHECK = True
             
@@ -784,8 +803,9 @@ def main():
             global N_INITIAL
             if(ITERATION_COUNT < N_INITIAL):
                 if(ITERATION_COUNT in config.attention):
-                    logging.info('run_attention_check,TRUE')
-                    logging.info(' ')
+                    RUN_ATT_CHECK = True
+                    #logging.info('run_attention_check,TRUE')
+                    
                     att_check_info = 'Pull the slider to ' + str(ATT_CHECK_VAL)
                     if(SCALES == 1 or SCALES == 2):
                         return {
@@ -794,6 +814,7 @@ def main():
                             inp3: gr.update(visible=True),
                             inp4: gr.update(visible=True),
                             inp5: gr.update(visible=True),
+                            user_id: gr.update(visible=False),
                             out: gr.update(value=image, visible=True),
                             infotext: gr.update(visible=False),
                             btn: gr.update(value="Generate new avatar"),
@@ -805,6 +826,7 @@ def main():
                     else: 
                         return {
                             inp1: gr.update(visible=True),
+                            user_id: gr.update(visible=False),
                             attention: gr.update(visible=True, label=att_check_info),
                             out: gr.update(value=image, visible=True),
                             infotext: gr.update(visible=False),
@@ -814,14 +836,16 @@ def main():
                             btn: gr.update(value="Generate new avatar")
                         }
                 elif(SCALES == 1 or SCALES == 2):
-                    logging.info('run_attention_check,FALSE')
-                    logging.info(' ')
+                    #logging.info('run_attention_check,FALSE')
+                    RUN_ATT_CHECK = False
+                    
                     return {
                         inp1: gr.update(visible=True),
                         inp2: gr.update(visible=True),
                         inp3: gr.update(visible=True),
                         inp4: gr.update(visible=True),
                         inp5: gr.update(visible=True),
+                        user_id: gr.update(visible=False),
                         btnEnd: gr.update(visible=True),
                         out: gr.update(value=image, visible=True),
                         infotext: gr.update(visible=False),
@@ -832,10 +856,12 @@ def main():
                          
                     }
                 else:
-                    logging.info('run_attention_check,FALSE')
-                    logging.info(' ')
+                    #logging.info('run_attention_check,FALSE')
+                    RUN_ATT_CHECK = False
+                    
                     return {
                         inp1: gr.update(visible=True),
+                        user_id: gr.update(visible=False),
                         out: gr.update(value=image, visible=True),
                         infotext: gr.update(visible=False),
                         btnEnd: gr.update(visible=True),
@@ -852,6 +878,7 @@ def main():
                         inp3: gr.update(visible=False),
                         inp4: gr.update(visible=False),
                         inp5: gr.update(visible=False),
+                        user_id: gr.update(visible=False),
                         btnStartOver: gr.update(visible=True),
                         attention: gr.update(visible=False),
                         btn: gr.update(visible=False),
@@ -864,6 +891,7 @@ def main():
                 else:
                     return {
                         inp1: gr.update(visible=False),
+                        user_id: gr.update(visible=False),
                         btnStartOver: gr.update(visible=True),
                         attention: gr.update(visible=False),
                         out: gr.update(value=image, visible=True),
@@ -875,19 +903,19 @@ def main():
                     }
 
         if(SCALES == 1 or SCALES  == 2):
-            btn.click(fn=diffusion, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext, text_input,btnStartOver])
-            btnEnd.click(fn=endquestion, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext, text_input,btnStartOver])
-            btnYesEnd.click(fn=end, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnNoReturn,btnSubmitEnd,infotext, text_input,btnStartOver])
-            btnNoReturn.click(fn=returnbutton, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext, text_input,btnStartOver])
-            btnSubmitEnd.click(fn=submitEnd, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnSubmitEnd,btnYesEnd,btnNoReturn,infotext, text_input,btnStartOver])
-            btnStartOver.click(fn=startOver, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver])
+            btn.click(fn=diffusion, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input, user_id], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext, text_input,btnStartOver, user_id])
+            btnEnd.click(fn=endquestion, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input, user_id], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext, text_input,btnStartOver, user_id])
+            btnYesEnd.click(fn=end, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input, user_id], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnNoReturn,btnSubmitEnd,infotext, text_input,btnStartOver, user_id])
+            btnNoReturn.click(fn=returnbutton, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input, user_id], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext, text_input,btnStartOver, user_id])
+            btnSubmitEnd.click(fn=submitEnd, inputs=[inp1, inp2, inp3, inp4, inp5, attention, text_input, user_id], outputs=[inp1,inp2,inp3,inp4,inp5,attention,out,btn,btnEnd,btnSubmitEnd,btnYesEnd,btnNoReturn,infotext, text_input,btnStartOver, user_id])
+            btnStartOver.click(fn=startOver, inputs=[inp1, attention, text_input, user_id], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver, user_id])
         else:
-            btn.click(fn=diffusion, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnNoReturn,btnSubmitEnd,infotext,attention, text_input,btnStartOver])
-            btnEnd.click(fn=endquestion, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver])
-            btnYesEnd.click(fn=end , inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver])
-            btnNoReturn.click(fn=returnbutton, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver])
-            btnSubmitEnd.click(fn=submitEnd, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver])
-            btnStartOver.click(fn=startOver, inputs=[inp1, attention, text_input], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver])
+            btn.click(fn=diffusion, inputs=[inp1, attention, text_input, user_id], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnNoReturn,btnSubmitEnd,infotext,attention, text_input,btnStartOver, user_id])
+            btnEnd.click(fn=endquestion, inputs=[inp1, attention, text_input, user_id], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver, user_id])
+            btnYesEnd.click(fn=end , inputs=[inp1, attention, text_input, user_id], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver, user_id])
+            btnNoReturn.click(fn=returnbutton, inputs=[inp1, attention, text_input, user_id], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver, user_id])
+            btnSubmitEnd.click(fn=submitEnd, inputs=[inp1, attention, text_input, user_id], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver, user_id])
+            btnStartOver.click(fn=startOver, inputs=[inp1, attention, text_input, user_id], outputs=[inp1,out,btn,btnEnd,btnYesEnd,btnSubmitEnd,btnNoReturn,infotext,attention, text_input,btnStartOver, user_id])
     pyautogui.hotkey('f5')
     demo.launch()
 
