@@ -81,18 +81,18 @@ logging.root.handlers[0].setFormatter(CsvFormatter())
 
 if (config.promptmodel == "defined"):
     if(config.scales == 1):
-        logging.info('iteration;prompt;negative_prompt;acceptance_sl;likeability_sl;empathy_sl;anthropomorphism_sl;trust_sl;abstraction;age;ethnicity;gender;face width;facial hair;hair structure;statur;nose;mouth;eye size;ears;skincolor_R;skincolor_G;skincolor_B;hair length;haircolor_R;haircolor_G;haircolor_B;eyecolor_R;eyecolor_G;eyecolor_B;run_att_check;att_check_successful,user_id')
+        logging.info('iteration;prompt;negative_prompt;acceptance_sl;likeability_sl;empathy_sl;anthropomorphism_sl;trust_sl;abstraction;age;ethnicity;gender;face width;facial hair;hair structure;statur;nose;mouth;eye size;ears;skincolor_R;skincolor_G;skincolor_B;hair length;haircolor_R;haircolor_G;haircolor_B;eyecolor_R;eyecolor_G;eyecolor_B;run_att_check;att_check_successful;user_id')
     if(config.scales == 2):
-        logging.info('iteration;prompt;negative_prompt;openness_sl;conscientiousness_sl;extraversion_sl;agreeableness_sl;neuroticism_sl;abstraction;age;ethnicity;gender;face width;facial hair;hair structure;statur;nose;mouth;eye size;ears;skincolor_R;skincolor_G;skincolor_B;hair length;haircolor_R;haircolor_G;haircolor_B;eyecolor_R;eyecolor_G;eyecolor_B;run_att_check;att_check_successful,user_id')
+        logging.info('iteration;prompt;negative_prompt;openness_sl;conscientiousness_sl;extraversion_sl;agreeableness_sl;neuroticism_sl;abstraction;age;ethnicity;gender;face width;facial hair;hair structure;statur;nose;mouth;eye size;ears;skincolor_R;skincolor_G;skincolor_B;hair length;haircolor_R;haircolor_G;haircolor_B;eyecolor_R;eyecolor_G;eyecolor_B;run_att_check;att_check_successful;user_id')
     if(config.scales == 3):
-        logging.info('iteration;prompt;negative_prompt;efficiency_sl;abstraction;age;ethnicity;gender;face width;facial hair;hair structure;statur;nose;mouth;eye size;ears;skincolor_R;skincolor_G;skincolor_B;hair length;haircolor_R;haircolor_G;haircolor_B;eyecolor_R;eyecolor_G;eyecolor_B;run_att_check;att_check_successful,user_id')
+        logging.info('iteration;prompt;negative_prompt;efficiency_sl;abstraction;age;ethnicity;gender;face width;facial hair;hair structure;statur;nose;mouth;eye size;ears;skincolor_R;skincolor_G;skincolor_B;hair length;haircolor_R;haircolor_G;haircolor_B;eyecolor_R;eyecolor_G;eyecolor_B;run_att_check;att_check_successful;user_id')
 elif (config.promptmodel == "latent"):
     if(config.scales == 1):
-        logging.info('iteration;prompt;negative_prompt;acceptance_sl;likeability_sl;empathy_sl;anthropomorphism_sl;trust_sl;openness;conscientiousness;extraversion;agreeableness;neuroticism;acceptance;likeability;empathy;anthropomorphism;trust;run_att_check;att_check_successful,user_id')
+        logging.info('iteration;prompt;negative_prompt;acceptance_sl;likeability_sl;empathy_sl;anthropomorphism_sl;trust_sl;openness;conscientiousness;extraversion;agreeableness;neuroticism;acceptance;likeability;empathy;anthropomorphism;trust;run_att_check;att_check_successful;user_id')
     if(config.scales == 2):
-        logging.info('iteration;prompt;negative_prompt;openness_sl;conscientiousness_sl;extraversion_sl;agreeableness_sl;neuroticism_sl;openness;conscientiousness;extraversion;agreeableness;neuroticism;acceptance;likeability;empathy;anthropomorphism;trust;run_att_check;att_check_successful,user_id')
+        logging.info('iteration;prompt;negative_prompt;openness_sl;conscientiousness_sl;extraversion_sl;agreeableness_sl;neuroticism_sl;openness;conscientiousness;extraversion;agreeableness;neuroticism;acceptance;likeability;empathy;anthropomorphism;trust;run_att_check;att_check_successful;user_id')
     if(config.scales == 3):
-        logging.info('iteration;prompt;negative_prompt;efficiency_sl;openness;conscientiousness;extraversion;agreeableness;neuroticism;acceptance;likeability;empathy;anthropomorphism;trust;run_att_check;att_check_successful,user_id')    
+        logging.info('iteration;prompt;negative_prompt;efficiency_sl;openness;conscientiousness;extraversion;agreeableness;neuroticism;acceptance;likeability;empathy;anthropomorphism;trust;run_att_check;att_check_successful;user_id')    
 
 # important global values for the bayesian optimization
 BATCH_SIZE = 1 # Number of design parameter points to query at next iteration
