@@ -3,7 +3,7 @@
 # -------------------------------------------------------------------------------------------
 
 # Number of iterations that will run until the program is finished:
-initial = 20
+initial = 5
 
 # Which scales should be used ( 1 = acceptance, likeability, empathy, anthropomorphism, trust | 2 = openness, conscientiousness, extraversion, agreeableness, neuroticism | 3 = efficiency )
 scales = 1
@@ -14,8 +14,11 @@ pictures = 1
 # After how many iterations should the attention check be entered? (Array (e.g., [1,2,3]), [-1] for no check)
 attention = [1,3]
 
-# Diffusers - Model ( RV: "SG161222/Realistic_Vision_V1.4" )
-model = "SG161222/Realistic_Vision_V1.4"
+# Diffusers - Model (Default: "SG161222/Realistic_Vision_V5.1_noVAE")
+#model = "SG161222/Realistic_Vision_V1.4"
+#model="stabilityai/sdxl-turbo"
+#model ="SG161222/RealVisXL_V2.0"
+model = "SG161222/Realistic_Vision_V5.1_noVAE"
 
 # Your token for the huggingface-login (needed for some models. If not needed, leave as "")
 token = ""
