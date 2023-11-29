@@ -1,4 +1,3 @@
-
 import color
 
 def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLOR_VAL_R, SKINCOLOR_VAL_G, SKINCOLOR_VAL_B, FACEWIDTH_VAL, FACIALHAIR_VAL,  HAIRLENGTH_VAL, HAIRSTRUCTURE_VAL, HAIRCOLOR_VAL_R, HAIRCOLOR_VAL_G, HAIRCOLOR_VAL_B, STATUR_VAL, NOSE_VAL, MOUTH_VAL, EYECOLOR_VAL_R, EYECOLOR_VAL_G, EYECOLOR_VAL_B, EYESIZE_VAL, EARS_VAL):
@@ -21,7 +20,7 @@ def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLO
         EYECOLOR_VAL = color.colour_to_text((eyecolor_r, eyecolor_g, eyecolor_b))
 
         
-        #set the the abstractness level
+        #set the abstractness level
         if 0.00 <= ABSTR_VAL < 0.20: abstr = "A ultra abstract "; sugarcheck = False
         if 0.20 <= ABSTR_VAL < 0.40: abstr = "A abstract "; sugarcheck = False
         if 0.40 <= ABSTR_VAL < 0.60: abstr = "A realistic "; sugarcheck = False
@@ -194,7 +193,7 @@ def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLO
             sugar = "by NHK Animation, digital art, trending on artstation, illustration"
 
         # set the prompts
-        prompt = abstr + age + gender + "infront of grey background " + glasses + SKINCOLOR_VAL + " skin color, " + facewidth + facialhair + " face, " +  str(hairlength) + "m long " + hairstructure + HAIRCOLOR_VAL + " hair, " + statur + nose + mouth + eyesize + EYECOLOR_VAL + " eyes "+ "and " + ears + "is looking at the camera with a proud expression on the face, " + sugar
+        prompt = abstr + age + gender + "in front of grey background " + glasses + SKINCOLOR_VAL + " skin color, " + facewidth + facialhair + " face, " +  str(hairlength) + "m long " + hairstructure + HAIRCOLOR_VAL + " hair, " + statur + nose + mouth + eyesize + EYECOLOR_VAL + " eyes "+ "and " + ears + "is looking at the camera with a proud expression on the face, " + sugar
 
 
         return prompt
@@ -230,22 +229,22 @@ def generate_latentprompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, AC
 def calculate_postivevalue(input_parameter):
     if float(input_parameter) > 0.5:
         # Positive Prompt
-        ergebnis = "{:.2f}".format((float(input_parameter) - 0.5)/0.5)
+        result = "{:.2f}".format((float(input_parameter) - 0.5)/0.5)
     else:
         # Neutral & Input-Parameter ist kleiner 0,5
-        ergebnis = 0
+        result = 0
     
-    return ergebnis
+    return result
 
 def calculate_negativevalue(input_parameter):
     if float(input_parameter) < 0.5:
         # Negative Prompt
-        ergebnis = "{:.2f}".format(1 - (float(input_parameter) * 2))
+        result = "{:.2f}".format(1 - (float(input_parameter) * 2))
     else:
         # Neutral & Input-Parameter ist größer 0,5
-        ergebnis = 0
+        result = 0
     
-    return ergebnis
+    return result
 
 
 def generate_latent_negativePrompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL):
