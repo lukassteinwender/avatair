@@ -16,6 +16,7 @@ import logging
 from scripts import *
 from diffusers import DiffusionPipeline
 from diffusers import StableDiffusionXLPipeline, StableDiffusionXLImg2ImgPipeline
+from diffusers import AutoPipelineForText2Image, AutoPipelineForImage2Image
 from botorch.test_functions.multi_objective import BraninCurrin
 from botorch.models.gp_regression import SingleTaskGP
 from botorch.models.transforms.outcome import Standardize
@@ -781,6 +782,10 @@ def main():
             if(model_id == "stabilityai/stable-diffusion-xl-base-1.0"):
                 pipe = DiffusionPipeline.from_pretrained(
                 "stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16, variant="fp16", use_safetensors=True)
+                pipe.enable_model_cpu_offload()
+            if(model_id == "stabilityai/sdxl-turbo"):
+                pipe = AutoPipelineForText2Image.from_pretrained("stabilityai/sdxl-turbo", torch_dtype=torch.float16, variant="fp16", use_safetensors=True)
+                #pipe.to("cuda")
                 pipe.enable_model_cpu_offload()
                 
             global INITIAL_CHECK
