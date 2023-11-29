@@ -769,26 +769,22 @@ def main():
             
             model_id = config.model
             steps=20
-            if(model_id == "SG161222/Realistic_Vision_V1.4"):
-                pipe = DiffusionPipeline.from_pretrained(
-                    model_id,
-                    torch_dtype=torch.float16,
-                    safety_checker = None,
-                    requires_safety_checker = False,
-                    use_safetensors=False
-                )
-                pipe = pipe.to("cuda")
-                pipe.enable_vae_tiling()
             if(model_id == "stabilityai/stable-diffusion-xl-base-1.0"):
                 pipe = DiffusionPipeline.from_pretrained(
                 "stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16, variant="fp16", use_safetensors=True)
                 pipe.enable_model_cpu_offload()
-            if(model_id == "stabilityai/sdxl-turbo"):
+            elif(model_id == "stabilityai/sdxl-turbo"):
                 pipe = AutoPipelineForText2Image.from_pretrained("stabilityai/sdxl-turbo", torch_dtype=torch.float16, variant="fp16", use_safetensors=True)
                 #pipe.to("cuda")
                 # turbo only requires one step
                 steps=1
                 pipe.enable_model_cpu_offload()
+            # this catches all "SG161222/Realistic_Vision_VXX" versions
+            else:
+                pipe = AutoPipelineForText2Image.from_pretrained(model_id, torch_dtype=torch.float16, variant="fp16")
+                #pipe.enable_model_cpu_offload()
+                pipe = pipe.to("cuda")
+                pipe.enable_vae_tiling()
                 
             global INITIAL_CHECK
             INITIAL_CHECK = True
