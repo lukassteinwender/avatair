@@ -5,7 +5,7 @@ torch>=2.1.1
 gradio>=4.8.0
 botorch>=0.9.5
 diffusers>=0.24.0
-transformers>=4.35.2
+transformers>=4.36.0
 accelerate>=0.25.0
 pandas>=2.1.4
 huggingface_hub
