@@ -1,8 +1,8 @@
 --find-links https://download.pytorch.org/whl/torch_stable.html
 
-torch>=2.1.1
-#torch==2.1.1cu117 or +cu118 # depending on your CUDA version, find out via nvcc -V
-gradio>=4.8.0
+torch>=2.1.2
+#torch==2.1.2cu117 or +cu118 # depending on your CUDA version, find out via nvcc -V
+gradio>=4.9.0
 botorch>=0.9.5
 diffusers>=0.24.0
 transformers>=4.36.0
