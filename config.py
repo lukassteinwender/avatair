@@ -17,8 +17,10 @@ attention = [1,3]
 # Diffusers - Model (Default: "SG161222/Realistic_Vision_V5.1_noVAE")
 #model = "SG161222/Realistic_Vision_V1.4"
 #model="stabilityai/sdxl-turbo"
-#model ="SG161222/RealVisXL_V2.0"
-model = "SG161222/Realistic_Vision_V5.1_noVAE"
+# model ="SG161222/RealVisXL_V3.0"
+# model = "SG161222/Realistic_Vision_V5.1_noVAE"
+model = "SG161222/Realistic_Vision_V6.0_B1_noVAE"
+
 
 # Your token for the huggingface-login (needed for some models. If not needed, leave as "")
 token = ""
