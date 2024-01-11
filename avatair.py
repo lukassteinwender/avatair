@@ -769,10 +769,10 @@ def main():
             
             steps=20
             if(config.stablediffusion == "xl"):
-                pipe = DiffusionPipeline.from_pretrained(config.model, torch_dtype=torch.float16, variant="fp16", use_safetensors=True)
+                pipe = DiffusionPipeline.from_pretrained(config.model, torch_dtype=torch.float16, use_safetensors=True)
                 pipe.enable_model_cpu_offload()
             else:
-                pipe = AutoPipelineForText2Image.from_pretrained(config.model, torch_dtype=torch.float16, variant="fp16")
+                pipe = AutoPipelineForText2Image.from_pretrained(config.model, torch_dtype=torch.float16)
                 #pipe.enable_model_cpu_offload()
                 pipe = pipe.to("cuda")
                 pipe.enable_vae_tiling()

@@ -15,12 +15,12 @@ pictures = 1
 attention = [1,3]
 
 # Choose between Stable Diffusion ("sd") and Stable Diffusion XL ("xl")
-stablediffusion = "sd"
+stablediffusion = "xl"
 
 # Diffusers - Model (Default: "SG161222/Realistic_Vision_V5.1_noVAE")
-model = "SG161222/Realistic_Vision_V1.4"
+# model = "SG161222/Realistic_Vision_V1.4"
 # model="stabilityai/sdxl-turbo"
-# model = "SG161222/RealVisXL_V3.0"
+model = "SG161222/RealVisXL_V3.0"
 # model = "SG161222/Realistic_Vision_V5.1_noVAE"
 # model = "SG161222/Realistic_Vision_V6.0_B1_noVAE"
 
