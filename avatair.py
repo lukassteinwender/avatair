@@ -767,21 +767,12 @@ def main():
             # stable-diffusion photo-generation script
             torch.manual_seed(random.randint(0, 1000))
             
-            model_id = config.model
             steps=20
-            if(model_id == "stabilityai/stable-diffusion-xl-base-1.0"):
-                pipe = DiffusionPipeline.from_pretrained(
-                "stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.float16, variant="fp16", use_safetensors=True)
+            if(config.stablediffusion == "xl"):
+                pipe = DiffusionPipeline.from_pretrained(config.model, torch_dtype=torch.float16, variant="fp16", use_safetensors=True)
                 pipe.enable_model_cpu_offload()
-            elif(model_id == "stabilityai/sdxl-turbo"):
-                pipe = AutoPipelineForText2Image.from_pretrained("stabilityai/sdxl-turbo", torch_dtype=torch.float16, variant="fp16", use_safetensors=True)
-                #pipe.to("cuda")
-                # turbo only requires one step
-                steps=1
-                pipe.enable_model_cpu_offload()
-            # this catches all "SG161222/Realistic_Vision_VXX" versions
             else:
-                pipe = AutoPipelineForText2Image.from_pretrained(model_id, torch_dtype=torch.float16, variant="fp16")
+                pipe = AutoPipelineForText2Image.from_pretrained(config.model, torch_dtype=torch.float16, variant="fp16")
                 #pipe.enable_model_cpu_offload()
                 pipe = pipe.to("cuda")
                 pipe.enable_vae_tiling()
