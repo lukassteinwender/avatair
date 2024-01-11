@@ -53,8 +53,8 @@ python avatair.py
     </tr>
     <tr>
       <th><b>model</b></th>
-      <th>Use different types of SD-models (AvatAIr is optimized for SG161222/Realistic_Vision_V1.4)</th>
-      <th>"SG161222/Realistic_Vision_V1.4"</th>
+      <th>Use different types of SD-models</th>
+      <th>"SG161222/RealVisXL_V3.0"</th>
     </tr>
     <tr>
       <th><b>token</b></th>
