@@ -47,6 +47,11 @@ python avatair.py
       <th>[1,3]</th>
     </tr>
     <tr>
+      <th><b>stablediffusion</b></th>
+      <th>Choose between Stable Diffusion ("sd") and Stable Diffusion XL ("xl")</th>
+      <th>"xl"</th>
+    </tr>
+    <tr>
       <th><b>model</b></th>
       <th>Use different types of SD-models (AvatAIr is optimized for SG161222/Realistic_Vision_V1.4)</th>
       <th>"SG161222/Realistic_Vision_V1.4"</th>
