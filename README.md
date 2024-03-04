@@ -82,6 +82,9 @@ requirements.txt
 
 <br />
 
+**Paper:**<br />
+Download the paper <a href="https://steinwender-media.com/blog/2023/10/24/avatair/">here</a>.
+
 **License:**<br />
 [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 
