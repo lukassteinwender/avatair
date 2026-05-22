@@ -488,7 +488,7 @@ def main():
                     inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="neuroticism", info="0 = low | 1 = high | how emotional stable would you rate the avatar", visible=False)
                 if(SCALES == 3):
                     inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="efficiency", info="0 = low | 1 = high | how good does the avatar work", visible=False)
-                attention = gr.Slider(1, 100, step=1, value=0, label=att_check_info, visible=False)
+                attention = gr.Slider(1, 100, step=1, value=1, label=att_check_info, visible=False)
                 text_input = gr.Textbox(label="feedback (optional)", visible=False)
                 user_id = gr.Textbox(label="User ID", visible=True)
             out = gr.Image(visible=False, scale=0, min_width=512)
