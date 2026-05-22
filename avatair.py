@@ -10,6 +10,7 @@ import threading
 import warnings
 import config
 import pyautogui
+pyautogui.FAILSAFE = False  # Add this line
 import prompting
 import scripts
 import logging
