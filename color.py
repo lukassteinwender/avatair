@@ -15,8 +15,8 @@ def closest_colour(requested_colour):
         rd = (r_c - requested_colour[0]) ** 2
         gd = (g_c - requested_colour[1]) ** 2
         bd = (b_c - requested_colour[2]) ** 2
-        min_colors[(rd + gd + bd)] = name
-    return min_colors[min(min_colors.keys())]
+        min_colours[(rd + gd + bd)] = name
+    return min_colours[min(min_colours.keys())]
 
 
 
