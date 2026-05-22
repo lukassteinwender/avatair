@@ -29,7 +29,7 @@ from botorch.utils.multi_objective.scalarization import get_chebyshev_scalarizat
 from botorch.utils.multi_objective.box_decompositions.non_dominated import NondominatedPartitioning
 from botorch.acquisition.multi_objective.monte_carlo import qExpectedHypervolumeImprovement
 from botorch.utils.sampling import sample_simplex
-from botorch import fit_gpytorch_model
+from botorch import fit_gpytorch_mll
 from botorch.acquisition.monte_carlo import qExpectedImprovement, qNoisyExpectedImprovement
 from botorch.sampling import SobolQMCNormalSampler
 from botorch.exceptions import BadInitialCandidatesWarning
@@ -70,8 +70,8 @@ tkwargs = {
 
 date = time.strftime("%Y_%m_%d-%H_%M_%S")
 directory = os.path.dirname(os.path.realpath(__file__))
-os.mkdir(directory + '\pic_log' + '\pic_' + date)
-logfolder = directory + '\log' + '\log_' + date + '.csv'
+os.mkdir(directory + '\\pic_log' + '\\pic_' + date)
+logfolder = directory + '\\log' + '\\log_' + date + '.csv'
 logging.basicConfig(filename=logfolder, encoding='utf-8', level=logging.INFO)
 logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
@@ -314,7 +314,7 @@ def mobo_execute(seed, iterations, initial_samples):
         ITERATION_COUNT = iteration
         #print(mll_qehvi)
         # Fit Models
-        fit_gpytorch_model(mll_qehvi)
+        fit_gpytorch_mll(mll_qehvi)
 
         print("after fit_gpytorch_model")
         # Define qEI acquisition modules using QMC sampler
@@ -791,7 +791,7 @@ def main():
             img = image
             global directory
             global date
-            image_path = directory + '\pic_log' + '\pic_' + date + '\image_' + str(ITERATION_COUNT) + '.jpg'
+            image_path = directory + '\\pic_log' + '\\pic_' + date + '\\image_' + str(ITERATION_COUNT) + '.jpg'
             img.save(image_path)
 
             global N_INITIAL
