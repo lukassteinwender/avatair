@@ -318,7 +318,7 @@ def mobo_execute(seed, iterations, initial_samples):
 
         print("after fit_gpytorch_model")
         # Define qEI acquisition modules using QMC sampler
-        qehvi_sampler = SobolQMCNormalSampler(sample_shape=(BATCH_SIZE))
+        qehvi_sampler = SobolQMCNormalSampler(sample_shape=torch.Size([BATCH_SIZE]))
         print("after qehvi_sampler")
 
 
