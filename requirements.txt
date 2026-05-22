@@ -6,10 +6,10 @@ gradio>=6.14.0
 botorch>=0.17.2
 diffusers>=0.38.0
 transformers>=5.9.0
-accelerate>=1.6.0
+accelerate>=1.13.0
 pandas>=2.3.3
 huggingface_hub
 invisible-watermark
 safetensors
-webcolors
+webcolors>=25.10.0
 pyautogui
