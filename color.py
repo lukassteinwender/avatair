@@ -12,9 +12,9 @@ def closest_colour(requested_colour):
     min_colours = {}
     for name in webcolors.names("css3"):
         r_c, g_c, b_c = webcolors.name_to_rgb(name, spec="css3")
-        rd = (r_c - requested_color[0]) ** 2
-        gd = (g_c - requested_color[1]) ** 2
-        bd = (b_c - requested_color[2]) ** 2
+        rd = (r_c - requested_colour[0]) ** 2
+        gd = (g_c - requested_colour[1]) ** 2
+        bd = (b_c - requested_colour[2]) ** 2
         min_colors[(rd + gd + bd)] = name
     return min_colors[min(min_colors.keys())]
 
