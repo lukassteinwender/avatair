@@ -788,7 +788,7 @@ def main():
             steps=20
             if(config.stablediffusion == "xl"):
                 pipe = DiffusionPipeline.from_pretrained(config.model, torch_dtype=torch.float16, use_safetensors=True)
-                pipe.vae.to(torch.float32) 
+                #pipe.vae.to(torch.float32) 
                 pipe.enable_model_cpu_offload()
             else:
                 pipe = AutoPipelineForText2Image.from_pretrained(config.model, torch_dtype=torch.float16)
