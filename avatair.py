@@ -28,7 +28,7 @@ from botorch.optim.optimize import optimize_acqf, optimize_acqf_list
 from botorch.acquisition.objective import GenericMCObjective
 from botorch.utils.multi_objective.scalarization import get_chebyshev_scalarization
 from botorch.utils.multi_objective.box_decompositions.non_dominated import NondominatedPartitioning
-from botorch.acquisition.multi_objective.monte_carlo import qExpectedHypervolumeImprovement
+from botorch.acquisition.multi_objective.logei import qLogExpectedHypervolumeImprovement
 from botorch.utils.sampling import sample_simplex
 from botorch import fit_gpytorch_mll
 from botorch.acquisition.monte_carlo import qExpectedImprovement, qNoisyExpectedImprovement
@@ -228,7 +228,7 @@ def optimize_qehvi(model, train_obj, sampler):
     """Optimizes the qEHVI acquisition function, and returns a new candidate and observation."""
     # partition non-dominated space into disjoint rectangles
     partitioning = NondominatedPartitioning(ref_point=ref_point, Y=train_obj)
-    acq_func = qExpectedHypervolumeImprovement(
+    acq_func = qLogExpectedHypervolumeImprovement(
         model=model,
         ref_point=ref_point.tolist(),  # use known reference point 
         partitioning=partitioning,
@@ -502,7 +502,7 @@ def main():
             btnSubmitEnd = gr.Button(value="Submit reason", scale=2, visible=False)
             btnStartOver = gr.Button(value="Restart survey (optional)", scale=2, visible=False)
         
-        def endquestion(scale1, scale2, scale3, scale4, scale5, att, txt, u_id):
+        def endquestion(*args):
             if(SCALES == 1 or SCALES == 2):
                 return {
                     inp1: gr.update(visible=False),
@@ -530,7 +530,7 @@ def main():
                     infotext: gr.update(value="Are you sure about closing the survey? \nYou will not get rewarded and your progress will be worthless.", visible=True)
                 }
         
-        def startOver(scale1, scale2, scale3, scale4, scale5, att, txt, u_id):
+        
             #logging.info('restart,TRUE')
             
             try:
@@ -549,7 +549,17 @@ def main():
             finally:
                 eventStop.set()
 
-        def submitEnd(scale1, scale2, scale3, scale4, scale5, att, txt, u_id):
+        def startOver(*args):
+            try:
+                return {
+                    out: gr.update(visible=False),
+                    btnStartOver: gr.update(visible=False),
+                    infotext: gr.update(value="Restarting the survey, please reload the page in a few seconds if it isn't reloading by itself.", visible=True)
+                }
+            finally:
+                eventStop.set()
+
+        def submitEnd(*args):
             #logging.info('end_reason,' + txt)
             
             if(SCALES == 1 or SCALES == 2):
@@ -585,7 +595,7 @@ def main():
                     btnSubmitEnd: gr.update(visible=False)
                 }
         
-        def returnbutton(scale1, scale2, scale3, scale4, scale5, att, txt, u_id):
+        def returnbutton(*args):
             if(SCALES == 1 or SCALES == 2):
                 return {
                     inp1: gr.update(visible=True),
@@ -613,7 +623,7 @@ def main():
                     infotext: gr.update(visible=False)
                 }
             
-        def end(scale1, scale2, scale3, scale4, scale5, att, txt, u_id):
+        def end(*args):
             #logging.info('interrupt,TRUE')
             
             if(SCALES == 1 or SCALES == 2):
@@ -647,8 +657,15 @@ def main():
                     btnSubmitEnd: gr.update(visible=True)
                 }
 
-        def diffusion(scale1, scale2, scale3, scale4, scale5, att, txt, u_id):
-    
+        def diffusion(*args):
+            # 1. UNPACK ARGS MANUALLY
+            if config.scales in [1, 2]:
+                # In modes 1 and 2, you have 8 inputs
+                scale1, scale2, scale3, scale4, scale5, att, txt, u_id = args
+            else:
+                # In mode 3, you have 4 inputs
+                scale1, att, txt, u_id = args
+                scale2 = scale3 = scale4 = scale5 = 0 # Default values
             # empty cuda-cache
             torch.cuda.empty_cache()
             global ITERATION_COUNT
@@ -771,6 +788,7 @@ def main():
             steps=20
             if(config.stablediffusion == "xl"):
                 pipe = DiffusionPipeline.from_pretrained(config.model, torch_dtype=torch.float16, use_safetensors=True)
+                pipe.vae.to(torch.float32) 
                 pipe.enable_model_cpu_offload()
             else:
                 pipe = AutoPipelineForText2Image.from_pretrained(config.model, torch_dtype=torch.float16)

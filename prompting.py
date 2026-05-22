@@ -2,6 +2,20 @@ import color
 
 def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLOR_VAL_R, SKINCOLOR_VAL_G, SKINCOLOR_VAL_B, FACEWIDTH_VAL, FACIALHAIR_VAL,  HAIRLENGTH_VAL, HAIRSTRUCTURE_VAL, HAIRCOLOR_VAL_R, HAIRCOLOR_VAL_G, HAIRCOLOR_VAL_B, STATUR_VAL, NOSE_VAL, MOUTH_VAL, EYECOLOR_VAL_R, EYECOLOR_VAL_G, EYECOLOR_VAL_B, EYESIZE_VAL, EARS_VAL):
 
+        # --- SAFETY DEFAULTS (Prevents UnboundLocalError) ---
+        abstr = "A "
+        sugarcheck = False
+        age = "adult "
+        gender = "person "
+        glasses = ""
+        facewidth = ""
+        facialhair = ""
+        hairstructure = ""
+        statur = ""
+        nose = ""
+        mouth = ""
+        eyesize = ""
+        ears = ""
         
         #conversion to rgb values 0-255 & generate color as text
         skincolor_r = round(SKINCOLOR_VAL_R.item()*255)
@@ -29,6 +43,7 @@ def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLO
 
         #set Age
         if 0.00 <= AGE_VAL < 0.01: age = "1 y.o. "
+        # ... (Keep your existing age lines 0.01 to 0.98) ...
         if 0.01 <= AGE_VAL < 0.02: age = "2 y.o. "
         if 0.02 <= AGE_VAL < 0.03: age = "3 y.o. "
         if 0.03 <= AGE_VAL < 0.04: age = "4 y.o. "
@@ -127,61 +142,61 @@ def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLO
         if 0.96 <= AGE_VAL < 0.97: age = "97 y.o. "
         if 0.97 <= AGE_VAL < 0.98: age = "98 y.o. "
         if 0.98 <= AGE_VAL < 0.99: age = "99 y.o. "
-        if 0.99 <= AGE_VAL < 1.00: age = "100 y.o. "
+        if 0.99 <= AGE_VAL <= 1.00: age = "100 y.o. " # Fixed: <= 1.00
 
         #set Gender
         if 0.00 <= GENDER_VAL < 0.34: gender = "female person "
-        if 0.34 <= GENDER_VAL < 0.67: gender = "Androgynous "
-        if 0.67 <= GENDER_VAL < 1.00: gender = "male person "
+        elif 0.34 <= GENDER_VAL < 0.67: gender = "Androgynous "
+        else: gender = "male person " # Fixed logic: catches 0.67 to 1.00
         
         #set Glasses
         if 0.00 <= GLASSES_VAL < 0.50: glasses = "with glasses, "
-        if 0.50 <= GLASSES_VAL <= 1.00: glasses = "without glasses, "
+        else: glasses = "without glasses, "
 
         #set the face width
         if 0.00 <= FACEWIDTH_VAL < 0.34: facewidth = "thin "
-        if 0.34 <= FACEWIDTH_VAL < 0.67: facewidth = "medium-sized "
-        if 0.67 <= FACEWIDTH_VAL <= 1.00: facewidth = "wide "
+        elif 0.34 <= FACEWIDTH_VAL < 0.67: facewidth = "medium-sized "
+        else: facewidth = "wide "
 
         #set the facial hair
         if 0.00 <= FACIALHAIR_VAL < 0.34: facialhair = "clean shaven "
-        if 0.34 <= FACIALHAIR_VAL < 0.67: facialhair = "little bearded"
-        if 0.67 <= FACIALHAIR_VAL <= 1.00: facialhair = "bearded "
+        elif 0.34 <= FACIALHAIR_VAL < 0.67: facialhair = "little bearded"
+        else: facialhair = "bearded "
 
         #set the hair structure
         if 0.00 <= HAIRSTRUCTURE_VAL < 0.20: hairstructure = "stick straight "
-        if 0.20 <= HAIRSTRUCTURE_VAL < 0.40: hairstructure = "straight "
-        if 0.40 <= HAIRSTRUCTURE_VAL < 0.60: hairstructure = "wavy "
-        if 0.60 <= HAIRSTRUCTURE_VAL < 0.80: hairstructure = "big curls "
-        if 0.80 <= HAIRSTRUCTURE_VAL <= 1.00: hairstructure = "small curls "
+        elif 0.20 <= HAIRSTRUCTURE_VAL < 0.40: hairstructure = "straight "
+        elif 0.40 <= HAIRSTRUCTURE_VAL < 0.60: hairstructure = "wavy "
+        elif 0.60 <= HAIRSTRUCTURE_VAL < 0.80: hairstructure = "big curls "
+        else: hairstructure = "small curls "
 
         #set the statur
         if 0.00 <= STATUR_VAL < 0.20: statur = "very thin stature, "
-        if 0.20 <= STATUR_VAL < 0.40: statur = "thin stature, "
-        if 0.40 <= STATUR_VAL < 0.60: statur = "regular stature, "
-        if 0.60 <= STATUR_VAL < 0.80: statur = "obese stature, "
-        if 0.80 <= STATUR_VAL <= 1.00: statur = "very obese stature, "
+        elif 0.20 <= STATUR_VAL < 0.40: statur = "thin stature, "
+        elif 0.40 <= STATUR_VAL < 0.60: statur = "regular stature, "
+        elif 0.60 <= STATUR_VAL < 0.80: statur = "obese stature, "
+        else: statur = "very obese stature, "
 
         #set the nose, mouth, eyesize and ears
         if 0.00 <= NOSE_VAL < 0.25: nose = "no nose, "
-        if 0.25 <= NOSE_VAL < 0.50: nose = "small nose, "
-        if 0.50 <= NOSE_VAL < 0.75: nose = "medium-sized nose, "
-        if 0.75 <= NOSE_VAL <= 1.00: nose = "big nose, "
+        elif 0.25 <= NOSE_VAL < 0.50: nose = "small nose, "
+        elif 0.50 <= NOSE_VAL < 0.75: nose = "medium-sized nose, "
+        else: nose = "big nose, "
         
         if 0.00 <= MOUTH_VAL < 0.25: mouth = "no mouth, "
-        if 0.25 <= MOUTH_VAL < 0.50: mouth = "small mouth, "
-        if 0.50 <= MOUTH_VAL < 0.75: mouth = "medium-sized mouth, "
-        if 0.75 <= MOUTH_VAL <= 1.00: mouth = "big mouth, "
+        elif 0.25 <= MOUTH_VAL < 0.50: mouth = "small mouth, "
+        elif 0.50 <= MOUTH_VAL < 0.75: mouth = "medium-sized mouth, "
+        else: mouth = "big mouth, "
 
         if 0.00 <= EYESIZE_VAL < 0.25: eyesize = "no "
-        if 0.25 <= EYESIZE_VAL < 0.50: eyesize = "small "
-        if 0.50 <= EYESIZE_VAL < 0.75: eyesize = "medium-sized "
-        if 0.75 <= EYESIZE_VAL <= 1.00: eyesize = "big "
+        elif 0.25 <= EYESIZE_VAL < 0.50: eyesize = "small "
+        elif 0.50 <= EYESIZE_VAL < 0.75: eyesize = "medium-sized "
+        else: eyesize = "big "
 
         if 0.00 <= EARS_VAL < 0.25: ears= "no ears "
-        if 0.25 <= EARS_VAL < 0.50: ears= "small ears "
-        if 0.50 <= EARS_VAL < 0.75: ears= "medium-sized ears "
-        if 0.75 <= EARS_VAL <= 1.00: ears= "big ears "
+        elif 0.25 <= EARS_VAL < 0.50: ears= "small ears "
+        elif 0.50 <= EARS_VAL < 0.75: ears= "medium-sized ears "
+        else: ears= "big ears "
 
         #set the hairlength and convert it to two decimal places
         hairlength = "{:.2f}".format(HAIRLENGTH_VAL.item())
@@ -195,84 +210,56 @@ def generate_definedprompt(ABSTR_VAL, AGE_VAL, GENDER_VAL, GLASSES_VAL, SKINCOLO
         # set the prompts
         prompt = abstr + age + gender + "in front of grey background " + glasses + SKINCOLOR_VAL + " skin color, " + facewidth + facialhair + " face, " +  str(hairlength) + "m long " + hairstructure + HAIRCOLOR_VAL + " hair, " + statur + nose + mouth + eyesize + EYECOLOR_VAL + " eyes "+ "and " + ears + "is looking at the camera with a proud expression on the face, " + sugar
 
-
         return prompt
 
 
+
 def generate_latentprompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL):
-
-    #if calculate_postivevalue(OPEN_VAL) > 0:
     openness= "(Openness:" + str(calculate_postivevalue("{:.2f}".format(OPEN_VAL.item()))) + ")"
-    #elif calculate_postivevalue(CON_VAL) > 0:   
     conscientiousness= "(Conscientiousness:" + str(calculate_postivevalue("{:.2f}".format(CON_VAL.item()))) + ")"
-    #elif calculate_postivevalue(EXTRA_VAL) > 0:
     extraversion= "(Extraversion:" + str(calculate_postivevalue("{:.2f}".format(EXTRA_VAL.item()))) + ")"
-    #elif calculate_postivevalue(AGREE_VAL) > 0:
     agreeableness= "(Agreeableness:" + str(calculate_postivevalue("{:.2f}".format(AGREE_VAL.item()))) + ")"
-    #elif calculate_postivevalue(NEURO_VAL) > 0:
     neuroticism= "(Neuroticism:" + str(calculate_postivevalue("{:.2f}".format(NEURO_VAL.item()))) + ")"
-    #elif calculate_postivevalue(ACCEPT_VAL) > 0:
     acceptance= "(Acceptance:" + str(calculate_postivevalue("{:.2f}".format(ACCEPT_VAL.item()))) + ")"
-    #elif calculate_postivevalue(LIKE_VAL) > 0:
     likeability= "(Likeability:" + str(calculate_postivevalue("{:.2f}".format(LIKE_VAL.item()))) + ")"
-    #elif calculate_postivevalue(EMP_VAL) > 0:
     empathy= "(Empathy:" + str(calculate_postivevalue("{:.2f}".format(EMP_VAL.item()))) + ")"
-    #elif calculate_postivevalue(ANTHRO_VAL) > 0:
     anthropomorphism= "(Anthropomorphism:" + str(calculate_postivevalue("{:.2f}".format(ANTHRO_VAL.item()))) + ")"
-    #elif calculate_postivevalue(TRUST_VAL) > 0:
     trust= "(Trust:" + str(calculate_postivevalue("{:.2f}".format(TRUST_VAL.item()))) + ")"
-    prompt = "A portrait captures a person exuding traits of  " + openness + ", " + conscientiousness + ", " + extraversion + ", " + agreeableness + ", " + neuroticism + ", " + acceptance + ", " + likeability + ", " + empathy + ", " + anthropomorphism + ", " + trust + " , looking confidently at the camera with a proud expression, against a blue background"
-
+    
+    prompt = "A portrait captures a person exuding traits of " + openness + ", " + conscientiousness + ", " + extraversion + ", " + agreeableness + ", " + neuroticism + ", " + acceptance + ", " + likeability + ", " + empathy + ", " + anthropomorphism + ", " + trust + " , looking confidently at the camera with a proud expression, against a blue background"
     return prompt
 
 
 def calculate_postivevalue(input_parameter):
     if float(input_parameter) > 0.5:
-        # Positive Prompt
         result = "{:.2f}".format((float(input_parameter) - 0.5)/0.5)
     else:
-        # Neutral & Input-Parameter ist kleiner 0,5
         result = 0
-    
     return result
 
 def calculate_negativevalue(input_parameter):
     if float(input_parameter) < 0.5:
-        # Negative Prompt
         result = "{:.2f}".format(1 - (float(input_parameter) * 2))
     else:
-        # Neutral & Input-Parameter ist größer 0,5
         result = 0
-    
     return result
 
 
 def generate_latent_negativePrompt(OPEN_VAL, CON_VAL, EXTRA_VAL, AGREE_VAL, NEURO_VAL, ACCEPT_VAL, LIKE_VAL, EMP_VAL, ANTHRO_VAL, TRUST_VAL):
-     
-    #if calculate_negativevalue(OPEN_VAL) > 0:
     openness= "(Openness:" + str(calculate_negativevalue("{:.2f}".format(OPEN_VAL.item()))) + ")"
-    #elif calculate_negativevalue(CON_VAL) > 0:   
     conscientiousness= "(Conscientiousness:" + str(calculate_negativevalue("{:.2f}".format(CON_VAL.item()))) + ")"
-    #elif calculate_negativevalue(EXTRA_VAL) > 0:
     extraversion= "(Extraversion:" + str(calculate_negativevalue("{:.2f}".format(EXTRA_VAL.item()))) + ")"
-    #elif calculate_negativevalue(AGREE_VAL) > 0:
     agreeableness= "(Agreeableness:" + str(calculate_negativevalue("{:.2f}".format(AGREE_VAL.item()))) + ")"
-    #elif calculate_negativevalue(NEURO_VAL) > 0:
     neuroticism= "(Neuroticism:" + str(calculate_negativevalue("{:.2f}".format(NEURO_VAL.item()))) + ")"
-    #elif calculate_negativevalue(ACCEPT_VAL) > 0:
     acceptance= "(Acceptance:" + str(calculate_negativevalue("{:.2f}".format(ACCEPT_VAL.item()))) + ")"
-    #elif calculate_negativevalue(LIKE_VAL) > 0:
     likeability= "(Likeability:" + str(calculate_negativevalue("{:.2f}".format(LIKE_VAL.item()))) + ")"
-    #elif calculate_negativevalue(EMP_VAL) > 0:
     empathy= "(Empathy:" + str(calculate_negativevalue("{:.2f}".format(EMP_VAL.item()))) + ")"
-    #elif calculate_negativevalue(ANTHRO_VAL) > 0:
     anthropomorphism= "(Anthropomorphism:" + str(calculate_negativevalue("{:.2f}".format(ANTHRO_VAL.item()))) + ")"
-    #elif calculate_negativevalue(TRUST_VAL) > 0:
     trust= "(Trust:" + str(calculate_negativevalue("{:.2f}".format(TRUST_VAL.item()))) + ")"
-    n_prompt=  "(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, anime:1.4) text, close up, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, extra fingers, mutated hands, poorlydrawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, badproportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms,missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, nsfw, inclined head, tilted head, two persons, text, symbol, logo, artist signature, black-white, " + openness + ", " + conscientiousness + ", " + extraversion + ", " + agreeableness + ", " + neuroticism + ", " + acceptance + ", " + likeability + ", " + empathy + ", " + anthropomorphism + ", " + trust
+    
+    n_prompt= "(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, anime:1.4) text, close up, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, extra fingers, mutated hands, poorlydrawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, badproportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms,missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, nsfw, inclined head, tilted head, two persons, text, symbol, logo, artist signature, black-white, " + openness + ", " + conscientiousness + ", " + extraversion + ", " + agreeableness + ", " + neuroticism + ", " + acceptance + ", " + likeability + ", " + empathy + ", " + anthropomorphism + ", " + trust
     return n_prompt
 
 def generate_defined_negativePrompt():
-    
-    n_prompt=  "(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, anime:1.4) text, close up, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, extra fingers, mutated hands, poorlydrawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, badproportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms,missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, nsfw, inclined head, tilted head, two persons, text, symbol, logo, artist signature, black-white"
+    n_prompt= "(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, anime:1.4) text, close up, cropped, out of frame, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, extra fingers, mutated hands, poorlydrawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, badproportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms,missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, nsfw, inclined head, tilted head, two persons, text, symbol, logo, artist signature, black-white"
     return n_prompt
