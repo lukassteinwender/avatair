@@ -457,26 +457,25 @@ def main():
         with gr.Row():
             with gr.Column():
                 infotext = gr.TextArea(value="Welcome to AvatAIr, \n\nYou will get new avatars generated throughout the program. We ask you to rate them one by one using sliders, which you will see in a moment. \n\nEvery time your rating is finished the program will generate a new avatar adapted to your rating. This process is repeated several times until you are presented with your final result at the end of the program. \nThe generation of avatars may take some time depending on the performance of the system. Therefore we ask for your patience.\n\nThank you.", interactive=False, show_label=False)
-                global SCALES
-                if(SCALES == 1):
+                if SCALES == 1:
                     inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="acceptance", info="0 = low | 1 = high | general agreement that the avatar is satisfactory or right", visible=False)
                     inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="likeability", info="0 = low | 1 = high | how much do you like the avatar", visible=False)
                     inp3 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="empathy", info="0 = low | 1 = high | how empathic does the avatar effect", visible=False)
                     inp4 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="anthropomorphism", info="0 = low | 1 = high | how human-like is the avatar", visible=False)
                     inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="trust", info="0 = low | 1 = high | how much do you trust the avatar", visible=False)
-                if(SCALES == 2):
+                elif SCALES == 2:
                     inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="openness", info="0 = low | 1 = high | how open/acceptant does the avatar effect", visible=False)
                     inp2 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="conscientiousness", info="0 = low | 1 = high | does the avatar feel conscientious", visible=False)
                     inp3 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="extraversion", info="0 = low | 1 = high | how extroverted does the avatar look", visible=False)
                     inp4 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="agreeableness", info="0 = low | 1 = high | how sympathetic/cooperative/warm does the avatar feel", visible=False)
                     inp5 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="neuroticism", info="0 = low | 1 = high | how emotional stable would you rate the avatar", visible=False)
-                if(SCALES == 3):
+                elif SCALES == 3:
                     inp1 = gr.Slider(0.0, 1.0, step=0.0001, value=round(random.uniform(0.0000, 1.0000), 2), label="efficiency", info="0 = low | 1 = high | how good does the avatar work", visible=False)
                 attention = gr.Slider(1, 100, step=1, value=1, label=att_check_info, visible=False)
                 text_input = gr.Textbox(label="feedback (optional)", visible=False)
                 user_id = gr.Textbox(label="User ID", visible=True)
-            out = gr.Image(visible=False, scale=0, min_width=512)
-            #out.style(height=512, width=512) # pre Gradio 4.0
+            with gr.Column():
+                out = gr.Image(visible=False)
         with gr.Row():
             btn = gr.Button(value="Run", scale=1)
             btnEnd = gr.Button(value="Interrupt survey", variant='stop', scale=2, visible=False)
@@ -561,12 +560,13 @@ def main():
         
         def returnbutton(*args):
             if(SCALES == 1 or SCALES == 2):
+                scale1, scale2, scale3, scale4, scale5, att, txt, u_id = args
                 return {
-                    inp1: gr.update(visible=True),
-                    inp2: gr.update(visible=True),
-                    inp3: gr.update(visible=True),
-                    inp4: gr.update(visible=True),
-                    inp5: gr.update(visible=True),
+                    inp1: gr.update(visible=True, value=scale1),
+                    inp2: gr.update(visible=True, value=scale2),
+                    inp3: gr.update(visible=True, value=scale3),
+                    inp4: gr.update(visible=True, value=scale4),
+                    inp5: gr.update(visible=True, value=scale5),
                     attention: gr.update(visible=False),
                     out: gr.update(visible=True),
                     btn: gr.update(visible=True),
@@ -576,8 +576,9 @@ def main():
                     infotext: gr.update(visible=False)
                 }
             else:
+                scale1, att, txt, u_id = args
                 return {
-                    inp1: gr.update(visible=True),
+                    inp1: gr.update(visible=True, value=scale1),
                     attention: gr.update(visible=False),
                     out: gr.update(visible=True),
                     btn: gr.update(visible=True),
@@ -746,11 +747,11 @@ def main():
                     att_check_info = 'Pull the slider to ' + str(ATT_CHECK_VAL)
                     if(SCALES == 1 or SCALES == 2):
                         return {
-                            inp1: gr.update(visible=True),
-                            inp2: gr.update(visible=True),
-                            inp3: gr.update(visible=True),
-                            inp4: gr.update(visible=True),
-                            inp5: gr.update(visible=True),
+                            inp1: gr.update(visible=True, value=scale1),
+                            inp2: gr.update(visible=True, value=scale2),
+                            inp3: gr.update(visible=True, value=scale3),
+                            inp4: gr.update(visible=True, value=scale4),
+                            inp5: gr.update(visible=True, value=scale5),
                             user_id: gr.update(visible=False),
                             out: gr.update(value=image, visible=True),
                             infotext: gr.update(visible=False),
@@ -760,9 +761,9 @@ def main():
                             btnYesEnd: gr.update(visible=False),
                             attention: gr.update(visible=True, label=att_check_info)
                         }
-                    else: 
+                    else:
                         return {
-                            inp1: gr.update(visible=True),
+                            inp1: gr.update(visible=True, value=scale1),
                             user_id: gr.update(visible=False),
                             attention: gr.update(visible=True, label=att_check_info),
                             out: gr.update(value=image, visible=True),
@@ -775,13 +776,13 @@ def main():
                 elif(SCALES == 1 or SCALES == 2):
                     #logging.info('run_attention_check,FALSE')
                     RUN_ATT_CHECK = False
-                    
+
                     return {
-                        inp1: gr.update(visible=True),
-                        inp2: gr.update(visible=True),
-                        inp3: gr.update(visible=True),
-                        inp4: gr.update(visible=True),
-                        inp5: gr.update(visible=True),
+                        inp1: gr.update(visible=True, value=scale1),
+                        inp2: gr.update(visible=True, value=scale2),
+                        inp3: gr.update(visible=True, value=scale3),
+                        inp4: gr.update(visible=True, value=scale4),
+                        inp5: gr.update(visible=True, value=scale5),
                         user_id: gr.update(visible=False),
                         btnEnd: gr.update(visible=True),
                         out: gr.update(value=image, visible=True),
@@ -790,14 +791,13 @@ def main():
                         btnNoReturn: gr.update(visible=False),
                         btnYesEnd: gr.update(visible=False),
                         btn: gr.update(value="Generate new avatar")
-                         
                     }
                 else:
                     #logging.info('run_attention_check,FALSE')
                     RUN_ATT_CHECK = False
-                    
+
                     return {
-                        inp1: gr.update(visible=True),
+                        inp1: gr.update(visible=True, value=scale1),
                         user_id: gr.update(visible=False),
                         out: gr.update(value=image, visible=True),
                         infotext: gr.update(visible=False),
