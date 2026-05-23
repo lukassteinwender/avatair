@@ -1,8 +1,6 @@
 import webcolors
 
 def colour_to_text(colour_val):
-    closest_colour(colour_val)
-    ##actual_name, closest_name = get_colour_name(colour_val)
     return closest_colour(colour_val)
 
 ## closest colour always equals actual colour, if actual colour exists. 
